@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">SocialApp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="entry">вход</string>
+    <string name="registration">регистрация</string>
 </resources>
