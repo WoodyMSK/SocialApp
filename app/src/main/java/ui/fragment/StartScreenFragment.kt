@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.activity
+package ui.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.woodymsk.socialapp.databinding.FragmentStartScreenBinding
-
 
 class StartScreenFragment : Fragment() {
 
@@ -21,6 +20,5 @@ class StartScreenFragment : Fragment() {
 
         return binding.root
     }
-
 
 }
