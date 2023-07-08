@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivRegistrationScreenAddAvatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="128dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_a_photo_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/etRegistrationScreenAddLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="128dp"
+        android:hint="@string/login"
+        android:maxLength="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivRegistrationScreenAddAvatar" />
+
+    <EditText
+        android:id="@+id/etRegistrationScreenAddPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:maxLength="10"
+        app:layout_constraintEnd_toEndOf="@+id/etRegistrationScreenAddLogin"
+        app:layout_constraintStart_toStartOf="@+id/etRegistrationScreenAddLogin"
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrationScreenAddLogin" />
+
+    <EditText
+        android:id="@+id/etRegistrationScreenConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/confirm_password"
+        android:inputType="textPassword"
+        android:maxLength="10"
+        app:layout_constraintEnd_toEndOf="@+id/etRegistrationScreenAddPassword"
+        app:layout_constraintStart_toStartOf="@+id/etRegistrationScreenAddPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrationScreenAddPassword" />
+
+    <EditText
+        android:id="@+id/etRegistrationScreenAddName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/name"
+        android:inputType="textPersonName|textCapWords"
+        android:maxLength="30"
+        app:layout_constraintEnd_toEndOf="@+id/etRegistrationScreenConfirmPassword"
+        app:layout_constraintStart_toStartOf="@+id/etRegistrationScreenConfirmPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrationScreenConfirmPassword" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bRegistrationScreenSignInButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/registration_complete"
+        app:layout_constraintEnd_toEndOf="@+id/etRegistrationScreenAddName"
+        app:layout_constraintStart_toStartOf="@+id/etRegistrationScreenAddName"
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrationScreenAddName" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
