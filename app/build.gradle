@@ -1,11 +1,18 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
 }
 
 android {
     namespace 'ru.woodymsk.socialapp'
     compileSdk 33
+
+    buildFeatures {
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId "ru.woodymsk.socialapp"
@@ -13,7 +20,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        viewBinding.enabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -27,18 +34,52 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    kapt {
+        correctErrorTypes = true
     }
 }
 
 dependencies {
+    def core_version = "1.10.1"
+    def appcompat_version = "1.6.1"
+    def constraintlayout_version = "2.1.4"
+    def swiperefreshlayout_version = "1.1.0"
+    def recyclerview_version = "1.3.0"
+    def lifecycle_version = "2.6.1"
+    def mdc_version = "1.9.0"
+    def nav_version = "2.6.0"
+    def room_version = "2.5.2"
+    def retrofit_version = "2.9.0"
+    def okhttplogging_version = "4.10.0"
+    def bom_version = "1.8.0"
+    def act_version = "1.7.2"
 
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$mdc_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
+    implementation platform("org.jetbrains.kotlin:kotlin-bom:$bom_version")
+    implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.activity:activity-ktx:$act_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttplogging_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.room:room-common:$room_version"
+    implementation "androidx.room:room-paging:$room_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
+    implementation "com.google.code.gson:gson:2.9.0"
+    kapt "androidx.room:room-compiler:$room_version"
+    kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 }
