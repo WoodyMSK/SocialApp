@@ -1,0 +1,164 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivCardEventAuthorAvatar"
+            android:layout_width="@dimen/posts_avatar_size"
+            android:layout_height="@dimen/posts_avatar_size"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@string/cardPostAuthorAvatarDescription"
+            app:layout_constraintBottom_toBottomOf="@id/barrierCardEventContentHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@drawable/ic_post_author_24" />
+
+        <TextView
+            android:id="@+id/tvCardEventAuthor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            app:layout_constraintBottom_toTopOf="@+id/tvCardEventPublished"
+            app:layout_constraintEnd_toStartOf="@id/bCardEventMenu"
+            app:layout_constraintStart_toEndOf="@id/ivCardEventAuthorAvatar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="author" />
+
+        <TextView
+            android:id="@+id/tvCardEventPublished"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="@id/barrierCardEventContentHeader"
+            app:layout_constraintEnd_toStartOf="@id/bCardEventMenu"
+            app:layout_constraintStart_toEndOf="@id/ivCardEventAuthorAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvCardEventAuthor"
+            tools:text="19:17" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bCardEventMenu"
+            style="@style/Widget.AppTheme.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:icon="@drawable/ic_context_menu_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrierCardEventContentHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="ivCardEventAuthorAvatar,tvCardEventPublished,bCardEventMenu" />
+
+        <TextView
+            android:id="@+id/tvCardEventEventDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/barrierCardEventContentHeader"
+            tools:text="18.07.2023 в 19:00" />
+
+        <Spinner
+            android:id="@+id/spinCardEventEventFormat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:entries="@array/eventFormat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCardEventEventDate" />
+
+        <TextView
+            android:id="@+id/tvCardEventParticipantCountText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinCardEventEventFormat"
+            tools:text="Количество участников: " />
+
+        <TextView
+            android:id="@+id/tvCardEventParticipantCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/tvCardEventParticipantCountText"
+            app:layout_constraintStart_toEndOf="@id/tvCardEventParticipantCountText"
+            app:layout_constraintTop_toTopOf="@id/tvCardEventParticipantCountText"
+            tools:text="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bCardEventConnectToEventButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:text="@string/connectToEvent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCardEventParticipantCountText" />
+
+        <TextView
+            android:id="@+id/tvCardEventDescriptionText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bCardEventConnectToEventButton"
+            tools:ignore="SpUsage"
+            tools:text="Общие сведения" />
+
+        <TextView
+            android:id="@+id/tvCardEventDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:paddingVertical="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCardEventDescriptionText"
+            tools:text="сообщение" />
+
+        <ImageView
+            android:id="@+id/tvCardEventPicture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="@string/cardEventPictureDescription"
+            android:focusable="true"
+            android:scaleType="center"
+            app:constraint_referenced_ids="tvCardEventDescription"
+            app:layout_constraintTop_toBottomOf="@+id/tvCardEventDescription"
+            app:srcCompat="@drawable/ic_image_24"
+            tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrierCardEventContentFooter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="tvCardEventPicture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

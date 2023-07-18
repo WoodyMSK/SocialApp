@@ -8,6 +8,6 @@ fun Fragment.navigator(): Navigator {
 
 interface Navigator {
 
-    fun navigateTo(fragment: Fragment)
+    fun navigateTo(fragment: Fragment, addToBackStack: Boolean = true)
 
 }
