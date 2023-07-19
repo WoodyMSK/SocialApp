@@ -11,6 +11,10 @@ import ru.woodymsk.socialapp.ui.navigation.navigator
 
 class StartScreenFragment : Fragment() {
 
+    companion object {
+        fun newInstance(): Fragment = StartScreenFragment()
+    }
+
     private lateinit var binding: FragmentStartScreenBinding
 
     override fun onCreateView(

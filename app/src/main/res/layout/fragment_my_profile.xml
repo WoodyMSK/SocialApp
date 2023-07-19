@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cvMyProfileCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp">
+
+            <ImageView
+                android:id="@+id/ivMyProfileAuthorAvatar"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:contentDescription="@string/cardPostAuthorAvatarDescription"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@drawable/ic_post_author_24" />
+
+            <TextView
+                android:id="@+id/tvMyProfileAuthorName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@id/ivMyProfileAuthorAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivMyProfileAuthorAvatar"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="author" />
+
+            <TextView
+                android:id="@+id/tvMyProfilePlacesWork"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="16dp"
+                android:textAllCaps="true"
+                app:layout_constraintBottom_toBottomOf="@id/ivMyProfileAuthorAvatar"
+                app:layout_constraintStart_toEndOf="@id/ivMyProfileAuthorAvatar"
+                tools:text="@string/placesWork" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bMyProfileAddPlaceWork"
+                style="@style/Widget.AppTheme.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_add_24"
+                app:layout_constraintBottom_toBottomOf="@id/tvMyProfilePlacesWork"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tvMyProfilePlacesWork" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierMyProfileContentHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:barrierDirection="top"
+                app:constraint_referenced_ids="ivMyProfileAuthorAvatar,tvMyProfilePlacesWork,bMyProfileAddPlaceWork" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrierMyProfileContentFooter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="ivMyProfileAuthorAvatar,tvMyProfilePlacesWork,bMyProfileAddPlaceWork" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPostScreenListPost"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cvMyProfileCard"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_card_post" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
