@@ -1,0 +1,39 @@
+package ru.woodymsk.socialapp.presentation.event_screen
+
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import ru.woodymsk.socialapp.R.drawable.ic_profile_24
+import ru.woodymsk.socialapp.data.model.EventsItem
+import ru.woodymsk.socialapp.databinding.ItemCardEventBinding
+import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
+import ru.woodymsk.socialapp.domain.load
+import ru.woodymsk.socialapp.domain.parseAndFormatDate
+
+class EventViewHolder(
+    private val binding: ItemCardEventBinding,
+) : RecyclerView.ViewHolder(binding.root) {
+
+    fun bind(event: EventsItem) {
+        binding.apply {
+            tvCardEventAuthor.text = event.author
+            tvCardEventPublished.text = parseAndFormatDate(event.published)
+            tvCardEventEventDate.text = parseAndFormatDate(event.datetime)
+            tvCardEventEventFormat.text = event.type
+            tvCardEventParticipantCount.text = event.speakerIds.size.toString()
+            tvCardEventDescription.text = event.content
+            if (event.authorAvatar != null) {
+                ivCardEventAuthorAvatar.load(event.authorAvatar, CircleCrop())
+            } else {
+                ivCardEventAuthorAvatar.setImageResource(ic_profile_24)
+            }
+            if (event.attachment != null && event.attachment.type == IMAGE.name) {
+                ivCardEventPicture.load(event.attachment.url)
+                ivCardEventPicture.isVisible = true
+            } else {
+                ivCardEventPicture.isGone = true
+            }
+        }
+    }
+}

@@ -1,12 +1,14 @@
-package ru.woodymsk.socialapp.ui.registration_screen
+package ru.woodymsk.socialapp.presentation.registration_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentRegistrationBinding
 
+@AndroidEntryPoint
 class RegistrationScreenFragment : Fragment() {
 
     companion object {

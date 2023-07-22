@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.ui.registration_screen
+package ru.woodymsk.socialapp.presentation.my_profile_screen
 
 import android.os.Bundle
 import android.view.LayoutInflater

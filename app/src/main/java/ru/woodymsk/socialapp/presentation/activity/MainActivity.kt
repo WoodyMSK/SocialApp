@@ -1,20 +1,18 @@
-package ru.woodymsk.socialapp.ui.activity
+package ru.woodymsk.socialapp.presentation.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import ru.woodymsk.socialapp.R.id.itBottomNavigationPostScreen
-import ru.woodymsk.socialapp.R.id.itBottomNavigationEventScreen
-import ru.woodymsk.socialapp.R.id.itBottomNavigationLogInScreen
-import ru.woodymsk.socialapp.R.id.itBottomNavigationMyProfileScreen
-import ru.woodymsk.socialapp.R.id.fragmentContainer
+import dagger.hilt.android.AndroidEntryPoint
+import ru.woodymsk.socialapp.R.id.*
 import ru.woodymsk.socialapp.databinding.ActivityMainBinding
-import ru.woodymsk.socialapp.ui.event_screen.EventScreenFragment
-import ru.woodymsk.socialapp.ui.navigation.Navigator
-import ru.woodymsk.socialapp.ui.post_screen.PostScreenFragment
-import ru.woodymsk.socialapp.ui.registration_screen.MyProfileScreenFragment
-import ru.woodymsk.socialapp.ui.start_screen.StartScreenFragment
+import ru.woodymsk.socialapp.domain.Navigator
+import ru.woodymsk.socialapp.presentation.event_screen.EventScreenFragment
+import ru.woodymsk.socialapp.presentation.my_profile_screen.MyProfileScreenFragment
+import ru.woodymsk.socialapp.presentation.post_screen.PostScreenFragment
+import ru.woodymsk.socialapp.presentation.start_screen.StartScreenFragment
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
 
     private lateinit var binding: ActivityMainBinding

@@ -1,10 +1,6 @@
-package ru.woodymsk.socialapp.ui.navigation
+package ru.woodymsk.socialapp.domain
 
 import androidx.fragment.app.Fragment
-
-fun Fragment.navigator(): Navigator {
-    return requireActivity() as Navigator
-}
 
 interface Navigator {
 
