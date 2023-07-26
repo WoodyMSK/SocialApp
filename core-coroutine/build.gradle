@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'ru.woodymsk.socialapp.core_coroutine'
+}
+
+ext {
+    coroutines = "1.7.2"
+}
+dependencies {
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+}
