@@ -1,10 +1,9 @@
-plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
-}
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
 
-android {
-    namespace 'ru.woodymsk.socialapp.core_coroutine'
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 ext {
