@@ -23,7 +23,6 @@ class PostViewModel @Inject constructor(
     }
 
     private fun loadAllPosts() = viewModelScope.launch {
-        postRepository.getAllPostList()
-        _posts.value = postRepository.posts
+        _posts.value = postRepository.getAllPostList()
     }
 }

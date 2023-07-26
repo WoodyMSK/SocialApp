@@ -146,11 +146,11 @@
         <ImageView
             android:id="@+id/ivCardEventPicture"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/image_view_high"
             android:clickable="true"
             android:contentDescription="@string/cardEventPictureDescription"
             android:focusable="true"
-            android:scaleType="center"
+            android:scaleType="fitXY"
             app:constraint_referenced_ids="tvCardEventDescription"
             app:layout_constraintTop_toBottomOf="@+id/tvCardEventDescription"
             app:srcCompat="@drawable/ic_image_24"

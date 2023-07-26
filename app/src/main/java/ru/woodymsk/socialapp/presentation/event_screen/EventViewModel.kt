@@ -23,7 +23,6 @@ class EventViewModel @Inject constructor(
     }
 
     private fun loadAllEvents() = viewModelScope.launch {
-        eventRepository.getAllEventList()
-        _events.value = eventRepository.events
+        _events.value = eventRepository.getAllEventList()
     }
 }
