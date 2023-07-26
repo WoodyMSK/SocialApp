@@ -23,6 +23,13 @@ class EventViewHolder(
             tvCardEventEventFormat.text = event.type
             tvCardEventParticipantCount.text = event.speakerIds.size.toString()
             tvCardEventDescription.text = event.content
+            if (event.content.length > 200) {
+                bCardEventMoreContentText.isVisible = true
+            } else bCardEventMoreContentText.isGone = true
+            bCardEventMoreContentText.setOnClickListener {
+                tvCardEventDescription.maxLines = event.content.length
+                bCardEventMoreContentText.isGone = true
+            }
             if (event.authorAvatar != null) {
                 ivCardEventAuthorAvatar.load(event.authorAvatar, CircleCrop())
             } else {

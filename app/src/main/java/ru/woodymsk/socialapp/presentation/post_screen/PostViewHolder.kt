@@ -7,8 +7,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.woodymsk.socialapp.R.drawable.ic_profile_24
 import ru.woodymsk.socialapp.data.model.PostsItem
 import ru.woodymsk.socialapp.databinding.ItemCardPostBinding
-import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
 import ru.woodymsk.socialapp.domain.load
+import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
 import ru.woodymsk.socialapp.domain.parseAndFormatDate
 
 class PostViewHolder(
@@ -20,6 +20,14 @@ class PostViewHolder(
             tvCardPostAuthor.text = post.author
             tvCardPostPublished.text = parseAndFormatDate(post.published)
             tvCardPostText.text = post.content
+            bCardPostLike.isCheckable = post.likedByMe
+            if (post.content.length > 200) {
+                bCardPostMoreContentText.isVisible = true
+            } else bCardPostMoreContentText.isGone = true
+            bCardPostMoreContentText.setOnClickListener {
+                tvCardPostText.maxLines = post.content.length
+                bCardPostMoreContentText.isGone = true
+            }
             bCardPostLike.text = if (post.likeOwnerIds.isNotEmpty()) {
                 post.likeOwnerIds.size.toString()
             } else null

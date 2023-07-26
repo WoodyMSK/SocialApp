@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">SocialApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -12,15 +12,16 @@
     <string name="feed">Лента</string>
     <string name="event">События</string>
     <string name="logIn">Вход</string>
-    <string name="connectToEvent">Присоединиться</string>
-    <string name="cardPostAuthorAvatarDescription">CardPostAuthorAvatar</string>
-    <string name="cardEventPictureDescription">CardEventPicture</string>
-    <string name="cardPostPictureDescription">CardPostPicture</string>
-    <string name="placesWork">места работы</string>
+    <string name="connect_to_event">Присоединиться</string>
+    <string name="card_post_author_avatar_description">CardPostAuthorAvatar</string>
+    <string name="card_event_picture_description">CardEventPicture</string>
+    <string name="card_post_picture_description">CardPostPicture</string>
+    <string name="places_work">места работы</string>
     <string name="profile">Профиль</string>
-    <string name="CommonData">Общие сведения</string>
-    <string name="participantsCounts">Количество участников:</string>
+    <string name="common_data">Общие сведения</string>
+    <string name="participants_counts">Количество участников:</string>
     <string name="start_screen_image">Start screen image</string>
+    <string name="read_next" tools:ignore="TypographyEllipsis">...читать далее</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

@@ -6,4 +6,7 @@
     <dimen name="short_spacing">8dp</dimen>
     <dimen name="icon_button_padding">12dp</dimen>
     <dimen name="icon_button_min_size">48dp</dimen>
+    <dimen name="icon_button_middle_size">32dp</dimen>
+    <dimen name="attachment_image_height">400dp</dimen>
+    <dimen name="max_symbol_content">50</dimen>
 </resources>
