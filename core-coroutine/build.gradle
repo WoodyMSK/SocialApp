@@ -1,0 +1,14 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+ext {
+    coroutines = "1.7.2"
+}
+dependencies {
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
+}

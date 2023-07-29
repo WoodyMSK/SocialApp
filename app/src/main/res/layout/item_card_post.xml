@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
+    android:layout_marginTop="8dp"
+    app:cardCornerRadius="12dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/ivCardPostAuthorAvatar"
-            android:layout_width="@dimen/posts_avatar_size"
-            android:layout_height="@dimen/posts_avatar_size"
-            android:layout_marginBottom="16dp"
-            android:contentDescription="@string/cardPostAuthorAvatarDescription"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:contentDescription="@string/card_post_author_avatar_description"
+            android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="@id/barrierCardPostContentHeader"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -26,13 +26,11 @@
             android:id="@+id/tvCardPostAuthor"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
             android:singleLine="true"
             app:layout_constraintBottom_toTopOf="@+id/tvCardPostPublished"
-            app:layout_constraintEnd_toStartOf="@id/bCardPostMenu"
             app:layout_constraintStart_toEndOf="@id/ivCardPostAuthorAvatar"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ivCardPostAuthorAvatar"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="author" />
 
@@ -40,10 +38,7 @@
             android:id="@+id/tvCardPostPublished"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="@id/barrierCardPostContentHeader"
-            app:layout_constraintEnd_toStartOf="@id/bCardPostMenu"
+            app:layout_constraintBottom_toBottomOf="@id/ivCardPostAuthorAvatar"
             app:layout_constraintStart_toEndOf="@id/ivCardPostAuthorAvatar"
             app:layout_constraintTop_toBottomOf="@id/tvCardPostAuthor"
             tools:text="19:17" />
@@ -51,12 +46,13 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bCardPostMenu"
             style="@style/Widget.AppTheme.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_width="@dimen/icon_button_middle_size"
+            android:layout_height="@dimen/icon_button_middle_size"
+            android:layout_marginEnd="12dp"
             app:icon="@drawable/ic_context_menu_24"
+            app:layout_constraintBottom_toBottomOf="@id/tvCardPostPublished"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/tvCardPostAuthor" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrierCardPostContentHeader"
@@ -71,22 +67,40 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:ellipsize="end"
+            android:justificationMode="inter_word"
             android:maxLines="5"
+            android:paddingHorizontal="16dp"
             android:paddingVertical="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierCardPostContentHeader"
-            tools:text="сообщение" />
+            tools:text="сообщение"
+            tools:targetApi="o" />
+
+        <TextView
+            android:id="@+id/bCardPostMoreContentText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/card_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:text="@string/read_next"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/tvCardPostText"
+            app:layout_constraintEnd_toEndOf="@id/tvCardPostText"
+            tools:ignore="RtlSymmetry" />
 
         <ImageView
-            android:id="@+id/tvCardPostPicture"
+            android:id="@+id/ivCardPostPicture"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:clickable="true"
-            android:contentDescription="@string/cardPostPictureDescription"
+            android:contentDescription="@string/card_post_picture_description"
             android:focusable="true"
-            android:scaleType="center"
             app:constraint_referenced_ids="tvCardPostText"
             app:layout_constraintTop_toBottomOf="@+id/tvCardPostText"
             app:srcCompat="@drawable/ic_image_24"
@@ -98,15 +112,16 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="tvCardPostPicture" />
+            app:constraint_referenced_ids="ivCardPostPicture" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bCardPostLike"
             style="@style/Widget.AppTheme.LikeCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:checkable="true"
-            app:icon="@drawable/ic_like_outlined_24"
+            app:icon="@drawable/state_like_click"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierCardPostContentFooter"
             tools:text="1" />
@@ -114,10 +129,11 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bCardPostShare"
             style="@style/Widget.AppTheme.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/icon_button_middle_size"
+            android:layout_height="@dimen/icon_button_middle_size"
             android:layout_marginStart="16dp"
             app:icon="@drawable/ic_share_24"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bCardPostLike"
             app:layout_constraintTop_toBottomOf="@id/barrierCardPostContentFooter" />
     </androidx.constraintlayout.widget.ConstraintLayout>

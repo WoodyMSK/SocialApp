@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -12,6 +12,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -58,6 +59,9 @@ ext {
     okhttp_logging_version = "4.10.0"
     bom_version = "1.8.0"
     act_version = "1.7.2"
+    glide_version = "4.14.2"
+    gson_version = "2.9.0"
+    hilt_version = "2.47"
 }
 
 dependencies {
@@ -81,8 +85,16 @@ dependencies {
     implementation "androidx.room:room-common:$room_version"
     implementation "androidx.room:room-paging:$room_version"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
-    implementation "com.google.code.gson:gson:2.9.0"
+    implementation "com.google.code.gson:gson:$gson_version"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kapt "com.google.dagger:hilt-android:$hilt_version"
     kapt "androidx.room:room-compiler:$room_version"
+    kapt "com.github.bumptech.glide:annotations:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
     //noinspection LifecycleAnnotationProcessorWithJava8
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
+
+    implementation project(":core-coroutine")
 }

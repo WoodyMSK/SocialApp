@@ -22,7 +22,7 @@
                 android:id="@+id/ivMyProfileAuthorAvatar"
                 android:layout_width="96dp"
                 android:layout_height="96dp"
-                android:contentDescription="@string/cardPostAuthorAvatarDescription"
+                android:contentDescription="@string/card_post_author_avatar_description"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@drawable/ic_post_author_24" />
@@ -51,7 +51,7 @@
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="@id/ivMyProfileAuthorAvatar"
                 app:layout_constraintStart_toEndOf="@id/ivMyProfileAuthorAvatar"
-                tools:text="@string/placesWork" />
+                tools:text="@string/places_job" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/bMyProfileAddPlaceWork"
