@@ -21,6 +21,13 @@ class PostViewHolder(
             tvCardPostPublished.text = parseAndFormatDate(post.published)
             tvCardPostText.text = post.content
             bCardPostLike.isCheckable = post.likedByMe
+            if (post.content.length > 200) {
+                bCardPostMoreContentText.isVisible = true
+            } else bCardPostMoreContentText.isGone = true
+            bCardPostMoreContentText.setOnClickListener {
+                tvCardPostText.maxLines = post.content.length
+                bCardPostMoreContentText.isGone = true
+            }
             bCardPostLike.text = if (post.likeOwnerIds.isNotEmpty()) {
                 post.likeOwnerIds.size.toString()
             } else null
