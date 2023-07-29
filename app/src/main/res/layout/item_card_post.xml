@@ -46,8 +46,9 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bCardPostMenu"
             style="@style/Widget.AppTheme.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/icon_button_middle_size"
+            android:layout_height="@dimen/icon_button_middle_size"
+            android:layout_marginEnd="12dp"
             app:icon="@drawable/ic_context_menu_24"
             app:layout_constraintBottom_toBottomOf="@id/tvCardPostPublished"
             app:layout_constraintEnd_toEndOf="parent"
@@ -78,11 +79,11 @@
         <ImageView
             android:id="@+id/ivCardPostPicture"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/image_view_high"
             android:clickable="true"
             android:contentDescription="@string/cardPostPictureDescription"
             android:focusable="true"
-            android:scaleType="center"
+            android:scaleType="fitXY"
             app:constraint_referenced_ids="tvCardPostText"
             app:layout_constraintTop_toBottomOf="@+id/tvCardPostText"
             app:srcCompat="@drawable/ic_image_24"
@@ -103,7 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:checkable="true"
-            app:icon="@drawable/ic_like_outlined_24"
+            app:icon="@drawable/state_like_click"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrierCardPostContentFooter"
             tools:text="1" />
@@ -111,10 +112,11 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bCardPostShare"
             style="@style/Widget.AppTheme.IconButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/icon_button_middle_size"
+            android:layout_height="@dimen/icon_button_middle_size"
             android:layout_marginStart="16dp"
             app:icon="@drawable/ic_share_24"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/bCardPostLike"
             app:layout_constraintTop_toBottomOf="@id/barrierCardPostContentFooter" />
     </androidx.constraintlayout.widget.ConstraintLayout>
