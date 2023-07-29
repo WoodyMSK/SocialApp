@@ -1,14 +1,13 @@
 package ru.woodymsk.socialapp.presentation.event_screen
 
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.woodymsk.socialapp.R.drawable.ic_profile_24
 import ru.woodymsk.socialapp.data.model.EventsItem
 import ru.woodymsk.socialapp.databinding.ItemCardEventBinding
-import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
 import ru.woodymsk.socialapp.domain.load
+import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
 import ru.woodymsk.socialapp.domain.parseAndFormatDate
 
 class EventViewHolder(
@@ -25,10 +24,12 @@ class EventViewHolder(
             tvCardEventDescription.text = event.content
             if (event.content.length > 200) {
                 bCardEventMoreContentText.isVisible = true
-            } else bCardEventMoreContentText.isGone = true
+            } else {
+                bCardEventMoreContentText.isVisible = false
+            }
             bCardEventMoreContentText.setOnClickListener {
                 tvCardEventDescription.maxLines = event.content.length
-                bCardEventMoreContentText.isGone = true
+                bCardEventMoreContentText.isVisible = false
             }
             if (event.authorAvatar != null) {
                 ivCardEventAuthorAvatar.load(event.authorAvatar, CircleCrop())
@@ -39,7 +40,7 @@ class EventViewHolder(
                 ivCardEventPicture.load(event.attachment.url)
                 ivCardEventPicture.isVisible = true
             } else {
-                ivCardEventPicture.isGone = true
+                ivCardEventPicture.isVisible = false
             }
         }
     }

@@ -148,7 +148,7 @@
             android:id="@+id/bCardEventMoreContentText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/bottom_text_background_selector"
+            android:background="@color/card_background"
             android:clickable="true"
             android:focusable="true"
             android:paddingEnd="16dp"

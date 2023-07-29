@@ -51,7 +51,7 @@
                 android:textAllCaps="true"
                 app:layout_constraintBottom_toBottomOf="@id/ivMyProfileAuthorAvatar"
                 app:layout_constraintStart_toEndOf="@id/ivMyProfileAuthorAvatar"
-                tools:text="@string/places_work" />
+                tools:text="@string/places_job" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/bMyProfileAddPlaceWork"

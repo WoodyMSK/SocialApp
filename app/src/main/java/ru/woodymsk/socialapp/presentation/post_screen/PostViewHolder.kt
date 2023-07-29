@@ -1,6 +1,5 @@
 package ru.woodymsk.socialapp.presentation.post_screen
 
-import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -23,10 +22,12 @@ class PostViewHolder(
             bCardPostLike.isCheckable = post.likedByMe
             if (post.content.length > 200) {
                 bCardPostMoreContentText.isVisible = true
-            } else bCardPostMoreContentText.isGone = true
+            } else {
+                bCardPostMoreContentText.isVisible = false
+            }
             bCardPostMoreContentText.setOnClickListener {
                 tvCardPostText.maxLines = post.content.length
-                bCardPostMoreContentText.isGone = true
+                bCardPostMoreContentText.isVisible = false
             }
             bCardPostLike.text = if (post.likeOwnerIds.isNotEmpty()) {
                 post.likeOwnerIds.size.toString()
@@ -40,7 +41,7 @@ class PostViewHolder(
                 ivCardPostPicture.load(post.attachment.url)
                 ivCardPostPicture.isVisible = true
             } else {
-                ivCardPostPicture.isGone = true
+                ivCardPostPicture.isVisible = false
             }
         }
     }

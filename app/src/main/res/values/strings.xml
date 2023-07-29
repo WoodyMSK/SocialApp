@@ -16,7 +16,7 @@
     <string name="card_post_author_avatar_description">CardPostAuthorAvatar</string>
     <string name="card_event_picture_description">CardEventPicture</string>
     <string name="card_post_picture_description">CardPostPicture</string>
-    <string name="places_work">места работы</string>
+    <string name="places_job">места работы</string>
     <string name="profile">Профиль</string>
     <string name="common_data">Общие сведения</string>
     <string name="participants_counts">Количество участников:</string>
@@ -27,4 +27,3 @@
         <item>OFFLINE</item>
     </string-array>
 </resources>
-
