@@ -4,7 +4,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.woodymsk.socialapp.R.drawable.ic_profile_24
-import ru.woodymsk.socialapp.data.model.PostsItem
+import ru.woodymsk.socialapp.data.dto.PostDTO
 import ru.woodymsk.socialapp.databinding.ItemCardPostBinding
 import ru.woodymsk.socialapp.domain.load
 import ru.woodymsk.socialapp.domain.model.AttachmentTypeDAO.IMAGE
@@ -14,7 +14,7 @@ class PostViewHolder(
     private val binding: ItemCardPostBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(post: PostsItem) {
+    fun bind(post: PostDTO) {
         binding.apply {
             tvCardPostAuthor.text = post.author
             tvCardPostPublished.text = parseAndFormatDate(post.published)
