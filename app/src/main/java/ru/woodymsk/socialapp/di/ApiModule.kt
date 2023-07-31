@@ -39,7 +39,7 @@ class ApiModule {
         okhttp: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(okhttp)
         .build()
 
