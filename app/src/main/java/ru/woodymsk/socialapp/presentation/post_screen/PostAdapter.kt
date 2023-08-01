@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import ru.woodymsk.socialapp.data.model.PostsItem
+import ru.woodymsk.socialapp.data.dto.PostDTO
 import ru.woodymsk.socialapp.databinding.ItemCardPostBinding
 
-class PostAdapter : ListAdapter<PostsItem, PostViewHolder>(PostDiffCallBack()) {
+class PostAdapter : ListAdapter<PostDTO, PostViewHolder>(PostDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding =
             ItemCardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,12 +19,12 @@ class PostAdapter : ListAdapter<PostsItem, PostViewHolder>(PostDiffCallBack()) {
     }
 }
 
-class PostDiffCallBack : DiffUtil.ItemCallback<PostsItem>() {
-    override fun areItemsTheSame(oldItem: PostsItem, newItem: PostsItem): Boolean {
+class PostDiffCallBack : DiffUtil.ItemCallback<PostDTO>() {
+    override fun areItemsTheSame(oldItem: PostDTO, newItem: PostDTO): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: PostsItem, newItem: PostsItem): Boolean {
+    override fun areContentsTheSame(oldItem: PostDTO, newItem: PostDTO): Boolean {
         return oldItem == newItem
     }
 }
