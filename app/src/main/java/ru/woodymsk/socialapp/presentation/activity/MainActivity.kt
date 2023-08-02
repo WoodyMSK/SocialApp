@@ -7,10 +7,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.R.id.*
 import ru.woodymsk.socialapp.databinding.ActivityMainBinding
 import ru.woodymsk.socialapp.domain.Navigator
-import ru.woodymsk.socialapp.presentation.event_screen.EventScreenFragment
-import ru.woodymsk.socialapp.presentation.my_profile_screen.MyProfileScreenFragment
-import ru.woodymsk.socialapp.presentation.post_screen.PostScreenFragment
-import ru.woodymsk.socialapp.presentation.start_screen.StartScreenFragment
+import ru.woodymsk.socialapp.presentation.event.EventScreenFragment
+import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
+import ru.woodymsk.socialapp.presentation.post.PostScreenFragment
+import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), Navigator {
                     navigateTo(EventScreenFragment.newInstance(), false)
                 }
                 itBottomNavigationLogInScreen -> {
-                    navigateTo(StartScreenFragment.newInstance(), false)
+                    navigateTo(AuthFragment.newInstance(), false)
                 }
                 itBottomNavigationMyProfileScreen -> {
                     navigateTo(MyProfileScreenFragment.newInstance(), false)
