@@ -4,8 +4,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import ru.woodymsk.socialapp.data.post_screen.PostRepositoryImpl
-import ru.woodymsk.socialapp.domain.post_screen.PostRepository
+import ru.woodymsk.socialapp.data.post.PostRepositoryImpl
+import ru.woodymsk.socialapp.domain.post.PostRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
