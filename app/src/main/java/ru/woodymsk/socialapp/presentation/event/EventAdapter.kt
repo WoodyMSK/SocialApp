@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import ru.woodymsk.socialapp.domain.post.model.EventsItem
+import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.databinding.ItemCardEventBinding
 
-class EventAdapter : ListAdapter<EventsItem, EventViewHolder>(EventDiffCallBack()) {
+class EventAdapter : ListAdapter<Event, EventViewHolder>(EventDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
         val binding =
             ItemCardEventBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -19,12 +19,12 @@ class EventAdapter : ListAdapter<EventsItem, EventViewHolder>(EventDiffCallBack(
     }
 }
 
-class EventDiffCallBack : DiffUtil.ItemCallback<EventsItem>() {
-    override fun areItemsTheSame(oldItem: EventsItem, newItem: EventsItem): Boolean {
+class EventDiffCallBack : DiffUtil.ItemCallback<Event>() {
+    override fun areItemsTheSame(oldItem: Event, newItem: Event): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: EventsItem, newItem: EventsItem): Boolean {
+    override fun areContentsTheSame(oldItem: Event, newItem: Event): Boolean {
         return oldItem == newItem
     }
 }
