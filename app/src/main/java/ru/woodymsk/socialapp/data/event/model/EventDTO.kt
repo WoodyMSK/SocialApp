@@ -1,9 +1,10 @@
-package ru.woodymsk.socialapp.domain.post.model
+package ru.woodymsk.socialapp.data.event.model
 
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.Coords
+import ru.woodymsk.socialapp.data.model.EventType
 
-data class EventsItem(
+data class EventDTO(
     val id: Int,
     val authorId: Int,
     val author: String,
@@ -13,7 +14,7 @@ data class EventsItem(
     val datetime: String,
     val published: String,
     val coords: Coords?,
-    val type: String,
+    val type: EventType,
     val likeOwnerIds: List<Int>,
     val likedByMe: Boolean,
     val speakerIds: List<Int>,

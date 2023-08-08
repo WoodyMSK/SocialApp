@@ -36,7 +36,7 @@ class PostMapper @Inject constructor() {
             mentionedMe = false,
             likedByMe = false,
             attachment = it.attachment,
-            ownedByMe = false,
+            ownedByMe = true,
         )
     }
 }

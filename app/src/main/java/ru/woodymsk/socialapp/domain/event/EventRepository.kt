@@ -1,9 +1,9 @@
 package ru.woodymsk.socialapp.domain.event
 
-import ru.woodymsk.socialapp.domain.post.model.EventsItem
+import ru.woodymsk.socialapp.data.event.model.EventDAO
 
 interface EventRepository {
 
-    suspend fun getAllEventList(): List<EventsItem>
+    suspend fun getAllEventList(): List<EventDAO>
 
 }

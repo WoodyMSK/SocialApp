@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import ru.woodymsk.socialapp.R.drawable.ic_profile_24
 import ru.woodymsk.socialapp.data.model.AttachmentType.IMAGE
-import ru.woodymsk.socialapp.domain.post.model.EventsItem
+import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.databinding.ItemCardEventBinding
 import ru.woodymsk.socialapp.domain.load
 import ru.woodymsk.socialapp.domain.parseAndFormatDate
@@ -14,12 +14,12 @@ class EventViewHolder(
     private val binding: ItemCardEventBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(event: EventsItem) {
+    fun bind(event: Event) {
         binding.apply {
             tvCardEventAuthor.text = event.author
             tvCardEventPublished.text = parseAndFormatDate(event.published)
             tvCardEventEventDate.text = parseAndFormatDate(event.datetime)
-            tvCardEventEventFormat.text = event.type
+            tvCardEventEventFormat.text = event.type.toString()
             tvCardEventParticipantCount.text = event.speakerIds.size.toString()
             tvCardEventDescription.text = event.content
             if (event.content.length > 200) {

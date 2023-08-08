@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.woodymsk.socialapp.domain.post.model.EventsItem
-import ru.woodymsk.socialapp.domain.event.EventRepository
+import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
+import ru.woodymsk.socialapp.domain.event.model.Event
 import javax.inject.Inject
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
-    private val eventRepository: EventRepository
+    private val eventInteractor: EventInteractor,
 ) : ViewModel() {
-    private val _events = MutableLiveData<List<EventsItem>>()
-    val events: LiveData<List<EventsItem>>
+    private val _events = MutableLiveData<List<Event>>()
+    val events: LiveData<List<Event>>
         get() = _events
 
     init {
@@ -23,6 +23,6 @@ class EventViewModel @Inject constructor(
     }
 
     private fun loadAllEvents() = viewModelScope.launch {
-        _events.value = eventRepository.getAllEventList()
+        _events.value = eventInteractor.getAllEventList()
     }
 }
