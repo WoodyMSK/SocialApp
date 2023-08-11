@@ -6,8 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
+import ru.woodymsk.socialapp.domain.post.model.Post
+import ru.woodymsk.socialapp.error.handler
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +23,7 @@ class PostViewModel @Inject constructor(
         loadAllPosts()
     }
 
-    private fun loadAllPosts() = viewModelScope.launch {
+    private fun loadAllPosts() = viewModelScope.launch(handler) {
         _posts.value = postInteractor.getAllPostList()
     }
 }

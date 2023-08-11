@@ -11,7 +11,7 @@ data class Event(
     val content: String,
     val datetime: String,
     val published: String,
-    val type: EventType,
+    val type: EventType?,
     val speakerIds: List<Int>,
     val participantsIds: List<Int>,
     val participatedByMe: Boolean,

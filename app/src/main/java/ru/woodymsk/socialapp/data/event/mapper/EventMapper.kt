@@ -2,23 +2,25 @@ package ru.woodymsk.socialapp.data.event.mapper
 
 import ru.woodymsk.socialapp.data.event.model.EventDAO
 import ru.woodymsk.socialapp.data.event.model.EventDTO
+import ru.woodymsk.socialapp.domain.orFalse
+import ru.woodymsk.socialapp.domain.orZero
 import javax.inject.Inject
 
 class EventMapper @Inject constructor() {
 
     fun mapToDao(items: List<EventDTO>): List<EventDAO> = items.map {
         EventDAO(
-            id = it.id,
-            authorId = it.authorId,
-            author = it.author,
+            id = it.id.orZero(),
+            authorId = it.authorId.orZero(),
+            author = it.author.orEmpty(),
             authorAvatar = it.authorAvatar,
-            content = it.content,
-            datetime = it.datetime,
-            published = it.published,
+            content = it.content.orEmpty(),
+            datetime = it.datetime.orEmpty(),
+            published = it.published.orEmpty(),
             type = it.type,
-            speakerIds = it.speakerIds,
-            participantsIds= it.participantsIds,
-            participatedByMe = it.participatedByMe,
+            speakerIds = it.speakerIds.orEmpty(),
+            participantsIds= it.participantsIds.orEmpty(),
+            participatedByMe = it.participatedByMe.orFalse(),
             attachment = it.attachment,
         )
     }
