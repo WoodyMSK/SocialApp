@@ -1,7 +1,13 @@
 package ru.woodymsk.socialapp.error
 
+import kotlinx.coroutines.CoroutineExceptionHandler
 import okio.IOException
+import java.lang.NullPointerException
 import java.sql.SQLException
+
+val handler = CoroutineExceptionHandler { _, exception ->
+    AppError.from(exception)
+}
 
 sealed class AppError(var code: String) : RuntimeException() {
 
@@ -10,6 +16,7 @@ sealed class AppError(var code: String) : RuntimeException() {
             is AppError -> e
             is SQLException -> DbError
             is IOException -> NetworkError
+            is NullPointerException -> NullError
             else -> UnknownError
         }
     }
@@ -17,6 +24,7 @@ sealed class AppError(var code: String) : RuntimeException() {
     object NetworkError : AppError("error_network")
     object DbError : AppError("error_db")
     object UnknownError : AppError("error_unknown")
+    object NullError : AppError("error_null")
 
     data class ApiError(val errorMessage: String) : AppError(errorMessage)
 }

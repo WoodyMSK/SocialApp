@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
 import ru.woodymsk.socialapp.domain.event.model.Event
+import ru.woodymsk.socialapp.error.handler
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +23,7 @@ class EventViewModel @Inject constructor(
         loadAllEvents()
     }
 
-    private fun loadAllEvents() = viewModelScope.launch {
+    private fun loadAllEvents() = viewModelScope.launch(handler) {
         _events.value = eventInteractor.getAllEventList()
     }
 }

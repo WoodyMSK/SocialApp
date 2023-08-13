@@ -4,13 +4,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
-import ru.woodymsk.socialapp.R.id.*
+import ru.woodymsk.socialapp.R.id.fragmentContainer
+import ru.woodymsk.socialapp.R.id.itBottomNavigationEventScreen
+import ru.woodymsk.socialapp.R.id.itBottomNavigationLogInScreen
+import ru.woodymsk.socialapp.R.id.itBottomNavigationMyProfileScreen
+import ru.woodymsk.socialapp.R.id.itBottomNavigationPostScreen
 import ru.woodymsk.socialapp.databinding.ActivityMainBinding
 import ru.woodymsk.socialapp.domain.Navigator
+import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 import ru.woodymsk.socialapp.presentation.event.EventScreenFragment
 import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
 import ru.woodymsk.socialapp.presentation.post.PostScreenFragment
-import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Navigator {

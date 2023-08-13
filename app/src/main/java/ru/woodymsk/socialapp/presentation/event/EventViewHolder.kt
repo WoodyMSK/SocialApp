@@ -42,6 +42,7 @@ class EventViewHolder(
             } else {
                 ivCardEventPicture.isVisible = false
             }
+            tvCardEventEventFormat.isVisible = event.type != null
         }
     }
 }
