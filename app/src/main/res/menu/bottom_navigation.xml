@@ -8,7 +8,7 @@
         android:id="@+id/itBottomNavigationEventScreen"
         android:icon="@drawable/ic_event_24"/>
     <item android:title="@string/logIn"
-        android:id="@+id/itBottomNavigationLogInScreen"
+        android:id="@+id/itBottomNavigationAuthScreen"
         android:icon="@drawable/ic_login_24"/>
     <item android:title="@string/profile"
         android:id="@+id/itBottomNavigationMyProfileScreen"

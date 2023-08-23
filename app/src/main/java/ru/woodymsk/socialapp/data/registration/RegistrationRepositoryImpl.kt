@@ -1,8 +1,9 @@
-package ru.woodymsk.socialapp.data.auth
+package ru.woodymsk.socialapp.data.registration
 
 import ru.woodymsk.socialapp.data.api.AuthService
+import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.data.auth.model.Token
-import ru.woodymsk.socialapp.domain.auth.RegistrationRepository
+import ru.woodymsk.socialapp.domain.registration.RegistrationRepository
 import ru.woodymsk.socialapp.error.AppError.ApiError
 import ru.woodymsk.socialapp.error.handler
 import withContextIO
