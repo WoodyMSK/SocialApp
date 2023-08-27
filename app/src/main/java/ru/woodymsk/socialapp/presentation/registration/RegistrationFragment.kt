@@ -13,20 +13,21 @@ import ru.woodymsk.socialapp.R.string.welcome
 import ru.woodymsk.socialapp.databinding.FragmentRegistrationBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
 import ru.woodymsk.socialapp.domain.navigator
+import ru.woodymsk.socialapp.presentation.common.TextChangedListener
 import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.LoginError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.PasswordError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.NameError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.IsRegistrationDataValid
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.RegistrationDataValid
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.ConfirmPasswordError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Success
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Error
 
 @AndroidEntryPoint
-class RegistrationScreenFragment : Fragment() {
+class RegistrationFragment : Fragment() {
 
     companion object {
-        fun newInstance(): Fragment = RegistrationScreenFragment()
+        fun newInstance(): Fragment = RegistrationFragment()
     }
 
     private val viewModel: RegistrationViewModel by viewModels()
@@ -85,7 +86,7 @@ class RegistrationScreenFragment : Fragment() {
                             getString(registrationFormState.nameError)
                     }
 
-                    is IsRegistrationDataValid -> bRegistrationScreenSignInButton.isEnabled = true
+                    is RegistrationDataValid -> bRegistrationScreenSignInButton.isEnabled = true
                 }
             }
         }

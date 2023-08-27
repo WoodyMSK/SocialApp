@@ -1,10 +1,11 @@
-package ru.woodymsk.socialapp.data.auth
+package ru.woodymsk.socialapp.data.login
 
+import retrofit2.HttpException
 import ru.woodymsk.socialapp.data.api.AuthService
+import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.data.auth.model.Token
-import ru.woodymsk.socialapp.domain.auth.LoginRepository
-import ru.woodymsk.socialapp.error.AppError.ApiError
-import ru.woodymsk.socialapp.error.handler
+import ru.woodymsk.socialapp.domain.login.LoginRepository
+import ru.woodymsk.socialapp.error.AppError
 import withContextIO
 import javax.inject.Inject
 
@@ -15,13 +16,11 @@ class LoginRepositoryImpl @Inject constructor(
     @Inject
     lateinit var auth: AppAuth
 
-    override fun logout() {
-        auth.removeAuth()
-    }
+    override fun logout() = auth.removeAuth()
 
-    override suspend fun login(login: String, password: String): Token = withContextIO(handler) {
+    override suspend fun login(login: String, password: String): Token = withContextIO {
         val response = authService.authUser(login, password)
-        val body = response.body() ?: throw ApiError(response.message())
+        val body = response.body() ?: throw AppError.handleError(HttpException(response))
         auth.setAuth(body.id, body.token.orEmpty())
 
         return@withContextIO body
