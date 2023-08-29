@@ -9,6 +9,7 @@
     <string name="confirm_password">Повторите пароль</string>
     <string name="name">Имя</string>
     <string name="registration_complete">Зарегестрироваться</string>
+    <string name="auth_complete">Войти</string>
     <string name="feed">Лента</string>
     <string name="event">События</string>
     <string name="logIn">Вход</string>
@@ -23,9 +24,10 @@
     <string name="start_screen_image">Start screen image</string>
     <string name="read_next" tools:ignore="TypographyEllipsis">...читать далее</string>
     <string name="registration_failed">Регистрация не удалась</string>
+    <string name="login_failed">Ошибка входа</string>
     <string name="invalid_length">Минимальная длина три символа</string>
     <string name="invalid_confirm_password">Пароли не совпадают</string>
-    <string name="welcome">Привет!</string>
+    <string name="welcome">Привет</string>
     <string name="is_blank">Поле не должно быть пустым</string>
     <string name="filter_symbol"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
     <string-array name="eventFormat">

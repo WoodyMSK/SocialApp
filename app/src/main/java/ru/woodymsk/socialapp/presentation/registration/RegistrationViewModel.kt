@@ -13,8 +13,10 @@ import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormSta
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.NameError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.LoginError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.PasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.IsRegistrationDataValid
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.RegistrationDataValid
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.ConfirmPasswordError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Success
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Error
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ class RegistrationViewModel @Inject constructor(
     val registrationResult: LiveData<RegistrationResult> = _registrationResult
 
     private val registrationResultHandler = CoroutineExceptionHandler { _, _ ->
-        _registrationResult.value = RegistrationResult.Error(error = R.string.registration_failed)
+        _registrationResult.value = Error(error = R.string.registration_failed)
     }
 
     companion object {
@@ -40,7 +42,7 @@ class RegistrationViewModel @Inject constructor(
     fun registration(login: String, password: String, userName: String) =
         viewModelScope.launch(registrationResultHandler) {
             registrationInteractor.registration(login, password, userName)
-            _registrationResult.value = RegistrationResult.Success(userName = userName)
+            _registrationResult.value = Success(userName = userName)
         }
 
     fun registrationDataChecked(
@@ -49,30 +51,20 @@ class RegistrationViewModel @Inject constructor(
         confirmPassword: String,
         userName: String,
     ) {
-        when {
-            !isLengthValid(login) -> {
-                _registrationFormState.value =
-                    LoginError(loginError = R.string.invalid_length)
-            }
+        _registrationFormState.value = when {
+            !isLengthValid(login) -> LoginError(loginError = R.string.invalid_length)
 
             !isLengthValid(password) -> {
-                _registrationFormState.value =
-                    PasswordError(passwordError = R.string.invalid_length)
+                PasswordError(passwordError = R.string.invalid_length)
             }
 
             !isPasswordValid(password, confirmPassword) -> {
-                _registrationFormState.value =
-                    ConfirmPasswordError(confirmPasswordError = R.string.invalid_confirm_password)
+                ConfirmPasswordError(confirmPasswordError = R.string.invalid_confirm_password)
             }
 
-            userName.isBlank() -> {
-                _registrationFormState.value = NameError(nameError = R.string.is_blank)
-            }
+            userName.isBlank() -> NameError(nameError = R.string.is_blank)
 
-            else -> {
-                _registrationFormState.value =
-                    IsRegistrationDataValid(isRegistrationDataValid = true)
-            }
+            else -> RegistrationDataValid
         }
     }
 

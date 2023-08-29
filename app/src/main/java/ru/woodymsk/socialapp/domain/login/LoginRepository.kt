@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.domain.auth
+package ru.woodymsk.socialapp.domain.login
 
 import ru.woodymsk.socialapp.data.auth.model.Token
 

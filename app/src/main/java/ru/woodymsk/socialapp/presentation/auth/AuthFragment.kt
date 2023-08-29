@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentAuthBinding
 import ru.woodymsk.socialapp.domain.navigator
-import ru.woodymsk.socialapp.presentation.registration.RegistrationScreenFragment
+import ru.woodymsk.socialapp.presentation.login.LoginFragment
+import ru.woodymsk.socialapp.presentation.registration.RegistrationFragment
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
@@ -26,13 +27,19 @@ class AuthFragment : Fragment() {
     ): View {
         binding = FragmentAuthBinding.inflate(inflater, container, false)
 
-        binding.bAuthRegistration.setOnClickListener { onRegistrationClick() }
+        with(binding) {
+            bAuthScreenLogIn.setOnClickListener { onLoginClick() }
+            bAuthRegistration.setOnClickListener { onRegistrationClick() }
+        }
 
         return binding.root
     }
 
-    private fun onRegistrationClick() {
-        navigator().navigateTo(RegistrationScreenFragment.newInstance())
+    private fun onLoginClick() {
+        navigator().navigateTo(LoginFragment.newInstance())
     }
 
+    private fun onRegistrationClick() {
+        navigator().navigateTo(RegistrationFragment.newInstance())
+    }
 }

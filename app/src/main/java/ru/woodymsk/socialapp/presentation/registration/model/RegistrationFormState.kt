@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 
 sealed class RegistrationFormState {
 
+    object RegistrationDataValid: RegistrationFormState()
+
     data class LoginError(@StringRes val loginError: Int): RegistrationFormState()
 
     data class PasswordError(@StringRes val passwordError: Int): RegistrationFormState()
@@ -12,5 +14,4 @@ sealed class RegistrationFormState {
 
     data class NameError(@StringRes val nameError: Int): RegistrationFormState()
 
-    data class IsRegistrationDataValid(val isRegistrationDataValid: Boolean): RegistrationFormState()
 }
