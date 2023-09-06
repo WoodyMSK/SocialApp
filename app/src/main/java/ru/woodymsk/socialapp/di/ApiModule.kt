@@ -2,6 +2,7 @@ package ru.woodymsk.socialapp.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -66,6 +67,10 @@ class ApiModule {
         .baseUrl(BuildConfig.BASE_URL)
         .client(okhttp)
         .build()
+
+    @Singleton
+    @Provides
+    fun provideGson(): Gson = Gson()
 
     @Singleton
     @Provides
