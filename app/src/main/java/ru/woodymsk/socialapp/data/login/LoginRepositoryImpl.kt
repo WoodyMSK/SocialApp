@@ -6,7 +6,7 @@ import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.data.auth.model.Token
 import ru.woodymsk.socialapp.data.model.ErrorResponse
 import ru.woodymsk.socialapp.domain.login.LoginRepository
-import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.error.AppError.ApiError
 import withContextIO
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class LoginRepositoryImpl @Inject constructor(
     override suspend fun login(login: String, password: String): Token = withContextIO {
         val response = authService.authUser(login, password)
         val body = response.body()
-            ?: throw AppError.ApiError(
+            ?: throw ApiError(
                 gson.fromJson(
                     response.errorBody()?.string(), ErrorResponse::class.java
                 )

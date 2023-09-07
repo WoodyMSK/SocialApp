@@ -15,13 +15,13 @@ import ru.woodymsk.socialapp.domain.hideKeyboard
 import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
 import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.LoginError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.PasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.NameError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.RegistrationDataValid
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.ConfirmPasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Success
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Error
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.LoginDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.PasswordDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.NameDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationDataValid
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.ConfirmPasswordError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationError
 
 @AndroidEntryPoint
 class RegistrationFragment : Fragment() {
@@ -31,7 +31,16 @@ class RegistrationFragment : Fragment() {
     }
 
     private val viewModel: RegistrationViewModel by viewModels()
-    private val textChangedListener = TextChangedListener { registrationDataChecked() }
+    private val textChangedListener = TextChangedListener {
+        with(binding) {
+            viewModel.registrationDataChecked(
+                login = etRegistrationScreenAddLogin.text.toString(),
+                password = etRegistrationScreenAddPassword.text.toString(),
+                confirmPassword = etRegistrationScreenConfirmPassword.text.toString(),
+                userName = etRegistrationScreenAddName.text.toString(),
+            )
+        }
+    }
     private lateinit var binding: FragmentRegistrationBinding
 
     override fun onCreateView(
@@ -47,11 +56,10 @@ class RegistrationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-            observeRegistrationFormState()
-            observeRegistrationResult()
-            setListeners()
+        observeRegistrationEvents()
+        setListeners()
 
-            binding.bRegistrationScreenSignInButton.setOnClickListener { registration() }
+        binding.bRegistrationScreenSignInButton.setOnClickListener { registration() }
     }
 
     private fun showGreetingToast(userName: String) {
@@ -59,51 +67,50 @@ class RegistrationFragment : Fragment() {
         Toast.makeText(requireActivity(), "$welcome, $userName.", Toast.LENGTH_LONG).show()
     }
 
-    private fun observeRegistrationFormState() {
-        viewModel.registrationFormState.observe(viewLifecycleOwner) { registrationFormState ->
+    private fun observeRegistrationEvents() {
+        viewModel.registrationEvents.observe(viewLifecycleOwner) { event ->
+
 
             with(binding) {
                 bRegistrationScreenSignInButton.isEnabled = false
+                etRegistrationScreenConfirmPassword.error = null
 
-                when (registrationFormState) {
-                    is LoginError -> {
+                when (event) {
+                    is LoginDataError -> {
                         etRegistrationScreenAddLogin.error =
-                            getString(registrationFormState.loginError)
+                            getString(event.loginError)
                     }
 
-                    is PasswordError -> {
+                    is PasswordDataError -> {
                         etRegistrationScreenAddPassword.error =
-                            getString(registrationFormState.passwordError)
+                            getString(event.passwordError)
                     }
 
                     is ConfirmPasswordError -> {
                         etRegistrationScreenConfirmPassword.error =
-                            getString(registrationFormState.confirmPasswordError)
+                            getString(event.confirmPasswordError)
                     }
 
-                    is NameError -> {
+                    is NameDataError -> {
                         etRegistrationScreenAddName.error =
-                            getString(registrationFormState.nameError)
+                            getString(event.nameError)
+                    }
+
+                    is RegistrationSuccess -> {
+                        showGreetingToast(event.userName)
+                        requireView().hideKeyboard()
+                        navigator().navigateTo(MyProfileScreenFragment.newInstance())
+                    }
+
+                    is RegistrationError -> {
+                        Toast.makeText(
+                            requireActivity(),
+                            event.appError.code,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
 
                     is RegistrationDataValid -> bRegistrationScreenSignInButton.isEnabled = true
-                }
-            }
-        }
-    }
-
-    private fun observeRegistrationResult() {
-        viewModel.registrationResult.observe(viewLifecycleOwner) { registrationResult ->
-
-            when (registrationResult) {
-                is Success -> {
-                    showGreetingToast(registrationResult.userName)
-                    requireView().hideKeyboard()
-                    navigator().navigateTo(MyProfileScreenFragment.newInstance())
-                }
-
-                is Error -> {
-                    Toast.makeText(requireActivity(), registrationResult.error, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -114,17 +121,6 @@ class RegistrationFragment : Fragment() {
             viewModel.registration(
                 login = etRegistrationScreenAddLogin.text.toString(),
                 password = etRegistrationScreenAddPassword.text.toString(),
-                userName = etRegistrationScreenAddName.text.toString(),
-            )
-        }
-    }
-
-    private fun registrationDataChecked() {
-        with(binding) {
-            viewModel.registrationDataChecked(
-                login = etRegistrationScreenAddLogin.text.toString(),
-                password = etRegistrationScreenAddPassword.text.toString(),
-                confirmPassword = etRegistrationScreenConfirmPassword.text.toString(),
                 userName = etRegistrationScreenAddName.text.toString(),
             )
         }

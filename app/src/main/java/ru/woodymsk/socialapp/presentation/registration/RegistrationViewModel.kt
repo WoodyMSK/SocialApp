@@ -8,16 +8,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
-import ru.woodymsk.socialapp.domain.registration.Interactor.RegistrationInteractor
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.NameError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.LoginError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.PasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.RegistrationDataValid
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationFormState.ConfirmPasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Success
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult.Error
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationResult
+import ru.woodymsk.socialapp.domain.registration.interactor.RegistrationInteractor
+import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.LoginDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.ConfirmPasswordError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.NameDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationDataValid
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,14 +24,11 @@ class RegistrationViewModel @Inject constructor(
     private val registrationInteractor: RegistrationInteractor,
 ) : ViewModel() {
 
-    private val _registrationFormState = MutableLiveData<RegistrationFormState>()
-    val registrationFormState: LiveData<RegistrationFormState> = _registrationFormState
+    private val _registrationEvents = MutableLiveData<RegistrationEvents>()
+    val registrationEvents: LiveData<RegistrationEvents> = _registrationEvents
 
-    private val _registrationResult = MutableLiveData<RegistrationResult>()
-    val registrationResult: LiveData<RegistrationResult> = _registrationResult
-
-    private val registrationResultHandler = CoroutineExceptionHandler { _, _ ->
-        _registrationResult.value = Error(error = R.string.registration_failed)
+    private val registrationResultHandler = CoroutineExceptionHandler { _, exeption ->
+        _registrationEvents.value = RegistrationError(AppError.handleError(exeption))
     }
 
     companion object {
@@ -42,7 +38,7 @@ class RegistrationViewModel @Inject constructor(
     fun registration(login: String, password: String, userName: String) =
         viewModelScope.launch(registrationResultHandler) {
             registrationInteractor.registration(login, password, userName)
-            _registrationResult.value = Success(userName = userName)
+            _registrationEvents.value = RegistrationSuccess(userName = userName)
         }
 
     fun registrationDataChecked(
@@ -51,18 +47,18 @@ class RegistrationViewModel @Inject constructor(
         confirmPassword: String,
         userName: String,
     ) {
-        _registrationFormState.value = when {
-            !isLengthValid(login) -> LoginError(loginError = R.string.invalid_length)
+        _registrationEvents.value = when {
+            !isLengthValid(login) -> LoginDataError(loginError = R.string.invalid_length)
 
             !isLengthValid(password) -> {
-                PasswordError(passwordError = R.string.invalid_length)
+                RegistrationEvents.PasswordDataError(passwordError = R.string.invalid_length)
             }
 
             !isPasswordValid(password, confirmPassword) -> {
                 ConfirmPasswordError(confirmPasswordError = R.string.invalid_confirm_password)
             }
 
-            userName.isBlank() -> NameError(nameError = R.string.is_blank)
+            userName.isBlank() -> NameDataError(nameError = R.string.is_blank)
 
             else -> RegistrationDataValid
         }
