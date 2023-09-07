@@ -8,12 +8,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
-import ru.woodymsk.socialapp.domain.login.Interactor.LoginInteractor
+import ru.woodymsk.socialapp.domain.login.interactor.LoginInteractor
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.PasswordDataError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginSuccess
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
 
 import javax.inject.Inject
 
@@ -26,14 +28,14 @@ class LoginViewModel @Inject constructor(
     val loginEvents: LiveData<LoginEvents> = _loginEvents
 
     private val loginResultHandler = CoroutineExceptionHandler { _, exception ->
-        _loginEvents.value = LoginEvents.LoginError(AppError.handleError(exception))
+        _loginEvents.value = LoginError(AppError.handleError(exception))
     }
 
     fun logout() = loginInteractor.logout()
 
     fun login(login: String, password: String) = viewModelScope.launch(loginResultHandler) {
         loginInteractor.login(login, password)
-        _loginEvents.value = LoginEvents.LoginSuccess(R.string.welcome)
+        _loginEvents.value = LoginSuccess(R.string.welcome)
     }
 
     fun loginDataChecked(login: String, password: String) {

@@ -58,30 +58,30 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeLoginEvents() {
-        viewModel.loginEvents.observe(viewLifecycleOwner) { loginEvents ->
+        viewModel.loginEvents.observe(viewLifecycleOwner) { event ->
 
             with(binding) {
                 bLoginEnter.isEnabled = false
 
-                when (loginEvents) {
+                when (event) {
                     is LoginDataValid -> bLoginEnter.isEnabled = true
 
                     is LoginDataError -> {
-                        etLoginScreenAddLogin.error = getString(loginEvents.loginError)
+                        etLoginScreenAddLogin.error = getString(event.loginError)
                     }
 
                     is PasswordDataError -> {
-                        etLoginScreenAddPassword.error = getString(loginEvents.passwordError)
+                        etLoginScreenAddPassword.error = getString(event.passwordError)
                     }
 
                     is LoginSuccess -> {
-                        Toast.makeText(requireActivity(), loginEvents.greeting, Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), event.greeting, Toast.LENGTH_LONG).show()
                         requireView().hideKeyboard()
                         navigator().navigateTo(MyProfileScreenFragment.newInstance())
                     }
 
                     is LoginError -> {
-                        Toast.makeText(requireActivity(), loginEvents.appError.code, Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireActivity(), event.appError.code, Toast.LENGTH_LONG).show()
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.domain.login.Interactor
+package ru.woodymsk.socialapp.domain.login.interactor
 
 import ru.woodymsk.socialapp.data.auth.model.Token
 import ru.woodymsk.socialapp.domain.login.LoginRepository
