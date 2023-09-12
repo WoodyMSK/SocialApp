@@ -7,9 +7,14 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
 
 private const val KEY = "token"
@@ -50,4 +55,21 @@ fun View.hideKeyboard() {
     val inputMethodManager =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
     inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+}
+
+// TODO вынести в core модуль
+/**
+ * Автоматическая подписка фрагмента на flow
+ * @param state при каком состоянии lifecycle подписываться и отписываться
+ * @param block функция подписки на flow с обработчиком
+ */
+inline fun Fragment.observeFlow(
+    state: Lifecycle.State = Lifecycle.State.STARTED,
+    crossinline block: suspend CoroutineScope.() -> Unit
+) {
+    viewLifecycleOwner.lifecycleScope.launch {
+        repeatOnLifecycle(state) {
+            block()
+        }
+    }
 }
