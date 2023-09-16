@@ -16,4 +16,7 @@ interface PostService {
         @Path("post_id") id: String,
         @Query("count") count: Int,
     ): Response<List<PostDTO>>
+
+    @GET("api/posts/latest")
+    suspend fun getLatest(@Query("count") count: Int): Response<List<PostDTO>>
 }
