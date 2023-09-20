@@ -1,5 +1,7 @@
 package ru.woodymsk.socialapp.domain.post.interactor
 
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.Flow
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.domain.post.mapper.PostMapper
 import ru.woodymsk.socialapp.domain.post.PostRepository
@@ -10,6 +12,6 @@ class PostInteractor @Inject constructor(
     private val postMapper: PostMapper,
 ) {
 
-    suspend fun getAllPostList(): List<Post> =
-        postMapper.mapPostFromDao(postRepository.getAllPostList())
+    suspend fun getPagedPostList(): Flow<PagingData<Post>> =
+        postMapper.mapPostFromDao(postRepository.getPagedPostList())
 }

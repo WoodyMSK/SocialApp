@@ -1,15 +1,16 @@
 package ru.woodymsk.socialapp.data.post
 
 import androidx.paging.PagingSource
-import androidx.paging.PagingSource.LoadResult.Page
+import androidx.paging.PagingSource.LoadParams.Append
+import androidx.paging.PagingSource.LoadParams.Prepend
+import androidx.paging.PagingSource.LoadParams.Refresh
 import androidx.paging.PagingSource.LoadResult.Error
+import androidx.paging.PagingSource.LoadResult.Page
 import androidx.paging.PagingState
+import retrofit2.HttpException
 import ru.woodymsk.socialapp.data.api.PostService
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
 import ru.woodymsk.socialapp.data.post.model.PostDAO
-import ru.woodymsk.socialapp.domain.orZero
-import ru.woodymsk.socialapp.error.AppError
-import ru.woodymsk.socialapp.error.handler
 import withContextIO
 import javax.inject.Inject
 
@@ -19,25 +20,40 @@ class PostPageSource @Inject constructor(
 ) : PagingSource<Int, PostDAO>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PostDAO> =
-        withContextIO(handler) {
+        withContextIO {
 
-            val pageNumber = params.key.orZero()
-            val pageSize: Int = params.loadSize
-            val response = postService.getBeforePost(pageNumber.toString(), pageSize)
+            try {
+                val response = when (params) {
+                    is Refresh -> postService.getLatest(params.loadSize)
+                    is Append -> {
+                        postService.getBeforePost(
+                            params.key.toString(),
+                            params.loadSize
+                        )
+                    }
 
-            return@withContextIO if (response.isSuccessful) {
-                val postList = postMapper.mapToDao(response.body().orEmpty())
-                val nextPageNumber = if (postList.isEmpty()) null else pageNumber.inc()
-                val prevPageNumber = if (pageNumber > 1) pageNumber.dec() else null
-                Page(postList, prevPageNumber, nextPageNumber)
-            } else {
-                Error(AppError.handleError(AppError.NetworkError))
+                    is Prepend -> {
+                        return@withContextIO Page(
+                            data = emptyList(),
+                            prevKey = params.key,
+                            nextKey = null,
+                        )
+                    }
+                }
+
+                val postList = response.body() ?: throw HttpException(response)
+
+                val key = postList.lastOrNull()?.id
+
+                return@withContextIO Page(
+                    data = postMapper.mapToDao(postList),
+                    prevKey = params.key,
+                    nextKey = key,
+                )
+            } catch (e: Exception) {
+                return@withContextIO Error(e)
             }
         }
 
-    override fun getRefreshKey(state: PagingState<Int, PostDAO>): Int? {
-        val anchorPosition = state.anchorPosition ?: return null
-        val page = state.closestPageToPosition(anchorPosition) ?: return null
-        return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
-    }
+    override fun getRefreshKey(state: PagingState<Int, PostDAO>): Int? = null
 }

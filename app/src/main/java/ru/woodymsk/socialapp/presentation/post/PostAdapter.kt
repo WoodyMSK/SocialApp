@@ -2,12 +2,12 @@ package ru.woodymsk.socialapp.presentation.post
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
-import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.databinding.ItemCardPostBinding
+import ru.woodymsk.socialapp.domain.post.model.Post
 
-class PostAdapter : ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
+class PostAdapter : PagingDataAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding =
             ItemCardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -15,7 +15,7 @@ class PostAdapter : ListAdapter<Post, PostViewHolder>(PostDiffCallBack()) {
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        getItem(position)?.let { holder.bind(it) }
     }
 }
 
