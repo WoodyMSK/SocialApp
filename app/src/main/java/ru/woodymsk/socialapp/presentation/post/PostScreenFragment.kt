@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
 import ru.woodymsk.socialapp.domain.observeFlow
-import ru.woodymsk.socialapp.presentation.common.addPagingAdapterLoadStateListener
+import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
 import ru.woodymsk.socialapp.presentation.post.PostsEvent.ErrorPosts
 import ru.woodymsk.socialapp.presentation.post.PostsEvent.ShowPosts
 
@@ -32,9 +32,9 @@ class PostScreenFragment : Fragment() {
     ): View {
         binding = FragmentPostScreenBinding.inflate(inflater, container, false)
         val adapter = PostAdapter()
-        binding.rvPostScreenListPost.adapter = adapter
 
-        adapter.addPagingAdapterLoadStateListener(viewModel::handleError)
+        binding.rvPostScreenListPost.adapter =
+            adapter.withLoadStateFooter(footer = PagingLoadStateAdapter(adapter::retry))
 
         observeFlow {
             viewModel.posts.collectLatest { event ->
