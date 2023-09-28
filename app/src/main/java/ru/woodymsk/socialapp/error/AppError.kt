@@ -20,7 +20,6 @@ sealed class AppError(var code: String) : RuntimeException() {
                 is IOException -> NetworkError
                 is NullPointerException -> NullError
                 is IllegalAccessError -> AccessError
-                is RuntimeException -> RuntimeError
                 is AppError -> e
                 else -> UnknownError
             }
@@ -29,7 +28,6 @@ sealed class AppError(var code: String) : RuntimeException() {
 
     object NetworkError : AppError("error_network")
     object AccessError: AppError("error_access")
-    object RuntimeError: AppError("error_run_time")
     object DbError : AppError("error_db")
     object UnknownError : AppError("error_unknown")
     object NullError : AppError("error_null")

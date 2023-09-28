@@ -7,16 +7,19 @@ import androidx.paging.PagingSource.LoadParams.Refresh
 import androidx.paging.PagingSource.LoadResult.Error
 import androidx.paging.PagingSource.LoadResult.Page
 import androidx.paging.PagingState
-import retrofit2.HttpException
+import com.google.gson.Gson
 import ru.woodymsk.socialapp.data.api.PostService
+import ru.woodymsk.socialapp.data.model.ErrorResponse
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
 import ru.woodymsk.socialapp.data.post.model.PostDAO
+import ru.woodymsk.socialapp.error.AppError
 import withContextIO
 import javax.inject.Inject
 
 class PostPageSource @Inject constructor(
     private val postService: PostService,
     private val postMapper: PostMapper,
+    private val gson: Gson,
 ) : PagingSource<Int, PostDAO>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PostDAO> =
@@ -41,7 +44,13 @@ class PostPageSource @Inject constructor(
                     }
                 }
 
-                val postList = response.body() ?: throw HttpException(response)
+                val postList = response.body()
+                    ?: throw AppError.ApiError(
+                        gson.fromJson(
+                            response.errorBody()?.string(), ErrorResponse::class.java
+                        )
+                        .reason
+                    )
 
                 val key = postList.lastOrNull()?.id
 

@@ -30,6 +30,8 @@
     <string name="welcome">Привет</string>
     <string name="is_blank">Поле не должно быть пустым</string>
     <string name="filter_symbol"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
+    <string name="try_again">Повторить попытку</string>
+    <string name="something_went_wrong">Что-то пошло не так :(</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>
