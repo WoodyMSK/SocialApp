@@ -29,7 +29,7 @@
         android:clickable="true"
         android:focusable="true"
         android:gravity="center"
-        android:padding="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/try_again"
         android:textColor="@color/link_color"
         android:textSize="17sp" />

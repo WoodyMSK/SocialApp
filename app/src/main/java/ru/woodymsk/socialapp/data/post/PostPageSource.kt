@@ -7,34 +7,33 @@ import androidx.paging.PagingSource.LoadParams.Refresh
 import androidx.paging.PagingSource.LoadResult.Error
 import androidx.paging.PagingSource.LoadResult.Page
 import androidx.paging.PagingState
-import com.google.gson.Gson
 import ru.woodymsk.socialapp.data.api.PostService
-import ru.woodymsk.socialapp.data.model.ErrorResponse
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
 import ru.woodymsk.socialapp.data.post.model.PostDAO
-import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.domain.throwAppError
 import withContextIO
 import javax.inject.Inject
 
 class PostPageSource @Inject constructor(
     private val postService: PostService,
     private val postMapper: PostMapper,
-    private val gson: Gson,
 ) : PagingSource<Int, PostDAO>() {
+
+    private var postsLoadSize = 10
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PostDAO> =
         withContextIO {
 
             try {
                 val response = when (params) {
-                    is Refresh -> postService.getLatest(params.loadSize)
+                    is Refresh -> postService.getLatest(postsLoadSize)
                     is Append -> {
+                        postsLoadSize += params.loadSize
                         postService.getBeforePost(
                             params.key.toString(),
                             params.loadSize
                         )
                     }
-
                     is Prepend -> {
                         return@withContextIO Page(
                             data = emptyList(),
@@ -44,13 +43,7 @@ class PostPageSource @Inject constructor(
                     }
                 }
 
-                val postList = response.body()
-                    ?: throw AppError.ApiError(
-                        gson.fromJson(
-                            response.errorBody()?.string(), ErrorResponse::class.java
-                        )
-                        .reason
-                    )
+                val postList = response.body().throwAppError(response)
 
                 val key = postList.lastOrNull()?.id
 

@@ -17,7 +17,7 @@ class PostMapper @Inject constructor() {
             content = it.content.orEmpty(),
             published = it.published.orEmpty(),
             likeOwnerIds = it.likeOwnerIds.orEmpty(),
-            likedByMe = it.ownedByMe.orFalse(),
+            likedByMe = it.likedByMe.orFalse(),
             attachment = it.attachment
         )
     }
@@ -41,4 +41,17 @@ class PostMapper @Inject constructor() {
             ownedByMe = true,
         )
     }
+
+    fun mapSinglePostToDao(item: PostDTO): PostDAO =
+        PostDAO(
+            id = item.id.orZero(),
+            authorId = item.authorId.orZero(),
+            author = item.author.orEmpty(),
+            authorAvatar = item.authorAvatar,
+            content = item.content.orEmpty(),
+            published = item.published.orEmpty(),
+            likeOwnerIds = item.likeOwnerIds.orEmpty(),
+            likedByMe = item.likedByMe.orFalse(),
+            attachment = item.attachment
+        )
 }

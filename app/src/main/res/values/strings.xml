@@ -29,9 +29,15 @@
     <string name="invalid_confirm_password">Пароли не совпадают</string>
     <string name="welcome">Привет</string>
     <string name="is_blank">Поле не должно быть пустым</string>
+    <string name="registration_require">Необходимо зарегестрироваться</string>
     <string name="filter_symbol"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
+    <string name="filter_symbol_name"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 `~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
     <string name="try_again">Повторить попытку</string>
     <string name="something_went_wrong">Что-то пошло не так :(</string>
+    <string name="require_authorization">Необходимо авторизоваться</string>
+    <string name="execute_login">Выполнить вход?</string>
+    <string name="positive_answer">Да</string>
+    <string name="negative_answer">Нет</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

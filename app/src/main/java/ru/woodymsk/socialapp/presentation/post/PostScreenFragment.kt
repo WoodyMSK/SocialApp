@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.post
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,13 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
+import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.observeFlow
+import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
-import ru.woodymsk.socialapp.presentation.post.PostsEvent.ErrorPosts
-import ru.woodymsk.socialapp.presentation.post.PostsEvent.ShowPosts
+import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorLike
+import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
+import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ShowPosts
 
 @AndroidEntryPoint
 class PostScreenFragment : Fragment() {
@@ -31,7 +35,13 @@ class PostScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPostScreenBinding.inflate(inflater, container, false)
-        val adapter = PostAdapter()
+        val adapter = PostAdapter(
+            object : PostClickListener {
+                override fun onLike(postId: Int, likedByMe: Boolean) {
+                    viewModel.onLikeButtonClick(postId, likedByMe)
+                }
+            }
+        )
 
         binding.rvPostScreenListPost.adapter =
             adapter.withLoadStateFooter(footer = PagingLoadStateAdapter(adapter::retry))
@@ -47,10 +57,31 @@ class PostScreenFragment : Fragment() {
                             Toast.LENGTH_LONG
                         ).show()
                     }
+                    is ErrorLike -> {
+                        showLoginDialogFragment()
+                    }
                 }
             }
         }
 
+        setupLoginDialogFragmentListener()
+
         return binding.root
+    }
+
+    private fun showLoginDialogFragment() {
+        val dialogFragment = LoginDialogFragment()
+        dialogFragment.show(parentFragmentManager, LoginDialogFragment.TAG)
+    }
+
+    private fun setupLoginDialogFragmentListener() {
+        parentFragmentManager.setFragmentResultListener(
+            LoginDialogFragment.REQUEST_KEY,
+            this
+        ) { _, result ->
+            when (result.getInt(LoginDialogFragment.KEY_RESPONSE)) {
+                DialogInterface.BUTTON_POSITIVE -> navigator().navigateTo(AuthFragment.newInstance())
+            }
+        }
     }
 }
