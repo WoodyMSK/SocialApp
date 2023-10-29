@@ -8,6 +8,7 @@ import ru.woodymsk.socialapp.data.api.PostService
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
 import ru.woodymsk.socialapp.data.post.model.PostDAO
 import ru.woodymsk.socialapp.domain.post.PostRepository
+import ru.woodymsk.socialapp.domain.throwAppError
 import ru.woodymsk.socialapp.error.handler
 import withContextIO
 import javax.inject.Inject
@@ -38,5 +39,29 @@ class PostRepositoryImpl @Inject constructor(
         withContextIO(handler) {
             val response = postService.getAllPostList()
             postMapper.mapToDao(response.body().orEmpty())
+        }
+
+    override suspend fun getPostById(id: String): PostDAO =
+        withContextIO(handler) {
+            val response = postService.getPostById(id)
+            postMapper.mapSinglePostToDao(
+                response.body().throwAppError(response)
+            )
+        }
+
+    override suspend fun like(id: String): PostDAO =
+        withContextIO(handler) {
+            val response = postService.like(id)
+            postMapper.mapSinglePostToDao(
+                response.body().throwAppError(response)
+            )
+        }
+
+    override suspend fun deleteLike(id: String): PostDAO =
+        withContextIO(handler) {
+            val response = postService.deleteLike(id)
+            postMapper.mapSinglePostToDao(
+                response.body().throwAppError(response)
+            )
         }
 }

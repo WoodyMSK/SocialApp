@@ -13,9 +13,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import ru.woodymsk.socialapp.R
+import ru.woodymsk.socialapp.data.model.ErrorResponse
+import ru.woodymsk.socialapp.error.AppError
 
 private const val KEY = "token"
 
@@ -56,6 +60,13 @@ fun View.hideKeyboard() {
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
     inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
 }
+
+fun <T> T?.throwAppError(response: Response<T>) : T = this ?: throw AppError.ApiError(
+    Gson().fromJson(
+        response.errorBody()?.string(), ErrorResponse::class.java
+    )
+    .reason
+)
 
 // TODO вынести в core модуль
 /**

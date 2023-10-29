@@ -12,4 +12,5 @@ data class Post(
     val likeOwnerIds: List<Int>,
     val likedByMe: Boolean,
     val attachment: Attachment?,
+    val likes: Int = likeOwnerIds.size,
 )

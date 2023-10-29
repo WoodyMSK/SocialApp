@@ -66,7 +66,7 @@
         android:hint="@string/name"
         android:inputType="textPersonName|textCapWords"
         android:maxLength="30"
-        android:digits="@string/filter_symbol"
+        android:digits="@string/filter_symbol_name"
         app:layout_constraintEnd_toEndOf="@+id/etRegistrationScreenConfirmPassword"
         app:layout_constraintStart_toStartOf="@+id/etRegistrationScreenConfirmPassword"
         app:layout_constraintTop_toBottomOf="@+id/etRegistrationScreenConfirmPassword" />
