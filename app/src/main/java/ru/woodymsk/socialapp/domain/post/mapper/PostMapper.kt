@@ -5,13 +5,13 @@ import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.woodymsk.socialapp.domain.post.model.Post
-import ru.woodymsk.socialapp.data.post.model.PostDAO
+import ru.woodymsk.socialapp.data.post.model.PostEntity
 import javax.inject.Inject
 
 class PostMapper @Inject constructor() {
 
-    fun mapPostToDao(items: List<Post>): List<PostDAO> = items.map {
-        PostDAO(
+    fun mapPostToDao(items: List<Post>): List<PostEntity> = items.map {
+        PostEntity(
             id = it.id,
             authorId = it.authorId,
             author = it.author,
@@ -24,7 +24,7 @@ class PostMapper @Inject constructor() {
         )
     }
 
-    fun mapPostFromDao(items: Flow<PagingData<PostDAO>>): Flow<PagingData<Post>> = items.map {
+    fun mapPostFromDao(items: Flow<PagingData<PostEntity>>): Flow<PagingData<Post>> = items.map {
         it.map { postDAO ->
             Post(
                 id = postDAO.id,

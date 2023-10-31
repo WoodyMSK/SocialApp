@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.woodymsk.socialapp.data.api.PostService
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
-import ru.woodymsk.socialapp.data.post.model.PostDAO
+import ru.woodymsk.socialapp.data.post.model.PostEntity
 import ru.woodymsk.socialapp.domain.post.PostRepository
 import ru.woodymsk.socialapp.domain.throwAppError
 import ru.woodymsk.socialapp.error.handler
@@ -23,7 +23,7 @@ class PostRepositoryImpl @Inject constructor(
         const val PAGE_SIZE = 10
     }
 
-    override suspend fun getPagedPostList(): Flow<PagingData<PostDAO>> =
+    override suspend fun getPagedPostList(): Flow<PagingData<PostEntity>> =
         withContextIO {
             Pager(
                 config = PagingConfig(
@@ -35,13 +35,13 @@ class PostRepositoryImpl @Inject constructor(
         }
         .flow
 
-    override suspend fun getAllPostList(): List<PostDAO> =
+    override suspend fun getAllPostList(): List<PostEntity> =
         withContextIO(handler) {
             val response = postService.getAllPostList()
             postMapper.mapToDao(response.body().orEmpty())
         }
 
-    override suspend fun getPostById(id: String): PostDAO =
+    override suspend fun getPostById(id: String): PostEntity =
         withContextIO(handler) {
             val response = postService.getPostById(id)
             postMapper.mapSinglePostToDao(
@@ -49,7 +49,7 @@ class PostRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun like(id: String): PostDAO =
+    override suspend fun like(id: String): PostEntity =
         withContextIO(handler) {
             val response = postService.like(id)
             postMapper.mapSinglePostToDao(
@@ -57,7 +57,7 @@ class PostRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun deleteLike(id: String): PostDAO =
+    override suspend fun deleteLike(id: String): PostEntity =
         withContextIO(handler) {
             val response = postService.deleteLike(id)
             postMapper.mapSinglePostToDao(
