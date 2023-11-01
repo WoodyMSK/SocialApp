@@ -9,7 +9,7 @@ import androidx.paging.PagingSource.LoadResult.Page
 import androidx.paging.PagingState
 import ru.woodymsk.socialapp.data.api.PostService
 import ru.woodymsk.socialapp.data.post.mapper.PostMapper
-import ru.woodymsk.socialapp.data.post.model.PostDAO
+import ru.woodymsk.socialapp.data.post.model.PostEntity
 import ru.woodymsk.socialapp.domain.throwAppError
 import withContextIO
 import javax.inject.Inject
@@ -17,11 +17,11 @@ import javax.inject.Inject
 class PostPageSource @Inject constructor(
     private val postService: PostService,
     private val postMapper: PostMapper,
-) : PagingSource<Int, PostDAO>() {
+) : PagingSource<Int, PostEntity>() {
 
     private var postsLoadSize = 10
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PostDAO> =
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PostEntity> =
         withContextIO {
 
             try {
@@ -57,5 +57,5 @@ class PostPageSource @Inject constructor(
             }
         }
 
-    override fun getRefreshKey(state: PagingState<Int, PostDAO>): Int? = null
+    override fun getRefreshKey(state: PagingState<Int, PostEntity>): Int? = null
 }

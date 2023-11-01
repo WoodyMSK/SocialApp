@@ -1,15 +1,15 @@
 package ru.woodymsk.socialapp.data.post.mapper
 
 import ru.woodymsk.socialapp.data.post.model.PostDTO
-import ru.woodymsk.socialapp.data.post.model.PostDAO
+import ru.woodymsk.socialapp.data.post.model.PostEntity
 import ru.woodymsk.socialapp.domain.orFalse
 import ru.woodymsk.socialapp.domain.orZero
 import javax.inject.Inject
 
 class PostMapper @Inject constructor() {
 
-    fun mapToDao(items: List<PostDTO>): List<PostDAO> = items.map {
-        PostDAO(
+    fun mapToDao(items: List<PostDTO>): List<PostEntity> = items.map {
+        PostEntity(
             id = it.id.orZero(),
             authorId = it.authorId.orZero(),
             author = it.author.orEmpty(),
@@ -22,7 +22,7 @@ class PostMapper @Inject constructor() {
         )
     }
 
-    fun mapFromDao(items: List<PostDAO>): List<PostDTO> = items.map {
+    fun mapFromDao(items: List<PostEntity>): List<PostDTO> = items.map {
         PostDTO(
             id = it.id,
             authorId = it.authorId,
@@ -42,8 +42,8 @@ class PostMapper @Inject constructor() {
         )
     }
 
-    fun mapSinglePostToDao(item: PostDTO): PostDAO =
-        PostDAO(
+    fun mapSinglePostToDao(item: PostDTO): PostEntity =
+        PostEntity(
             id = item.id.orZero(),
             authorId = item.authorId.orZero(),
             author = item.author.orEmpty(),
