@@ -21,21 +21,23 @@ class PostMapper @Inject constructor() {
             likeOwnerIds = it.likeOwnerIds,
             likedByMe = it.likedByMe,
             attachment = it.attachment,
+            likes = it.likes,
         )
     }
 
     fun mapPostFromDao(items: Flow<PagingData<PostEntity>>): Flow<PagingData<Post>> = items.map {
-        it.map { postDAO ->
+        it.map { postEntity ->
             Post(
-                id = postDAO.id,
-                authorId = postDAO.authorId,
-                author = postDAO.author,
-                authorAvatar = postDAO.authorAvatar,
-                content = postDAO.content,
-                published = postDAO.published,
-                likeOwnerIds = postDAO.likeOwnerIds,
-                likedByMe = postDAO.likedByMe,
-                attachment = postDAO.attachment,
+                id = postEntity.id,
+                authorId = postEntity.authorId,
+                author = postEntity.author,
+                authorAvatar = postEntity.authorAvatar,
+                content = postEntity.content,
+                published = postEntity.published,
+                likeOwnerIds = postEntity.likeOwnerIds,
+                likedByMe = postEntity.likedByMe,
+                attachment = postEntity.attachment,
+                likes = postEntity.likes,
             )
         }
     }

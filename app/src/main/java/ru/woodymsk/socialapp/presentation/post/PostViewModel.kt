@@ -44,7 +44,6 @@ class PostViewModel @Inject constructor(
                 _posts.postValue(ErrorLike(R.string.registration_require))
             } else {
                 postInteractor.onLikeButtonClick(postId, likedByMe)
-                loadPagedPost()
             }
         }
 

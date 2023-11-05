@@ -44,9 +44,7 @@ class PostViewHolder(
                 tvCardPostText.maxLines = post.content.length
                 bCardPostMoreContentText.isVisible = false
             }
-            bCardPostLike.text = if (post.likeOwnerIds.isNotEmpty()) {
-                post.likeOwnerIds.size.toString()
-            } else null
+            bCardPostLike.text = post.likes.toString()
             if (post.authorAvatar != null) {
                 ivCardPostAuthorAvatar.load(post.authorAvatar, CircleCrop())
             } else {
