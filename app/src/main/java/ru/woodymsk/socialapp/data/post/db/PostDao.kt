@@ -23,4 +23,23 @@ interface PostDao {
 
     @Query("DELETE FROM PostEntity")
     suspend fun removeAllPosts()
+
+    @Query ("SELECT COUNT(*) == 0 FROM PostEntity")
+    suspend fun isEmpty(): Boolean
+
+    @Query("""
+        UPDATE PostEntity SET
+        likes = likes + 1,
+        likedByMe = 1
+        WHERE id = :id
+    """)
+    fun like(id: Int)
+
+    @Query("""
+        UPDATE PostEntity SET
+        likes = likes - 1,
+        likedByMe = 0
+        WHERE id = :id
+    """)
+    fun deleteLike(id: Int)
 }

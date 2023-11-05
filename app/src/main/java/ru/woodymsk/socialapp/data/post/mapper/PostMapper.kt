@@ -18,7 +18,8 @@ class PostMapper @Inject constructor() {
             published = it.published.orEmpty(),
             likeOwnerIds = it.likeOwnerIds.orEmpty(),
             likedByMe = it.likedByMe.orFalse(),
-            attachment = it.attachment
+            attachment = it.attachment,
+            likes = it.likeOwnerIds.orEmpty().size,
         )
     }
 
@@ -52,6 +53,7 @@ class PostMapper @Inject constructor() {
             published = item.published.orEmpty(),
             likeOwnerIds = item.likeOwnerIds.orEmpty(),
             likedByMe = item.likedByMe.orFalse(),
-            attachment = item.attachment
+            attachment = item.attachment,
+            likes = item.likeOwnerIds.orEmpty().size,
         )
 }
