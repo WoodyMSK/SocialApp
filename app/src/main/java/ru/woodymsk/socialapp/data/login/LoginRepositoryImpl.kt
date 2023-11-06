@@ -18,8 +18,6 @@ class LoginRepositoryImpl @Inject constructor(
     @Inject
     lateinit var auth: AppAuth
 
-    override fun logout() = auth.removeAuth()
-
     override suspend fun login(login: String, password: String): Token = withContextIO {
         val response = authService.authUser(login, password)
         val body = response.body()

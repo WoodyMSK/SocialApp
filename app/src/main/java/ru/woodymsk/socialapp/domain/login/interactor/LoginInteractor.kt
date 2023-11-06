@@ -8,8 +8,6 @@ class LoginInteractor @Inject constructor(
     private val loginRepository: LoginRepository,
 ) {
 
-    fun logout() = loginRepository.logout()
-
     suspend fun login(login: String, password: String): Token =
         loginRepository.login(login, password)
 
