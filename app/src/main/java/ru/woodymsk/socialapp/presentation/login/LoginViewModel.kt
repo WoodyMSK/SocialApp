@@ -31,8 +31,6 @@ class LoginViewModel @Inject constructor(
         _loginEvents.value = LoginError(AppError.handleError(exception))
     }
 
-    fun logout() = loginInteractor.logout()
-
     fun login(login: String, password: String) = viewModelScope.launch(loginResultHandler) {
         loginInteractor.login(login, password)
         _loginEvents.value = LoginSuccess(R.string.welcome)
