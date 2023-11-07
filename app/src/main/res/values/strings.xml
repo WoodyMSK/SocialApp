@@ -39,6 +39,9 @@
     <string name="execute_login">Выполнить вход?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
+    <string name="remove">удалить</string>
+    <string name="what_is_new_with_you">Что у вас нового?</string>
+    <string name="publish">опубликовать</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

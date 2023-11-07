@@ -69,6 +69,14 @@ class PostScreenFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.bPostScreenAddNewPost.setOnClickListener {
+            navigator().navigateTo(NewPostFragment.newInstance())
+        }
+    }
+
     private fun showLoginDialogFragment() {
         val dialogFragment = LoginDialogFragment()
         dialogFragment.show(parentFragmentManager, LoginDialogFragment.TAG)

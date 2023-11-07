@@ -1,9 +1,11 @@
 package ru.woodymsk.socialapp.domain
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
@@ -59,6 +61,15 @@ fun View.hideKeyboard() {
     val inputMethodManager =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
     inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+}
+
+fun EditText.focus() {
+    text?.let { setSelection(it.length) }
+    postDelayed({
+        requestFocus()
+        val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    }, 200)
 }
 
 fun <T> T?.throwAppError(response: Response<T>) : T = this ?: throw AppError.ApiError(
