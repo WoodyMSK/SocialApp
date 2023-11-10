@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.data.post.mapper
 
+import ru.woodymsk.socialapp.data.post.model.PostCreate
 import ru.woodymsk.socialapp.data.post.model.PostDTO
 import ru.woodymsk.socialapp.data.post.model.PostEntity
 import ru.woodymsk.socialapp.domain.orFalse
@@ -23,27 +24,7 @@ class PostMapper @Inject constructor() {
         )
     }
 
-    fun mapFromDao(items: List<PostEntity>): List<PostDTO> = items.map {
-        PostDTO(
-            id = it.id,
-            authorId = it.authorId,
-            author = it.author,
-            authorAvatar = it.authorAvatar,
-            authorJob = null,
-            content = it.content,
-            published = it.published,
-            coords = null,
-            link = null,
-            likeOwnerIds = emptyList(),
-            mentionIds = emptyList(),
-            mentionedMe = false,
-            likedByMe = false,
-            attachment = it.attachment,
-            ownedByMe = true,
-        )
-    }
-
-    fun mapSinglePostToDao(item: PostDTO): PostEntity =
+    fun mapSinglePostToEntity(item: PostDTO): PostEntity =
         PostEntity(
             id = item.id.orZero(),
             authorId = item.authorId.orZero(),
@@ -55,5 +36,12 @@ class PostMapper @Inject constructor() {
             likedByMe = item.likedByMe.orFalse(),
             attachment = item.attachment,
             likes = item.likeOwnerIds.orEmpty().size,
+        )
+
+    fun mapSinglePostToCreate(item: PostEntity): PostCreate =
+        PostCreate(
+            id = item.id,
+            content = item.content,
+            attachment = item.attachment,
         )
 }
