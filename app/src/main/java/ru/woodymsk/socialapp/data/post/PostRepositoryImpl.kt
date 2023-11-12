@@ -5,7 +5,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import ru.woodymsk.socialapp.data.api.PostService
+import ru.woodymsk.socialapp.data.model.Attachment
+import ru.woodymsk.socialapp.data.model.AttachmentType
+import ru.woodymsk.socialapp.data.model.Media
+import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.data.post.db.PostDao
 import ru.woodymsk.socialapp.data.post.db.PostDatabase
 import ru.woodymsk.socialapp.data.post.db.PostKeyDao
@@ -27,6 +33,7 @@ class PostRepositoryImpl @Inject constructor(
 
     companion object {
         const val PAGE_SIZE = 10
+        const val FILE_NAME = "file"
     }
 
     @OptIn(ExperimentalPagingApi::class)
@@ -49,7 +56,7 @@ class PostRepositoryImpl @Inject constructor(
                 )
             )
         }
-        .flow
+            .flow
 
     override suspend fun getAllPostList(): List<PostEntity> =
         withContextIO(handler) {
@@ -60,7 +67,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getPostById(id: String): PostEntity =
         withContextIO(handler) {
             val response = postService.getPostById(id)
-            postMapper.mapSinglePostToDao(
+            postMapper.mapSinglePostToEntity(
                 response.body().throwAppError(response)
             )
         }
@@ -69,7 +76,7 @@ class PostRepositoryImpl @Inject constructor(
         withContextIO(handler) {
             postDao.like(id.toInt())
             val response = postService.like(id)
-            postMapper.mapSinglePostToDao(
+            postMapper.mapSinglePostToEntity(
                 response.body().throwAppError(response)
             )
         }
@@ -78,8 +85,36 @@ class PostRepositoryImpl @Inject constructor(
         withContextIO(handler) {
             postDao.deleteLike(id.toInt())
             val response = postService.deleteLike(id)
-            postMapper.mapSinglePostToDao(
+            postMapper.mapSinglePostToEntity(
                 response.body().throwAppError(response)
             )
+        }
+
+    override suspend fun createPost(postEntity: PostEntity) =
+        withContextIO(handler) {
+            val response = postService.createPost(postMapper.mapSinglePostToCreate(postEntity))
+            val postResponse = postMapper.mapSinglePostToEntity(
+                response.body().throwAppError(response)
+            )
+            postDao.insertPost(postResponse)
+        }
+
+    override suspend fun createPostWithAttachment(postEntity: PostEntity, upload: MediaUpload) =
+        withContextIO(handler) {
+            val media = uploadMedia(upload)
+            val postWithAttachment =
+                postEntity.copy(attachment = Attachment(media.url, AttachmentType.IMAGE))
+            createPost(postWithAttachment)
+        }
+
+    override suspend fun uploadMedia(upload: MediaUpload): Media =
+        withContextIO(handler) {
+            val media = MultipartBody.Part.createFormData(
+                name = FILE_NAME,
+                filename = upload.file.name,
+                body = upload.file.asRequestBody(),
+            )
+            val response = postService.uploadMedia(media)
+            response.body().throwAppError(response)
         }
 }
