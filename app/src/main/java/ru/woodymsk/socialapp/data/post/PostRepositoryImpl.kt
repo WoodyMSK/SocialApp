@@ -61,7 +61,7 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getAllPostList(): List<PostEntity> =
         withContextIO(handler) {
             val response = postService.getAllPostList()
-            postMapper.mapToDao(response.body().orEmpty())
+            postMapper.mapToEntity(response.body().orEmpty())
         }
 
     override suspend fun getPostById(id: String): PostEntity =

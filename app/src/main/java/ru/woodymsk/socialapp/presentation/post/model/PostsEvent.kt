@@ -8,5 +8,5 @@ import ru.woodymsk.socialapp.error.AppError
 sealed class PostsEvent {
     data class ShowPosts(val events: PagingData<Post>) : PostsEvent()
     data class ErrorPosts(val appError: AppError) : PostsEvent()
-    data class ErrorLike(@StringRes val registrationRequire: Int) : PostsEvent()
+    data class ErrorAuth(@StringRes val registrationRequire: Int) : PostsEvent()
 }

@@ -16,9 +16,9 @@ import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent
+import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ShowPosts
-import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorLike
 import javax.inject.Inject
 
 @HiltViewModel
@@ -40,12 +40,19 @@ class PostViewModel @Inject constructor(
 
     fun onLikeButtonClick(postId: Int, likedByMe: Boolean) =
         viewModelScope.launch(exceptionHandler) {
-            if (auth.authStateFlow.value.id == 0) {
-                _posts.postValue(ErrorLike(R.string.registration_require))
-            } else {
+            if (checkAuth()) {
                 postInteractor.onLikeButtonClick(postId, likedByMe)
             }
         }
+
+    fun checkAuth(): Boolean {
+        return if (auth.authStateFlow.value.id == 0) {
+            _posts.postValue(ErrorAuth(R.string.registration_require))
+            false
+        } else {
+            true
+        }
+    }
 
     private fun loadPagedPost() =
         viewModelScope.launch(exceptionHandler) {

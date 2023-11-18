@@ -1,19 +1,62 @@
 package ru.woodymsk.socialapp.presentation.post
 
+import android.Manifest.permission.CAMERA
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
+import ru.woodymsk.socialapp.domain.navigator
+import ru.woodymsk.socialapp.presentation.common.PhotoImagePicker
+import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.common.checkPermissionResult
+import ru.woodymsk.socialapp.presentation.common.getImagePermissionType
+import ru.woodymsk.socialapp.presentation.common.isPermissionGranted
+import ru.woodymsk.socialapp.presentation.common.requestPermission
+import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.ContentDataError
+import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.ErrorNewPosts
+import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.GoToPostListScreen
+import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.NewPostDataValid
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
 
     companion object {
         fun newInstance(): Fragment = NewPostFragment()
     }
 
+    private val viewModel: NewPostViewModel by viewModels()
+    private val textChangedListener = TextChangedListener {
+        viewModel.newPostDataChecked(binding.etNewPostMessage.text.toString())
+    }
+    private val pickPhotoLauncher =
+        registerForActivityResult(StartActivityForResult()) {
+            when (it.resultCode) {
+                ImagePicker.RESULT_ERROR -> {
+                    Snackbar.make(
+                        binding.root,
+                        ImagePicker.getError(it.data),
+                        Snackbar.LENGTH_LONG,
+                    ).show()
+                }
+
+                Activity.RESULT_OK -> viewModel.changePicture(it.data?.data)
+            }
+        }
+
+    @Inject
+    lateinit var photoImagePicker: PhotoImagePicker
     private lateinit var binding: FragmentNewPostBinding
 
     override fun onCreateView(
@@ -27,6 +70,81 @@ class NewPostFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.etNewPostMessage.focus()
+
+        val permissionsImageRequest = getImagePermissionRequest()
+        val permissionsCameraRequest = getCameraPermissionRequest()
+
+        observeNewPostEvents()
+
+        with(binding) {
+            etNewPostMessage.focus()
+            etNewPostMessage.addTextChangedListener(textChangedListener)
+            bNewPostPublish.setOnClickListener {
+                viewModel.changeContent(binding.etNewPostMessage.text.toString())
+                viewModel.createPost()
+            }
+            bNewPostCloseFragment.setOnClickListener {
+                navigator().navigateTo(PostScreenFragment.newInstance())
+            }
+            bNewPostPickImage.setOnClickListener {
+                requestPermission(permissionsImageRequest, getImagePermissionType())
+            }
+            bNewPostTakePhoto.setOnClickListener {
+                requestPermission(permissionsCameraRequest, CAMERA)
+            }
+            bNewPostRemoveImage.setOnClickListener {
+                viewModel.changePicture(null)
+            }
+        }
+
+        viewModel.postPicture.observe(viewLifecycleOwner) {
+            if (it.uri == null) {
+                binding.flImageContainer.visibility = View.GONE
+                return@observe
+            }
+            binding.flImageContainer.visibility = View.VISIBLE
+            binding.ivNewPostImage.setImageURI(it.uri)
+        }
     }
+
+    private fun observeNewPostEvents() {
+        viewModel.newPostEvents.observe(viewLifecycleOwner) { event ->
+            with(binding) {
+                bNewPostPublish.isEnabled = false
+                when (event) {
+                    is ContentDataError -> bNewPostPublish.isEnabled = false
+                    is NewPostDataValid -> bNewPostPublish.isEnabled = true
+                    is GoToPostListScreen -> {
+                        navigator().navigateTo(PostScreenFragment.newInstance())
+                    }
+                    is ErrorNewPosts -> {
+                        Toast.makeText(
+                            requireActivity(),
+                            event.appError.code,
+                            Toast.LENGTH_LONG
+                        )
+                        .show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getImagePermissionRequest() =
+        registerForActivityResult(RequestPermission()) {
+            if (isPermissionGranted(getImagePermissionType())) {
+                photoImagePicker.pickImage(requireActivity(), pickPhotoLauncher::launch)
+            } else {
+                checkPermissionResult(getImagePermissionType())
+            }
+        }
+
+    private fun getCameraPermissionRequest() =
+        registerForActivityResult(RequestPermission()) {
+            if (isPermissionGranted(CAMERA)) {
+                photoImagePicker.takePhoto(requireActivity(), pickPhotoLauncher::launch)
+            } else {
+                checkPermissionResult(CAMERA)
+            }
+        }
 }

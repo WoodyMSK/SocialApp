@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class PostMapper @Inject constructor() {
 
-    fun mapToDao(items: List<PostDTO>): List<PostEntity> = items.map {
+    fun mapToEntity(items: List<PostDTO>): List<PostEntity> = items.map {
         PostEntity(
             id = it.id.orZero(),
             authorId = it.authorId.orZero(),
