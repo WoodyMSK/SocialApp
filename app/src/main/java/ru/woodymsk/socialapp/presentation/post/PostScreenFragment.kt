@@ -10,14 +10,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
 import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.observeFlow
 import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
-import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorLike
+import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ShowPosts
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PostScreenFragment : Fragment() {
@@ -28,6 +30,8 @@ class PostScreenFragment : Fragment() {
 
     private val viewModel: PostViewModel by viewModels()
     lateinit var binding: FragmentPostScreenBinding
+    @Inject
+    lateinit var auth: AppAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,9 +61,7 @@ class PostScreenFragment : Fragment() {
                             Toast.LENGTH_LONG
                         ).show()
                     }
-                    is ErrorLike -> {
-                        showLoginDialogFragment()
-                    }
+                    is ErrorAuth -> showLoginDialogFragment()
                 }
             }
         }
@@ -73,7 +75,9 @@ class PostScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.bPostScreenAddNewPost.setOnClickListener {
-            navigator().navigateTo(NewPostFragment.newInstance())
+            if (viewModel.checkAuth()) {
+                navigator().navigateTo(NewPostFragment.newInstance())
+            }
         }
     }
 

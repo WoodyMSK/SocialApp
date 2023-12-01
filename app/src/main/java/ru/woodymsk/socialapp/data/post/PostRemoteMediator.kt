@@ -91,7 +91,7 @@ class PostRemoteMediator(
                     }
                 }
 
-                postDao.insertPostList(postMapper.mapToDao(postList))
+                postDao.insertPostList(postMapper.mapToEntity(postList))
             }
 
             return Success(postList.isEmpty())

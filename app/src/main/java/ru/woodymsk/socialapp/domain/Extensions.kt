@@ -78,7 +78,6 @@ fun <T> T?.throwAppError(response: Response<T>) : T = this ?: throw AppError.Api
     )
     .reason
 )
-
 // TODO вынести в core модуль
 /**
  * Автоматическая подписка фрагмента на flow
