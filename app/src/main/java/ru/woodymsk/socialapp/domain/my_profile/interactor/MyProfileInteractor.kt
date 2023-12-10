@@ -7,5 +7,5 @@ class MyProfileInteractor @Inject constructor(
     private val myProfileRepository: MyProfileRepository,
 ) {
 
-    fun logout() = myProfileRepository.logout()
+    suspend fun logout() = myProfileRepository.logout()
 }

@@ -19,4 +19,5 @@ data class PostEntity(
     @Embedded
     val attachment: Attachment?,
     val likes: Int,
+    val ownedByMe: Boolean,
 )

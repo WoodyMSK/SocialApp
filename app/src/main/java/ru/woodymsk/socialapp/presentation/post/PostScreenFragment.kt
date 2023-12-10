@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -14,6 +16,7 @@ import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
 import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.observeFlow
+import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
@@ -25,6 +28,8 @@ import javax.inject.Inject
 class PostScreenFragment : Fragment() {
 
     companion object {
+        private const val REQ_POST_KEY = "REQ_POST_KEY"
+        private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
         fun newInstance(): Fragment = PostScreenFragment()
     }
 
@@ -42,7 +47,11 @@ class PostScreenFragment : Fragment() {
         val adapter = PostAdapter(
             object : PostClickListener {
                 override fun onLike(postId: Int, likedByMe: Boolean) {
-                    viewModel.onLikeButtonClick(postId, likedByMe)
+                    viewModel.onLikeButtonClick(postId = postId, likedByMe = likedByMe)
+                }
+                override fun onEdit(post: Post) {
+                    setFragmentResult(REQ_POST_KEY, bundleOf(BUNDLE_POST_KEY to post))
+                    navigator().navigateTo(NewPostFragment.newInstance())
                 }
             }
         )

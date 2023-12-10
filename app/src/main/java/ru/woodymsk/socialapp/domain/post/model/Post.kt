@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.domain.post.model
 
 import ru.woodymsk.socialapp.data.model.Attachment
+import java.io.Serializable
 
 data class Post(
     val id: Int = 0,
@@ -13,4 +14,5 @@ data class Post(
     val likedByMe: Boolean = false,
     val attachment: Attachment? = null,
     val likes: Int = 0,
-)
+    val ownedByMe: Boolean = false,
+) : Serializable

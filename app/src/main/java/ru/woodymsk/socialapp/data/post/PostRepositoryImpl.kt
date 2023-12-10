@@ -117,4 +117,9 @@ class PostRepositoryImpl @Inject constructor(
             val response = postService.uploadMedia(media)
             response.body().throwAppError(response)
         }
+
+    override suspend fun removeAllDbPosts() =
+        withContextIO(handler) {
+            postDao.removeAllPosts()
+        }
 }

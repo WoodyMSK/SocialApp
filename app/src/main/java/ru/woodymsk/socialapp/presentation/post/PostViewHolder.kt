@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.presentation.post
 
 import android.annotation.SuppressLint
+import android.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
@@ -58,6 +59,22 @@ class PostViewHolder(
             }
             bCardPostLike.setOnClickListener {
                 onClickListener.onLike(post.id, post.likedByMe)
+            }
+            bCardPostMenu.isVisible = post.ownedByMe
+            bCardPostMenu.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.post_options)
+                    menu.setGroupVisible(R.id.menuPost, post.ownedByMe)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.bEdit -> {
+                                onClickListener.onEdit(post)
+                                true
+                            }
+                            else -> false
+                        }
+                    }
+                }.show()
             }
         }
     }

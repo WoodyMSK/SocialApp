@@ -16,5 +16,6 @@ interface PostRepository {
     suspend fun createPost(postEntity: PostEntity)
     suspend fun createPostWithAttachment(postEntity: PostEntity, upload: MediaUpload)
     suspend fun uploadMedia(upload: MediaUpload): Media
+    suspend fun removeAllDbPosts()
 
 }

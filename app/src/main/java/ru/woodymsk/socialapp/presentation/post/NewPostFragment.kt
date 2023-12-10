@@ -9,14 +9,19 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
+import ru.woodymsk.socialapp.domain.getSerializableCompat
+import ru.woodymsk.socialapp.domain.load
 import ru.woodymsk.socialapp.domain.navigator
+import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.common.PhotoImagePicker
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
 import ru.woodymsk.socialapp.presentation.common.checkPermissionResult
@@ -33,6 +38,8 @@ import javax.inject.Inject
 class NewPostFragment : Fragment() {
 
     companion object {
+        private const val REQ_POST_KEY = "REQ_POST_KEY"
+        private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
         fun newInstance(): Fragment = NewPostFragment()
     }
 
@@ -58,6 +65,17 @@ class NewPostFragment : Fragment() {
     @Inject
     lateinit var photoImagePicker: PhotoImagePicker
     private lateinit var binding: FragmentNewPostBinding
+    private var post = Post()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setFragmentResultListener(REQ_POST_KEY) { _, bundle ->
+            post = bundle.getSerializableCompat(BUNDLE_POST_KEY, Post::class.java)
+            binding.etNewPostMessage.setText(post.content)
+            post.attachment?.url?.let { binding.ivNewPostImage.load(it) }
+            viewModel.changePicture(post.attachment?.url?.toUri())
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -80,7 +98,14 @@ class NewPostFragment : Fragment() {
             etNewPostMessage.focus()
             etNewPostMessage.addTextChangedListener(textChangedListener)
             bNewPostPublish.setOnClickListener {
-                viewModel.changeContent(binding.etNewPostMessage.text.toString())
+                if (post.attachment != null) {
+                    viewModel.changePicture(null)
+                }
+                viewModel.changeContent(
+                    postId = post.id,
+                    content = binding.etNewPostMessage.text.toString(),
+                    attachment = post.attachment
+                )
                 viewModel.createPost()
             }
             bNewPostCloseFragment.setOnClickListener {
@@ -94,6 +119,7 @@ class NewPostFragment : Fragment() {
             }
             bNewPostRemoveImage.setOnClickListener {
                 viewModel.changePicture(null)
+                post = post.copy(attachment = null)
             }
         }
 

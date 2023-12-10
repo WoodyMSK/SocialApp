@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
+import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
@@ -51,8 +52,8 @@ class NewPostViewModel @Inject constructor(
             _postPicture.value = noPicture
         }
 
-    fun changeContent(content: String) {
-        postContent.value = postContent.value?.copy(content = content.trim())
+    fun changeContent(postId: Int, content: String, attachment: Attachment?) {
+        postContent.value = postContent.value?.copy(id = postId, content = content.trim(), attachment = attachment)
     }
 
     fun changePicture(uri: Uri?) {
