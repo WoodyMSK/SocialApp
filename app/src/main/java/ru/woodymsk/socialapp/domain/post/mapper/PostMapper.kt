@@ -23,6 +23,7 @@ class PostMapper @Inject constructor() {
                 likedByMe = postEntity.likedByMe,
                 attachment = postEntity.attachment,
                 likes = postEntity.likes,
+                ownedByMe = postEntity.ownedByMe,
             )
         }
     }
@@ -38,5 +39,6 @@ class PostMapper @Inject constructor() {
         likedByMe = item.likedByMe,
         attachment = item.attachment,
         likes = item.likes,
+        ownedByMe = item.ownedByMe,
     )
 }

@@ -45,6 +45,7 @@
     <string name="permission_denied">Доступ запрещён</string>
     <string name="permission_must_be_granted">Для продолжения необходимо предоставить доступ в настройках \n\nПерейти в настройки?</string>
     <string name="go_to_settings">Перейти в настройки?</string>
+    <string name="edit">Редактировать</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

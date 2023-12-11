@@ -3,6 +3,8 @@ package ru.woodymsk.socialapp.domain
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -22,6 +24,7 @@ import retrofit2.Response
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.ErrorResponse
 import ru.woodymsk.socialapp.error.AppError
+import java.io.Serializable
 
 private const val KEY = "token"
 
@@ -34,6 +37,10 @@ var SharedPreferences.token: String?
 fun Int?.orZero(): Int = this ?: 0
 
 fun Boolean?.orFalse(): Boolean = this ?: false
+
+fun <T : Serializable?> Bundle.getSerializableCompat(key: String, clazz: Class<T>): T {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) getSerializable(key, clazz)!! else (getSerializable(key) as T)
+}
 
 fun ImageView.load(
     url: String,
