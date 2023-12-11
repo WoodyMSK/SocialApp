@@ -16,7 +16,7 @@ class PostInteractor @Inject constructor(
     suspend fun getPagedPostList(): Flow<PagingData<Post>> =
         postMapper.mapPostsFromEntity(postRepository.getPagedPostList())
 
-    suspend fun onLikeButtonClick(postId: Int, likedByMe: Boolean) {
+    suspend fun likePost(postId: Int, likedByMe: Boolean) {
         if (likedByMe) {
             postRepository.deleteLike(postId.toString())
         } else {
@@ -34,4 +34,6 @@ class PostInteractor @Inject constructor(
             )
         }
     }
+
+    suspend fun deletePost(id: String) = postRepository.removePostById(id)
 }

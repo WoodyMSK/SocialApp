@@ -53,4 +53,9 @@ interface PostService {
     suspend fun uploadMedia(
         @Part media: MultipartBody.Part
     ): Response<Media>
+
+    @DELETE("api/posts/{post_id}")
+    suspend fun removePostById(
+        @Path("post_id") id: String,
+    ): Response<Unit>
 }

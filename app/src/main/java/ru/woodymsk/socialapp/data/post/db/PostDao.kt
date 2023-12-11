@@ -24,6 +24,9 @@ interface PostDao {
     @Query("DELETE FROM PostEntity")
     suspend fun removeAllPosts()
 
+    @Query("DELETE FROM PostEntity WHERE id = :id")
+    suspend fun removePostById(id: Int)
+
     @Query ("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean
 

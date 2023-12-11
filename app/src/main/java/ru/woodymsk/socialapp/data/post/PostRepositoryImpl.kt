@@ -122,4 +122,13 @@ class PostRepositoryImpl @Inject constructor(
         withContextIO(handler) {
             postDao.removeAllPosts()
         }
+
+    override suspend fun removePostById(id: String) =
+        withContextIO(handler) {
+            val response = postService.removePostById(id)
+            if (!response.isSuccessful) {
+                response.body().throwAppError(response)
+            }
+            postDao.removePostById(id.toInt())
+        }
 }
