@@ -59,14 +59,23 @@ class PostScreenFragment : Fragment() {
             }
         )
 
-        binding.rvPostScreenListPost.adapter =
-            adapter.withLoadStateFooter(footer = PagingLoadStateAdapter(adapter::retry))
+        binding.apply {
+            rvPostScreenListPost.adapter =
+                adapter.withLoadStateFooter(footer = PagingLoadStateAdapter(adapter::retry))
+            swipeRefreshPostScreen.setOnRefreshListener {
+                viewModel.loadPagedPost()
+            }
+        }
 
         observeFlow {
             viewModel.posts.collectLatest { event ->
                 when (event) {
-                    is ShowPosts -> adapter.submitData(event.events)
+                    is ShowPosts -> {
+                        binding.swipeRefreshPostScreen.isRefreshing = false
+                        adapter.submitData(event.events)
+                    }
                     is ErrorPosts -> {
+                        binding.swipeRefreshPostScreen.isRefreshing = false
                         Toast.makeText(
                             requireActivity(),
                             event.appError.code,

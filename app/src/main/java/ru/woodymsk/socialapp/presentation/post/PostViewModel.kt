@@ -59,7 +59,7 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    private fun loadPagedPost() =
+    fun loadPagedPost() =
         viewModelScope.launch(exceptionHandler) {
             postInteractor.getPagedPostList()
                 .cachedIn(viewModelScope)
