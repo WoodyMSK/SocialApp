@@ -53,6 +53,9 @@ class PostScreenFragment : Fragment() {
                     setFragmentResult(REQ_POST_KEY, bundleOf(BUNDLE_POST_KEY to post))
                     navigator().navigateTo(NewPostFragment.newInstance())
                 }
+                override fun onDelete(id: Int) {
+                    viewModel.onDeleteButtonClick(id.toString())
+                }
             }
         )
 

@@ -41,8 +41,13 @@ class PostViewModel @Inject constructor(
     fun onLikeButtonClick(postId: Int, likedByMe: Boolean) =
         viewModelScope.launch(exceptionHandler) {
             if (checkAuth()) {
-                postInteractor.onLikeButtonClick(postId, likedByMe)
+                postInteractor.likePost(postId, likedByMe)
             }
+        }
+
+    fun onDeleteButtonClick(id: String) =
+        viewModelScope.launch(exceptionHandler) {
+            postInteractor.deletePost(id)
         }
 
     fun checkAuth(): Boolean {

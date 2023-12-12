@@ -2,5 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/menuPost">
         <item android:id="@+id/bEdit" android:title="@string/edit" />
+        <item android:id="@+id/bDelete" android:title="@string/delete" />
     </group>
 </menu>

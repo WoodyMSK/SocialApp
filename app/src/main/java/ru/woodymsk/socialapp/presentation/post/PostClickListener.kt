@@ -6,5 +6,6 @@ interface PostClickListener {
 
     fun onLike(postId: Int, likedByMe: Boolean)
     fun onEdit(post: Post)
+    fun onDelete(id: Int)
 
 }

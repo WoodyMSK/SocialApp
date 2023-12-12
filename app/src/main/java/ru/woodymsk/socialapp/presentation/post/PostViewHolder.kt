@@ -71,6 +71,10 @@ class PostViewHolder(
                                 onClickListener.onEdit(post)
                                 true
                             }
+                            R.id.bDelete -> {
+                                onClickListener.onDelete(post.id)
+                                true
+                            }
                             else -> false
                         }
                     }
