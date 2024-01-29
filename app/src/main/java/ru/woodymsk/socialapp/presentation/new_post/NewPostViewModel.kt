@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.post
+package ru.woodymsk.socialapp.presentation.new_post
 
 import android.net.Uri
 import androidx.core.net.toFile
@@ -6,14 +6,19 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.MediaUpload
+import ru.woodymsk.socialapp.domain.navigation.subnavigation.LocalCiceroneHolder
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.domain.navigation.RouterProvider
+import ru.woodymsk.socialapp.presentation.common.Screens
+import ru.woodymsk.socialapp.presentation.common.TabTag.POST_SCREEN
 import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
 import javax.inject.Inject
@@ -21,7 +26,11 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
-) : ViewModel() {
+    private val ciceroneHolder: LocalCiceroneHolder,
+) : ViewModel(), RouterProvider {
+
+    override val router: Router
+        get() = ciceroneHolder.getCicerone(POST_SCREEN).router
 
     private val noPicture = PictureModel()
     private val _postPicture = MutableLiveData(noPicture)
@@ -66,6 +75,8 @@ class NewPostViewModel @Inject constructor(
             else -> NewPostEvents.NewPostDataValid
         }
     }
+
+    fun onBackPressed() = router.backTo(Screens.onPostScreenTab())
 
     private fun handleError(e: Throwable) =
         _newPostEvents.postValue(NewPostEvents.ErrorNewPosts(AppError.handleError(e)))

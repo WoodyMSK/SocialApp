@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
@@ -13,8 +14,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.auth.AppAuth
+import ru.woodymsk.socialapp.domain.navigation.subnavigation.LocalCiceroneHolder
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.domain.navigation.RouterProvider
+import ru.woodymsk.socialapp.presentation.common.Screens
+import ru.woodymsk.socialapp.presentation.common.TabTag.POST_SCREEN
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
@@ -25,7 +30,11 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
     private val auth: AppAuth,
-) : ViewModel() {
+    private val ciceroneHolder: LocalCiceroneHolder,
+) : ViewModel(), RouterProvider {
+
+    override val router: Router
+        get() = ciceroneHolder.getCicerone(POST_SCREEN).router
 
     private val _posts = MutableLiveData<PostsEvent>()
     val posts: Flow<PostsEvent> = _posts.asFlow()
@@ -68,6 +77,10 @@ class PostViewModel @Inject constructor(
                     _posts.postValue(ShowPosts(it))
                 }
         }
+
+    fun onBackPressed() = router.backTo(Screens.onPostScreenTab())
+
+    fun onNewPostClick() = router.navigateTo(Screens.onNewPostScreenTab())
 
     private fun handleError(e: Throwable) =
         _posts.postValue(ErrorPosts(AppError.handleError(e)))

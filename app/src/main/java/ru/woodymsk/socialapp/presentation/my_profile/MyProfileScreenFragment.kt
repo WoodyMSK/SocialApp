@@ -8,18 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentMyProfileBinding
-import ru.woodymsk.socialapp.domain.navigator
-import ru.woodymsk.socialapp.presentation.auth.AuthFragment
+import ru.woodymsk.socialapp.domain.navigation.BottomNavigation
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
+import ru.woodymsk.socialapp.presentation.common.TabTag
 
 @AndroidEntryPoint
-class MyProfileScreenFragment : Fragment() {
+class MyProfileScreenFragment : Fragment(), BackButtonListener {
 
     companion object {
-        fun newInstance(): Fragment = MyProfileScreenFragment()
+        fun newInstance() = MyProfileScreenFragment()
     }
 
     private val viewModel: MyProfileViewModel by viewModels()
-    private lateinit var binding: FragmentMyProfileBinding
+    lateinit var binding: FragmentMyProfileBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,8 +38,10 @@ class MyProfileScreenFragment : Fragment() {
         binding.bMyProfileLogout.setOnClickListener { logout() }
     }
 
+    override fun onBackPressed() = viewModel.onBackPressed()
+
     private fun logout() {
         viewModel.logout()
-        navigator().navigateTo(AuthFragment.newInstance())
+        (requireActivity() as BottomNavigation).openTabWithNavigationReset(TabTag.AUTHORIZATION)
     }
 }

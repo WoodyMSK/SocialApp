@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.post
+package ru.woodymsk.socialapp.presentation.post.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
