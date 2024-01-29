@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.post
+package ru.woodymsk.socialapp.presentation.new_post
 
 import android.net.Uri
 import androidx.core.net.toFile
@@ -6,14 +6,17 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.MediaUpload
+import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.Screens.postScreen
 import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
 import javax.inject.Inject
@@ -21,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
-) : ViewModel() {
+    override val router: Router,
+) : ViewModel(), RouterProvider {
 
     private val noPicture = PictureModel()
     private val _postPicture = MutableLiveData(noPicture)
@@ -53,7 +57,8 @@ class NewPostViewModel @Inject constructor(
         }
 
     fun changeContent(postId: Int, content: String, attachment: Attachment?) {
-        postContent.value = postContent.value?.copy(id = postId, content = content.trim(), attachment = attachment)
+        postContent.value =
+            postContent.value?.copy(id = postId, content = content.trim(), attachment = attachment)
     }
 
     fun changePicture(uri: Uri?) {
@@ -66,6 +71,10 @@ class NewPostViewModel @Inject constructor(
             else -> NewPostEvents.NewPostDataValid
         }
     }
+
+    fun goToPostScreen() = router.backTo(postScreen())
+
+    fun onBackPressed() = goToPostScreen()
 
     private fun handleError(e: Throwable) =
         _newPostEvents.postValue(NewPostEvents.ErrorNewPosts(AppError.handleError(e)))

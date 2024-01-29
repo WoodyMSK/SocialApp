@@ -14,29 +14,32 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.observeFlow
 import ru.woodymsk.socialapp.domain.post.model.Post
-import ru.woodymsk.socialapp.presentation.auth.AuthFragment
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
+import ru.woodymsk.socialapp.presentation.post.adapter.PostAdapter
+import ru.woodymsk.socialapp.presentation.post.adapter.PostClickListener
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ShowPosts
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PostScreenFragment : Fragment() {
+class PostScreenFragment : Fragment(), BackButtonListener {
 
     companion object {
         private const val REQ_POST_KEY = "REQ_POST_KEY"
         private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
-        fun newInstance(): Fragment = PostScreenFragment()
+
+        fun newInstance() = PostScreenFragment()
     }
 
     private val viewModel: PostViewModel by viewModels()
-    lateinit var binding: FragmentPostScreenBinding
+
     @Inject
     lateinit var auth: AppAuth
+    lateinit var binding: FragmentPostScreenBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +54,7 @@ class PostScreenFragment : Fragment() {
                 }
                 override fun onEdit(post: Post) {
                     setFragmentResult(REQ_POST_KEY, bundleOf(BUNDLE_POST_KEY to post))
-                    navigator().navigateTo(NewPostFragment.newInstance())
+                    onNewPostClick()
                 }
                 override fun onDelete(id: Int) {
                     viewModel.onDeleteButtonClick(id.toString())
@@ -96,11 +99,15 @@ class PostScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.bPostScreenAddNewPost.setOnClickListener {
-            if (viewModel.checkAuth()) {
-                navigator().navigateTo(NewPostFragment.newInstance())
+            if (viewModel.checkAuth()) run{
+                onNewPostClick()
             }
         }
     }
+
+    override fun onBackPressed() = viewModel.onBackPressed()
+
+    private fun onNewPostClick() = viewModel.onNewPostClick()
 
     private fun showLoginDialogFragment() {
         val dialogFragment = LoginDialogFragment()
@@ -113,7 +120,7 @@ class PostScreenFragment : Fragment() {
             this
         ) { _, result ->
             when (result.getInt(LoginDialogFragment.KEY_RESPONSE)) {
-                DialogInterface.BUTTON_POSITIVE -> navigator().navigateTo(AuthFragment.newInstance())
+                DialogInterface.BUTTON_POSITIVE -> viewModel.goToAuthScreen()
             }
         }
     }

@@ -5,26 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentAuthBinding
-import ru.woodymsk.socialapp.domain.navigator
-import ru.woodymsk.socialapp.presentation.login.LoginFragment
-import ru.woodymsk.socialapp.presentation.registration.RegistrationFragment
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 
 @AndroidEntryPoint
-class AuthFragment : Fragment() {
+class AuthFragment : Fragment(), BackButtonListener {
 
     companion object {
-        fun newInstance(): Fragment = AuthFragment()
+        fun newInstance() = AuthFragment()
     }
 
-    private lateinit var binding: FragmentAuthBinding
+    private val viewModel: AuthViewModel by viewModels()
+    lateinit var binding: FragmentAuthBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        super.onCreateView(inflater, container, savedInstanceState)
         binding = FragmentAuthBinding.inflate(inflater, container, false)
 
         with(binding) {
@@ -35,11 +36,10 @@ class AuthFragment : Fragment() {
         return binding.root
     }
 
-    private fun onLoginClick() {
-        navigator().navigateTo(LoginFragment.newInstance())
-    }
+    override fun onBackPressed() = viewModel.onBackPressed()
 
-    private fun onRegistrationClick() {
-        navigator().navigateTo(RegistrationFragment.newInstance())
-    }
+    private fun onLoginClick() = viewModel.onLoginClick()
+
+    private fun onRegistrationClick() = viewModel.onRegistrationClick()
+
 }

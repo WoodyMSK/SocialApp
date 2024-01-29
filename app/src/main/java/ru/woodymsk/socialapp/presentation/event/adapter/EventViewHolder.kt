@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.event
+package ru.woodymsk.socialapp.presentation.event.adapter
 
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView

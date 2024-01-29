@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.post
+package ru.woodymsk.socialapp.presentation.new_post
 
 import android.Manifest.permission.CAMERA
 import android.app.Activity
@@ -20,8 +20,8 @@ import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
 import ru.woodymsk.socialapp.domain.getSerializableCompat
 import ru.woodymsk.socialapp.domain.load
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.post.model.Post
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.PhotoImagePicker
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
 import ru.woodymsk.socialapp.presentation.common.checkPermissionResult
@@ -35,18 +35,20 @@ import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.NewPostDataVa
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class NewPostFragment : Fragment() {
+class NewPostFragment : Fragment(), BackButtonListener {
 
     companion object {
         private const val REQ_POST_KEY = "REQ_POST_KEY"
         private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
-        fun newInstance(): Fragment = NewPostFragment()
+
+        fun newInstance() = NewPostFragment()
     }
 
     private val viewModel: NewPostViewModel by viewModels()
     private val textChangedListener = TextChangedListener {
         viewModel.newPostDataChecked(binding.etNewPostMessage.text.toString())
     }
+
     private val pickPhotoLauncher =
         registerForActivityResult(StartActivityForResult()) {
             when (it.resultCode) {
@@ -61,11 +63,11 @@ class NewPostFragment : Fragment() {
                 Activity.RESULT_OK -> viewModel.changePicture(it.data?.data)
             }
         }
+    private var post = Post()
 
     @Inject
     lateinit var photoImagePicker: PhotoImagePicker
-    private lateinit var binding: FragmentNewPostBinding
-    private var post = Post()
+    lateinit var binding: FragmentNewPostBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,7 +111,7 @@ class NewPostFragment : Fragment() {
                 viewModel.createPost()
             }
             bNewPostCloseFragment.setOnClickListener {
-                navigator().navigateTo(PostScreenFragment.newInstance())
+                onBackPressed()
             }
             bNewPostPickImage.setOnClickListener {
                 requestPermission(permissionsImageRequest, getImagePermissionType())
@@ -133,6 +135,8 @@ class NewPostFragment : Fragment() {
         }
     }
 
+    override fun onBackPressed() = viewModel.onBackPressed()
+
     private fun observeNewPostEvents() {
         viewModel.newPostEvents.observe(viewLifecycleOwner) { event ->
             with(binding) {
@@ -140,9 +144,7 @@ class NewPostFragment : Fragment() {
                 when (event) {
                     is ContentDataError -> bNewPostPublish.isEnabled = false
                     is NewPostDataValid -> bNewPostPublish.isEnabled = true
-                    is GoToPostListScreen -> {
-                        navigator().navigateTo(PostScreenFragment.newInstance())
-                    }
+                    is GoToPostListScreen -> viewModel.goToPostScreen()
                     is ErrorNewPosts -> {
                         Toast.makeText(
                             requireActivity(),
