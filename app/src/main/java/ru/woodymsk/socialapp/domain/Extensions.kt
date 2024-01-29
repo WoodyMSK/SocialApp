@@ -60,10 +60,6 @@ fun ImageView.load(
         .into(this)
 }
 
-fun Fragment.navigator(): Navigator {
-    return requireActivity() as Navigator
-}
-
 fun View.hideKeyboard() {
     val inputMethodManager =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
