@@ -9,13 +9,15 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentEventScreenBinding
 import ru.woodymsk.socialapp.domain.observeFlow
-import ru.woodymsk.socialapp.presentation.event.EventsEvent.ShowEvents
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
+import ru.woodymsk.socialapp.presentation.event.adapter.EventAdapter
+import ru.woodymsk.socialapp.presentation.event.model.EventsEvent.ShowEvents
 
 @AndroidEntryPoint
-class EventScreenFragment : Fragment() {
+class EventScreenFragment : Fragment(), BackButtonListener {
 
     companion object {
-        fun newInstance(): Fragment = EventScreenFragment()
+        fun newInstance() = EventScreenFragment()
     }
 
     private val viewModel: EventViewModel by viewModels()
@@ -40,5 +42,7 @@ class EventScreenFragment : Fragment() {
 
         return binding.root
     }
+
+    override fun onBackPressed() = viewModel.onBackPressed()
 
 }

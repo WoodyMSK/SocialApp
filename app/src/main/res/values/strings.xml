@@ -47,6 +47,7 @@
     <string name="go_to_settings">Перейти в настройки?</string>
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
+    <string name="unknown_error">Ошибка: %1$s</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

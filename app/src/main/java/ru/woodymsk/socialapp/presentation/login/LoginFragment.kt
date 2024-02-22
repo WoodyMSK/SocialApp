@@ -11,20 +11,21 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentLoginBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
-import ru.woodymsk.socialapp.domain.navigator
+import ru.woodymsk.socialapp.domain.navigation.BottomNavigation
+import ru.woodymsk.socialapp.presentation.common.BackButtonListener
+import ru.woodymsk.socialapp.presentation.common.TabTag
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginSuccess
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.PasswordDataError
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
-import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
 
 @AndroidEntryPoint
-class LoginFragment : Fragment() {
+class LoginFragment : Fragment(), BackButtonListener {
 
     companion object {
-        fun newInstance(): Fragment = LoginFragment()
+        fun newInstance() = LoginFragment()
     }
 
     private val viewModel: LoginViewModel by viewModels()
@@ -36,7 +37,7 @@ class LoginFragment : Fragment() {
             )
         }
     }
-    private lateinit var binding: FragmentLoginBinding
+    lateinit var binding: FragmentLoginBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,6 +57,8 @@ class LoginFragment : Fragment() {
 
         binding.bLoginEnter.setOnClickListener { login() }
     }
+
+    override fun onBackPressed() = viewModel.onBackPressed()
 
     private fun observeLoginEvents() {
         viewModel.loginEvents.observe(viewLifecycleOwner) { event ->
@@ -77,7 +80,7 @@ class LoginFragment : Fragment() {
                     is LoginSuccess -> {
                         Toast.makeText(requireActivity(), event.greeting, Toast.LENGTH_LONG).show()
                         requireView().hideKeyboard()
-                        navigator().navigateTo(MyProfileScreenFragment.newInstance())
+                        (requireActivity() as BottomNavigation).openTabWithNavigationReset(TabTag.MY_PROFILE)
                     }
 
                     is LoginError -> {

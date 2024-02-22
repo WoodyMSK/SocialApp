@@ -71,6 +71,7 @@ ext {
     paging_version = "3.2.1"
     play_services_version = "21.3.0"
     imagepicker_version = "2.1"
+    cicerone_version = "7.1"
 }
 
 dependencies {
@@ -101,6 +102,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "com.google.android.gms:play-services-cast-framework:$play_services_version"
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
+    implementation "com.github.terrakok:cicerone:$cicerone_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     kapt "com.google.dagger:hilt-android:$hilt_version"
     //noinspection KaptUsageInsteadOfKsp
