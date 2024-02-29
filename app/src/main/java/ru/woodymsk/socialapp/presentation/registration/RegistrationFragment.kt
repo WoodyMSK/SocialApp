@@ -12,16 +12,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.R.string.welcome
 import ru.woodymsk.socialapp.databinding.FragmentRegistrationBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
-import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.LoginDataError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.PasswordDataError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.NameDataError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationDataValid
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.ConfirmPasswordError
-import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.LoginDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.NameDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.PasswordDataError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationDataValid
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationError
+import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
 
 @AndroidEntryPoint
 class RegistrationFragment : Fragment() {
@@ -99,7 +97,7 @@ class RegistrationFragment : Fragment() {
                     is RegistrationSuccess -> {
                         showGreetingToast(event.userName)
                         requireView().hideKeyboard()
-                        navigator().navigateTo(MyProfileScreenFragment.newInstance())
+                        viewModel.goToProfile()
                     }
 
                     is RegistrationError -> {

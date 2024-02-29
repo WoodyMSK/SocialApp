@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentAuthBinding
-import ru.woodymsk.socialapp.domain.navigator
-import ru.woodymsk.socialapp.presentation.login.LoginFragment
-import ru.woodymsk.socialapp.presentation.registration.RegistrationFragment
 
 @AndroidEntryPoint
 class AuthFragment : Fragment() {
@@ -19,6 +17,7 @@ class AuthFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentAuthBinding
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,18 +27,10 @@ class AuthFragment : Fragment() {
         binding = FragmentAuthBinding.inflate(inflater, container, false)
 
         with(binding) {
-            bAuthScreenLogIn.setOnClickListener { onLoginClick() }
-            bAuthRegistration.setOnClickListener { onRegistrationClick() }
+            bAuthScreenLogIn.setOnClickListener { viewModel.onLoginClick() }
+            bAuthRegistration.setOnClickListener { viewModel.onRegistrationClick() }
         }
 
         return binding.root
-    }
-
-    private fun onLoginClick() {
-        navigator().navigateTo(LoginFragment.newInstance())
-    }
-
-    private fun onRegistrationClick() {
-        navigator().navigateTo(RegistrationFragment.newInstance())
     }
 }

@@ -11,14 +11,12 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentLoginBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
+import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginSuccess
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.PasswordDataError
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
-import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
-import ru.woodymsk.socialapp.presentation.my_profile.MyProfileScreenFragment
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -77,7 +75,7 @@ class LoginFragment : Fragment() {
                     is LoginSuccess -> {
                         Toast.makeText(requireActivity(), event.greeting, Toast.LENGTH_LONG).show()
                         requireView().hideKeyboard()
-                        navigator().navigateTo(MyProfileScreenFragment.newInstance())
+                        viewModel.goToProfileScreen()
                     }
 
                     is LoginError -> {

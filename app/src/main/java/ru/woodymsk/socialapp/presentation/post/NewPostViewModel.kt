@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.navigation.Screens.postScreen
 import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
 import javax.inject.Inject
@@ -21,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NewPostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
+    private val router: Router,
 ) : ViewModel() {
 
     private val noPicture = PictureModel()
@@ -66,6 +69,8 @@ class NewPostViewModel @Inject constructor(
             else -> NewPostEvents.NewPostDataValid
         }
     }
+
+    fun goToPostScreen() = router.replaceScreen(postScreen())
 
     private fun handleError(e: Throwable) =
         _newPostEvents.postValue(NewPostEvents.ErrorNewPosts(AppError.handleError(e)))

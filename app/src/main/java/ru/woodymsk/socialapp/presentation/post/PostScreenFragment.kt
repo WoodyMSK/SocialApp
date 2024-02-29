@@ -14,10 +14,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.observeFlow
 import ru.woodymsk.socialapp.domain.post.model.Post
-import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
@@ -51,7 +49,7 @@ class PostScreenFragment : Fragment() {
                 }
                 override fun onEdit(post: Post) {
                     setFragmentResult(REQ_POST_KEY, bundleOf(BUNDLE_POST_KEY to post))
-                    navigator().navigateTo(NewPostFragment.newInstance())
+                    viewModel.onNewPostClick()
                 }
                 override fun onDelete(id: Int) {
                     viewModel.onDeleteButtonClick(id.toString())
@@ -96,8 +94,8 @@ class PostScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.bPostScreenAddNewPost.setOnClickListener {
-            if (viewModel.checkAuth()) {
-                navigator().navigateTo(NewPostFragment.newInstance())
+            if (viewModel.checkAuth()) run {
+                viewModel.onNewPostClick()
             }
         }
     }
@@ -113,7 +111,7 @@ class PostScreenFragment : Fragment() {
             this
         ) { _, result ->
             when (result.getInt(LoginDialogFragment.KEY_RESPONSE)) {
-                DialogInterface.BUTTON_POSITIVE -> navigator().navigateTo(AuthFragment.newInstance())
+                DialogInterface.BUTTON_POSITIVE -> viewModel.goToAuthScreen()
             }
         }
     }

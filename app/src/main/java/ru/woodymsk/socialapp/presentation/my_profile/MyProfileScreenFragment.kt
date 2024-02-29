@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentMyProfileBinding
-import ru.woodymsk.socialapp.domain.navigator
-import ru.woodymsk.socialapp.presentation.auth.AuthFragment
 
 @AndroidEntryPoint
 class MyProfileScreenFragment : Fragment() {
@@ -34,11 +32,6 @@ class MyProfileScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.bMyProfileLogout.setOnClickListener { logout() }
-    }
-
-    private fun logout() {
-        viewModel.logout()
-        navigator().navigateTo(AuthFragment.newInstance())
+        binding.bMyProfileLogout.setOnClickListener { viewModel.logout() }
     }
 }
