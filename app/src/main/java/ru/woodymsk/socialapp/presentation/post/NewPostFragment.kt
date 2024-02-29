@@ -20,7 +20,6 @@ import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
 import ru.woodymsk.socialapp.domain.getSerializableCompat
 import ru.woodymsk.socialapp.domain.load
-import ru.woodymsk.socialapp.domain.navigator
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.common.PhotoImagePicker
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
@@ -109,7 +108,7 @@ class NewPostFragment : Fragment() {
                 viewModel.createPost()
             }
             bNewPostCloseFragment.setOnClickListener {
-                navigator().navigateTo(PostScreenFragment.newInstance())
+                viewModel.goToPostScreen()
             }
             bNewPostPickImage.setOnClickListener {
                 requestPermission(permissionsImageRequest, getImagePermissionType())
@@ -140,9 +139,7 @@ class NewPostFragment : Fragment() {
                 when (event) {
                     is ContentDataError -> bNewPostPublish.isEnabled = false
                     is NewPostDataValid -> bNewPostPublish.isEnabled = true
-                    is GoToPostListScreen -> {
-                        navigator().navigateTo(PostScreenFragment.newInstance())
-                    }
+                    is GoToPostListScreen -> viewModel.goToPostScreen()
                     is ErrorNewPosts -> {
                         Toast.makeText(
                             requireActivity(),

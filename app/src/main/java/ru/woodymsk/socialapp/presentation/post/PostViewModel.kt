@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,8 @@ import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.navigation.Screens.authScreen
+import ru.woodymsk.socialapp.presentation.navigation.Screens.newPostScreen
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
@@ -25,6 +28,7 @@ import javax.inject.Inject
 class PostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
     private val auth: AppAuth,
+    private val router: Router,
 ) : ViewModel() {
 
     private val _posts = MutableLiveData<PostsEvent>()
@@ -68,6 +72,10 @@ class PostViewModel @Inject constructor(
                     _posts.postValue(ShowPosts(it))
                 }
         }
+
+    fun onNewPostClick() = router.navigateTo(newPostScreen())
+
+    fun goToAuthScreen() = router.replaceScreen(authScreen())
 
     private fun handleError(e: Throwable) =
         _posts.postValue(ErrorPosts(AppError.handleError(e)))
