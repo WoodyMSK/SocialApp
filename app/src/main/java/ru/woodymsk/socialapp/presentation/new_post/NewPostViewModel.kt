@@ -16,6 +16,7 @@ import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.Screens
 import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
 import javax.inject.Inject
@@ -70,6 +71,8 @@ class NewPostViewModel @Inject constructor(
             else -> NewPostEvents.NewPostDataValid
         }
     }
+
+    fun goToPostScreen() = router.replaceScreen(Screens.postScreen())
 
     fun onBackPressed() = router.exit()
 

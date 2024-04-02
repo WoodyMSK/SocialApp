@@ -144,7 +144,7 @@ class NewPostFragment : Fragment(), BackButtonListener {
                 when (event) {
                     is ContentDataError -> bNewPostPublish.isEnabled = false
                     is NewPostDataValid -> bNewPostPublish.isEnabled = true
-                    is GoToPostListScreen -> viewModel.onBackPressed()
+                    is GoToPostListScreen -> viewModel.goToPostScreen()
                     is ErrorNewPosts -> {
                         Toast.makeText(
                             requireActivity(),

@@ -16,6 +16,6 @@ class AuthViewModel @Inject constructor(
 
     fun onLoginClick() = router.navigateTo(Screens.loginScreen())
 
-    fun onRegistrationClick() = router.navigateTo(Screens.loginScreen())
+    fun onRegistrationClick() = router.navigateTo(Screens.registrationScreen())
 
 }
