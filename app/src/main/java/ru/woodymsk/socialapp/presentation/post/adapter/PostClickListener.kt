@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.post
+package ru.woodymsk.socialapp.presentation.post.adapter
 
 import ru.woodymsk.socialapp.domain.post.model.Post
 

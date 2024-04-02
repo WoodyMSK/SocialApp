@@ -1,4 +1,4 @@
-package ru.woodymsk.socialapp.presentation.event
+package ru.woodymsk.socialapp.presentation.event.model
 
 import ru.woodymsk.socialapp.domain.event.model.Event
 
