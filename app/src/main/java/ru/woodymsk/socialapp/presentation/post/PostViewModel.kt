@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.post
 
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -17,8 +18,8 @@ import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.error.AppError
-import ru.woodymsk.socialapp.presentation.common.Screens.newPostScreen
 import ru.woodymsk.socialapp.presentation.common.Screens.authScreen
+import ru.woodymsk.socialapp.presentation.common.Screens.newPostScreen
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
@@ -45,7 +46,7 @@ class PostViewModel @Inject constructor(
 
     fun onLikeButtonClick(postId: Int, likedByMe: Boolean) =
         viewModelScope.launch(exceptionHandler) {
-            if (checkAuth()) {
+            if (isAuth()) {
                 postInteractor.likePost(postId, likedByMe)
             }
         }
@@ -55,7 +56,7 @@ class PostViewModel @Inject constructor(
             postInteractor.deletePost(id)
         }
 
-    fun checkAuth(): Boolean {
+    fun isAuth(): Boolean {
         return if (auth.authStateFlow.value.id == 0) {
             _posts.postValue(ErrorAuth(R.string.registration_require))
             false
@@ -76,7 +77,7 @@ class PostViewModel @Inject constructor(
 
     fun onBackPressed() = router.exit()
 
-    fun onNewPostClick() = router.navigateTo(newPostScreen())
+    fun onNewPostClick(bundle: Bundle?) = router.navigateTo(newPostScreen(bundle))
 
     fun goToAuthScreen() = router.replaceScreen(authScreen())
 

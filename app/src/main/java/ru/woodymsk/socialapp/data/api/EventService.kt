@@ -6,7 +6,7 @@ import ru.woodymsk.socialapp.data.event.model.EventDTO
 
 interface EventService {
 
-    @GET("api/events")
+    @GET("api/items")
     suspend fun getAllEventList(): Response<List<EventDTO>>
 
 }
