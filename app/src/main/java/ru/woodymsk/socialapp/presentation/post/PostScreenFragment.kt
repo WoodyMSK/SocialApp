@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -29,7 +27,6 @@ import javax.inject.Inject
 class PostScreenFragment : Fragment(), BackButtonListener {
 
     companion object {
-        private const val REQ_POST_KEY = "REQ_POST_KEY"
         private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
 
         fun newInstance() = PostScreenFragment()
@@ -53,8 +50,9 @@ class PostScreenFragment : Fragment(), BackButtonListener {
                     viewModel.onLikeButtonClick(postId = postId, likedByMe = likedByMe)
                 }
                 override fun onEdit(post: Post) {
-                    setFragmentResult(REQ_POST_KEY, bundleOf(BUNDLE_POST_KEY to post))
-                    onNewPostClick()
+                    val bundle = Bundle()
+                    bundle.putSerializable(BUNDLE_POST_KEY, post)
+                    onNewPostClick(bundle)
                 }
                 override fun onDelete(id: Int) {
                     viewModel.onDeleteButtonClick(id.toString())
@@ -99,15 +97,15 @@ class PostScreenFragment : Fragment(), BackButtonListener {
         super.onViewCreated(view, savedInstanceState)
 
         binding.bPostScreenAddNewPost.setOnClickListener {
-            if (viewModel.checkAuth()) run{
-                onNewPostClick()
+            if (viewModel.isAuth()) run {
+                onNewPostClick(null)
             }
         }
     }
 
     override fun onBackPressed() = viewModel.onBackPressed()
 
-    private fun onNewPostClick() = viewModel.onNewPostClick()
+    private fun onNewPostClick(bundle: Bundle?) = viewModel.onNewPostClick(bundle)
 
     private fun showLoginDialogFragment() {
         val dialogFragment = LoginDialogFragment()

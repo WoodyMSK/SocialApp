@@ -11,14 +11,12 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
-import ru.woodymsk.socialapp.domain.getSerializableCompat
 import ru.woodymsk.socialapp.domain.load
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.common.BackButtonListener
@@ -42,6 +40,12 @@ class NewPostFragment : Fragment(), BackButtonListener {
         private const val BUNDLE_POST_KEY = "BUNDLE_POST_KEY"
 
         fun newInstance() = NewPostFragment()
+
+        fun newInstance(args: Bundle?): NewPostFragment {
+            val newPostFragment = NewPostFragment()
+            newPostFragment.arguments = args
+            return newPostFragment
+        }
     }
 
     private val viewModel: NewPostViewModel by viewModels()
@@ -63,7 +67,8 @@ class NewPostFragment : Fragment(), BackButtonListener {
                 Activity.RESULT_OK -> viewModel.changePicture(it.data?.data)
             }
         }
-    private var post = Post()
+
+    private lateinit var post: Post
 
     @Inject
     lateinit var photoImagePicker: PhotoImagePicker
@@ -71,12 +76,9 @@ class NewPostFragment : Fragment(), BackButtonListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setFragmentResultListener(REQ_POST_KEY) { _, bundle ->
-            post = bundle.getSerializableCompat(BUNDLE_POST_KEY, Post::class.java)
-            binding.etNewPostMessage.setText(post.content)
-            post.attachment?.url?.let { binding.ivNewPostImage.load(it) }
-            viewModel.changePicture(post.attachment?.url?.toUri())
-        }
+
+        savedInstanceState?.getSerializable(REQ_POST_KEY)
+            ?: arguments?.getSerializable(BUNDLE_POST_KEY)?.let { post = it as Post }
     }
 
     override fun onCreateView(
@@ -85,6 +87,12 @@ class NewPostFragment : Fragment(), BackButtonListener {
         savedInstanceState: Bundle?,
     ): View {
         binding = FragmentNewPostBinding.inflate(inflater, container, false)
+
+        if (::post.isInitialized) {
+            binding.etNewPostMessage.setText(post.content)
+            post.attachment?.url?.let { binding.ivNewPostImage.load(it) }
+            viewModel.changePicture(post.attachment?.url?.toUri())
+        }
 
         return binding.root
     }
@@ -95,6 +103,7 @@ class NewPostFragment : Fragment(), BackButtonListener {
         val permissionsCameraRequest = getCameraPermissionRequest()
 
         observeNewPostEvents()
+        if (!::post.isInitialized) post = Post()
 
         with(binding) {
             etNewPostMessage.focus()

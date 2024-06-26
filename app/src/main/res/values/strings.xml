@@ -48,6 +48,13 @@
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="unknown_error">Ошибка: %1$s</string>
+    <string name="empty_text">""</string>
+    <string name="exit_profile">ExitProfile</string>
+    <string name="add_job">AddJob</string>
+    <string name="more">More</string>
+    <string name="context_menu_button">ContextMenuButton</string>
+    <string name="load_avatar_by_coil">LoadAvatarByCoil</string>
+    <string name="load_image_by_coil">LoadImageByCoil</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

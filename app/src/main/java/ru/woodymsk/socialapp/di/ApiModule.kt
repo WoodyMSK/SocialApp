@@ -47,6 +47,12 @@ class ApiModule {
         return OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor { chain ->
+                val newRequest = chain.request().newBuilder()
+                    .header("Api-Key", "")
+                    .build()
+                return@addInterceptor chain.proceed(newRequest)
+            }
+            .addInterceptor { chain ->
                 tokenPrefs.token?.let { token ->
                     val newRequest = chain.request().newBuilder()
                         .addHeader("Authorization", token)

@@ -41,4 +41,20 @@ class PostMapper @Inject constructor() {
         likes = item.likes,
         ownedByMe = item.ownedByMe,
     )
+
+    fun mapPostsFromEntity(items: List<PostEntity>): List<Post> = items.map { postEntity ->
+        Post(
+            id = postEntity.id,
+            authorId = postEntity.authorId,
+            author = postEntity.author,
+            authorAvatar = postEntity.authorAvatar,
+            content = postEntity.content,
+            published = postEntity.published,
+            likeOwnerIds = postEntity.likeOwnerIds,
+            likedByMe = postEntity.likedByMe,
+            attachment = postEntity.attachment,
+            likes = postEntity.likes,
+            ownedByMe = postEntity.ownedByMe,
+        )
+    }
 }

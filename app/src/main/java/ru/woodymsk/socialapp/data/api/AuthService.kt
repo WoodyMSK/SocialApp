@@ -12,14 +12,14 @@ interface AuthService {
     @POST("api/users/authentication")
     suspend fun authUser(
         @Field("login") login: String,
-        @Field("password") password: String
+        @Field("pass") pass: String
     ): Response<Token>
 
     @FormUrlEncoded
-    @POST("/api/users/registration/")
+    @POST("api/users/registration")
     suspend fun registerUser(
         @Field("login") login: String,
-        @Field("password") password: String,
+        @Field("pass") pass: String,
         @Field("name") name: String
     ): Response<Token>
 
