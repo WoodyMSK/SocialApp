@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -49,6 +48,7 @@ android {
 
     kapt {
         correctErrorTypes = true
+        generateStubs = true
     }
 
     composeOptions {
@@ -72,7 +72,8 @@ ext {
     act_version = '1.9.0'
     glide_version = "4.14.2"
     gson_version = "2.9.0"
-    hilt_version = "2.47"
+    dagger2_version = "2.42"
+    javax_inject_version = "1"
     paging_version = "3.2.1"
     play_services_version = "21.3.0"
     imagepicker_version = "2.1"
@@ -108,7 +109,9 @@ dependencies {
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
     implementation "com.google.code.gson:gson:$gson_version"
     implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "com.google.dagger:dagger:$dagger2_version"
+    implementation "com.google.dagger:dagger-android-support:$dagger2_version"
+    implementation "javax.inject:javax.inject:$javax_inject_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "com.google.android.gms:play-services-cast-framework:$play_services_version"
     implementation "com.github.dhaval2404:imagepicker:$imagepicker_version"
@@ -122,10 +125,11 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_viewmodel_compose_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"
     implementation "io.coil-kt:coil-compose:$coil_compose_version"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$dagger2_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-    kapt "com.google.dagger:hilt-android:$hilt_version"
     //noinspection KaptUsageInsteadOfKsp
+    kapt "com.google.dagger:dagger-compiler:$dagger2_version"
+    kapt "com.google.dagger:dagger-android-processor:$dagger2_version"
     kapt "androidx.room:room-compiler:$room_version"
     kapt "com.github.bumptech.glide:annotations:$glide_version"
     //noinspection KaptUsageInsteadOfKsp

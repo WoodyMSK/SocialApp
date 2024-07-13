@@ -6,10 +6,8 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.R
 
-@AndroidEntryPoint
 class LoginDialogFragment : DialogFragment() {
 
     companion object {

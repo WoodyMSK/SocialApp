@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.registration
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +8,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.ViewModelProvider
+import dagger.android.support.AndroidSupportInjection
 import ru.woodymsk.socialapp.R.string.welcome
 import ru.woodymsk.socialapp.databinding.FragmentRegistrationBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.ConfirmPasswordError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.LoginDataError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.NameDataError
@@ -20,15 +22,17 @@ import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationDataValid
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationError
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class RegistrationFragment : Fragment() {
 
     companion object {
         fun newInstance() = RegistrationFragment()
     }
 
-    private val viewModel: RegistrationViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModel: RegistrationViewModel
     private val textChangedListener = TextChangedListener {
         with(binding) {
             viewModel.registrationDataChecked(
@@ -40,6 +44,18 @@ class RegistrationFragment : Fragment() {
         }
     }
     private lateinit var binding: FragmentRegistrationBinding
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[RegistrationViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

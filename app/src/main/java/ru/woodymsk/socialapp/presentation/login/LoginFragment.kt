@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.login
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,25 +8,28 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.ViewModelProvider
+import dagger.android.support.AndroidSupportInjection
 import ru.woodymsk.socialapp.databinding.FragmentLoginBinding
 import ru.woodymsk.socialapp.domain.hideKeyboard
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginDataValid
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginError
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginSuccess
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.PasswordDataError
+import javax.inject.Inject
 
-@AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     companion object {
         fun newInstance() = LoginFragment()
     }
 
-    private val viewModel: LoginViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModel: LoginViewModel
     private val textChangedListener = TextChangedListener {
         with(binding) {
             viewModel.loginDataChecked(
@@ -35,6 +39,18 @@ class LoginFragment : Fragment() {
         }
     }
     private lateinit var binding: FragmentLoginBinding
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[LoginViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

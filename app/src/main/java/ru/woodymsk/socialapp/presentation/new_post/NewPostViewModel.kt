@@ -7,12 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.MediaUpload
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.post.interactor.PostInteractor
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.error.AppError
@@ -21,11 +19,10 @@ import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
 import javax.inject.Inject
 
-@HiltViewModel
 class NewPostViewModel @Inject constructor(
     private val postInteractor: PostInteractor,
-    override val router: Router,
-) : ViewModel(), RouterProvider {
+    private val router: Router,
+) : ViewModel() {
 
     private val noPicture = PictureModel()
     private val _postPicture = MutableLiveData(noPicture)

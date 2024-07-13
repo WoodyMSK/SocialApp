@@ -5,12 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.domain.login.interactor.LoginInteractor
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.Screens.profileScreen
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents
@@ -21,11 +19,10 @@ import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.LoginSuccess
 import ru.woodymsk.socialapp.presentation.login.model.LoginEvents.PasswordDataError
 import javax.inject.Inject
 
-@HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginInteractor: LoginInteractor,
-    override val router: Router,
-) : ViewModel(), RouterProvider {
+    private val router: Router,
+) : ViewModel() {
 
     private val _loginEvents = MutableLiveData<LoginEvents>()
     val loginEvents: LiveData<LoginEvents> = _loginEvents

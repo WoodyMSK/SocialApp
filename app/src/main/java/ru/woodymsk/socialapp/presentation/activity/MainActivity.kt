@@ -12,7 +12,7 @@ import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
-import dagger.hilt.android.AndroidEntryPoint
+import dagger.android.AndroidInjection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R.id.itBottomNavigationAuthScreen
@@ -28,7 +28,6 @@ import ru.woodymsk.socialapp.presentation.common.Screens.profileScreen
 import ru.woodymsk.socialapp.presentation.common.Screens.screens
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     @Inject
@@ -44,6 +43,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AndroidInjection.inject(this)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
             .also { setContentView(it.root) }
 

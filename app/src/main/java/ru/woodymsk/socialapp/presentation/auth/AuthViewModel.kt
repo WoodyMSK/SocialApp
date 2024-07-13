@@ -2,15 +2,12 @@ package ru.woodymsk.socialapp.presentation.auth
 
 import androidx.lifecycle.ViewModel
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.presentation.common.Screens
 import javax.inject.Inject
 
-@HiltViewModel
 class AuthViewModel @Inject constructor(
-    override val router: Router
-) : ViewModel(), RouterProvider {
+    private val router: Router
+) : ViewModel() {
 
     fun onBackPressed() = router.exit()
 

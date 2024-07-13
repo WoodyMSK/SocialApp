@@ -5,11 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.registration.interactor.RegistrationInteractor
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.Screens.profileScreen
@@ -22,11 +20,10 @@ import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.
 import ru.woodymsk.socialapp.presentation.registration.model.RegistrationEvents.RegistrationSuccess
 import javax.inject.Inject
 
-@HiltViewModel
 class RegistrationViewModel @Inject constructor(
     private val registrationInteractor: RegistrationInteractor,
-    override val router: Router,
-) : ViewModel(), RouterProvider {
+    private val router: Router,
+) : ViewModel() {
 
     private val _registrationEvents = MutableLiveData<RegistrationEvents>()
     val registrationEvents: LiveData<RegistrationEvents> = _registrationEvents
