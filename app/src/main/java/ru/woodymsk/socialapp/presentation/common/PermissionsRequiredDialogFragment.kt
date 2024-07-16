@@ -9,10 +9,8 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.fragment.app.DialogFragment
 import com.google.android.datatransport.runtime.scheduling.persistence.EventStoreModule_PackageNameFactory
-import dagger.hilt.android.AndroidEntryPoint
 import ru.woodymsk.socialapp.R
 
-@AndroidEntryPoint
 class PermissionsRequiredDialogFragment : DialogFragment() {
 
     companion object {

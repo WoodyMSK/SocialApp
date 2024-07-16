@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.post
 
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.lifecycle.ViewModelProvider
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.coroutines.flow.collectLatest
 import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.databinding.FragmentPostScreenBinding
@@ -16,6 +17,7 @@ import ru.woodymsk.socialapp.domain.observeFlow
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.PagingLoadStateAdapter
+import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
 import ru.woodymsk.socialapp.presentation.post.adapter.PostAdapter
 import ru.woodymsk.socialapp.presentation.post.adapter.PostClickListener
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorAuth
@@ -23,7 +25,6 @@ import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ErrorPosts
 import ru.woodymsk.socialapp.presentation.post.model.PostsEvent.ShowPosts
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class PostScreenFragment : Fragment(), BackButtonListener {
 
     companion object {
@@ -32,11 +33,25 @@ class PostScreenFragment : Fragment(), BackButtonListener {
         fun newInstance() = PostScreenFragment()
     }
 
-    private val viewModel: PostViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModel: PostViewModel
 
     @Inject
     lateinit var auth: AppAuth
     private lateinit var binding: FragmentPostScreenBinding
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        AndroidSupportInjection.inject(this)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[PostViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

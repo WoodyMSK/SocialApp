@@ -4,14 +4,12 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.auth.AppAuth
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.domain.profile.interactor.ProfileInteractor
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.Screens
@@ -22,12 +20,11 @@ import ru.woodymsk.socialapp.presentation.profile.model.ProfileEvents.ShowProfil
 import ru.woodymsk.socialapp.presentation.profile.model.ProfileEvents.LoadingState
 import javax.inject.Inject
 
-@HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val profileInteractor: ProfileInteractor,
-    override val router: Router,
+    private val router: Router,
     private val auth: AppAuth,
-) : ViewModel(), RouterProvider {
+) : ViewModel() {
 
     private val _profile: MutableStateFlow<ProfileEvents> =
         MutableStateFlow(LoadingState)

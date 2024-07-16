@@ -2,6 +2,7 @@ package ru.woodymsk.socialapp.presentation.new_post
 
 import android.Manifest.permission.CAMERA
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,10 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
+import dagger.android.support.AndroidSupportInjection
 import ru.woodymsk.socialapp.databinding.FragmentNewPostBinding
 import ru.woodymsk.socialapp.domain.focus
 import ru.woodymsk.socialapp.domain.load
@@ -22,6 +23,7 @@ import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.PhotoImagePicker
 import ru.woodymsk.socialapp.presentation.common.TextChangedListener
+import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
 import ru.woodymsk.socialapp.presentation.common.checkPermissionResult
 import ru.woodymsk.socialapp.presentation.common.getImagePermissionType
 import ru.woodymsk.socialapp.presentation.common.isPermissionGranted
@@ -32,7 +34,6 @@ import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.GoToPostListS
 import ru.woodymsk.socialapp.presentation.post.model.NewPostEvents.NewPostDataValid
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class NewPostFragment : Fragment(), BackButtonListener {
 
     companion object {
@@ -48,7 +49,9 @@ class NewPostFragment : Fragment(), BackButtonListener {
         }
     }
 
-    private val viewModel: NewPostViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    private lateinit var viewModel: NewPostViewModel
     private val textChangedListener = TextChangedListener {
         viewModel.newPostDataChecked(binding.etNewPostMessage.text.toString())
     }
@@ -74,8 +77,16 @@ class NewPostFragment : Fragment(), BackButtonListener {
     lateinit var photoImagePicker: PhotoImagePicker
     private lateinit var binding: FragmentNewPostBinding
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        AndroidSupportInjection.inject(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(this, viewModelFactory)[NewPostViewModel::class.java]
 
         savedInstanceState?.getSerializable(REQ_POST_KEY)
             ?: arguments?.getSerializable(BUNDLE_POST_KEY)?.let { post = it as Post }

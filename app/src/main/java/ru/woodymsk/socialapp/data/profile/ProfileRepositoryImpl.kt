@@ -10,6 +10,7 @@ import ru.woodymsk.socialapp.domain.profile.ProfileRepository
 import ru.woodymsk.socialapp.domain.profile.model.User
 import ru.woodymsk.socialapp.domain.post.PostRepository
 import ru.woodymsk.socialapp.domain.throwAppError
+import ru.woodymsk.socialapp.error.handler
 import withContextIO
 import javax.inject.Inject
 
@@ -28,34 +29,33 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getProfileData(): User =
-        withContextIO() {
+        withContextIO(handler) {
             val response = profileService.getProfileData(auth.authStateFlow.value.id.toString())
             response.body().throwAppError(response)
         }
 
     override suspend fun getProfilePostList(): List<PostEntity> =
-        withContextIO() {
+        withContextIO(handler) {
             val response = profileService.getProfilePostList()
             postMapper.mapToEntity(response.body().orEmpty())
         }
 
     override suspend fun like(id: String): PostEntity =
-        withContextIO() {
+        withContextIO(handler) {
             postDao.like(id.toInt())
             val response = postService.like(id)
             postMapper.mapSinglePostToEntity(response.body().throwAppError(response))
         }
 
     override suspend fun deleteLike(id: String): PostEntity =
-        withContextIO {
+        withContextIO(handler) {
             postDao.deleteLike(id.toInt())
             val response = postService.deleteLike(id)
             postMapper.mapSinglePostToEntity(response.body().throwAppError(response))
         }
 
-
     override suspend fun removePostById(id: String) =
-        withContextIO() {
+        withContextIO(handler) {
             val response = postService.removePostById(id)
             if (!response.isSuccessful) {
                 response.body().throwAppError(response)

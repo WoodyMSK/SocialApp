@@ -3,20 +3,17 @@ package ru.woodymsk.socialapp.presentation.event
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.core_coroutine.util.EventFlow
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
-import ru.woodymsk.socialapp.domain.navigation.RouterProvider
 import ru.woodymsk.socialapp.error.handler
 import ru.woodymsk.socialapp.presentation.event.model.EventsEvent
 import javax.inject.Inject
 
-@HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventInteractor: EventInteractor,
-    override val router: Router,
-) : ViewModel(), RouterProvider {
+    private val router: Router,
+) : ViewModel() {
 
     val events = EventFlow<EventsEvent>()
 
