@@ -18,7 +18,7 @@
 - Retrofit
 - Coroutines, LiveData, Flow
 - Paging3
-- Hilt
+- Dagger2
 - Gson
 - ImagePicker, Glide
 - Cicerone

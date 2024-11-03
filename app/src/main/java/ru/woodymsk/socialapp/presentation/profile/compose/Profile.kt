@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -35,8 +35,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -159,13 +162,28 @@ private fun PostListItems(
             topEnd = 8.dp,
         ),
     ) {
+
+        var openDeleteDialog by remember { mutableStateOf(false) }
+        var postId by remember { mutableIntStateOf(0) }
+
+        if (openDeleteDialog) {
+            DeleteItemDialog(
+                onClick = {
+                    if (it) {
+                        onDelete(postId.toString())
+                    }
+                    openDeleteDialog = false
+                }
+            )
+        }
+
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
         ) {
-            itemsIndexed(myPostList) { _, post ->
+            items(items = myPostList, key = { item -> item.id }) { post ->
                 val isContentExpanded = remember {
                     mutableStateOf(post.content.length <= 200)
                 }
@@ -245,7 +263,8 @@ private fun PostListItems(
                                         DropdownMenuItem(
                                             text = { Text(stringResource(R.string.delete)) },
                                             onClick = {
-                                                onDelete(post.id.toString())
+                                                postId = post.id
+                                                openDeleteDialog = true
                                                 isMenuExpanded.value = false
                                             },
                                         )
