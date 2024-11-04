@@ -169,9 +169,7 @@ private fun PostListItems(
         if (openDeleteDialog) {
             DeleteItemDialog(
                 onClick = {
-                    if (it) {
-                        onDelete(postId.toString())
-                    }
+                    if (it) onDelete(postId.toString())
                     openDeleteDialog = false
                 }
             )
