@@ -40,6 +40,7 @@
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
     <string name="remove">удалить</string>
+    <string name="remove_post">Удалить пост?</string>
     <string name="what_is_new_with_you">Что у вас нового?</string>
     <string name="publish">опубликовать</string>
     <string name="permission_denied">Доступ запрещён</string>
