@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.core_coroutine.util.EventFlow
+import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
 import ru.woodymsk.socialapp.error.handler
 import ru.woodymsk.socialapp.presentation.event.model.EventsEvent
@@ -12,6 +13,7 @@ import javax.inject.Inject
 
 class EventViewModel @Inject constructor(
     private val eventInteractor: EventInteractor,
+    private val auth: AppAuth,
     private val router: Router,
 ) : ViewModel() {
 
@@ -22,6 +24,8 @@ class EventViewModel @Inject constructor(
     }
 
     fun onBackPressed() = router.exit()
+
+    fun isAuth(): Boolean = auth.authStateFlow.value.id != 0
 
     private fun loadAllEvents() = viewModelScope.launch(handler) {
         val eventList = eventInteractor.getAllEventList()

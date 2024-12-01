@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.AndroidSupportInjection
-import ru.woodymsk.socialapp.databinding.FragmentEventScreenBinding
-import ru.woodymsk.socialapp.domain.observeFlow
 import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
-import ru.woodymsk.socialapp.presentation.event.adapter.EventAdapter
-import ru.woodymsk.socialapp.presentation.event.model.EventsEvent.ShowEvents
+import ru.woodymsk.socialapp.presentation.event.compose.EventView
+import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import javax.inject.Inject
 
 class EventScreenFragment : Fragment(), BackButtonListener {
@@ -25,7 +25,6 @@ class EventScreenFragment : Fragment(), BackButtonListener {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: EventViewModel
-    private lateinit var binding: FragmentEventScreenBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -43,21 +42,15 @@ class EventScreenFragment : Fragment(), BackButtonListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentEventScreenBinding.inflate(inflater, container, false)
-        val adapter = EventAdapter()
-        binding.rvEventScreenListPost.adapter = adapter
-
-        observeFlow {
-            viewModel.events.collect { event ->
-                when (event) {
-                    is ShowEvents -> adapter.submitList(event.events)
+    ): View =
+        ComposeView(requireActivity()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                SocialAppTheme {
+                    EventView(viewModel)
                 }
             }
         }
-
-        return binding.root
-    }
 
     override fun onBackPressed() = viewModel.onBackPressed()
 

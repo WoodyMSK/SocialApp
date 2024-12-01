@@ -85,7 +85,7 @@ class PostViewHolder(
 
     private fun like(likedByMe: Boolean) {
         if (likedByMe) {
-            binding.bCardPostLike.setIconResource(R.drawable.ic_like_filled_24dp)
+            binding.bCardPostLike.setIconResource(R.drawable.ic_like_filled_24)
             binding.bCardPostLike.setIconTintResource(R.color.red)
         } else {
             binding.bCardPostLike.setIconResource(R.drawable.ic_like_outlined_24)
