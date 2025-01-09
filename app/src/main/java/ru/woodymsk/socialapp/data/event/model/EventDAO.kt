@@ -12,8 +12,12 @@ data class EventDAO(
     val datetime: String,
     val published: String,
     val type: EventType?,
+    val likeOwnerIds: List<Int>,
+    val likedByMe: Boolean,
+    val likes: Int,
     val speakerIds: List<Int>,
     val participantsIds: List<Int>,
     val participatedByMe: Boolean,
     val attachment: Attachment?,
+    val ownedByMe: Boolean,
 )

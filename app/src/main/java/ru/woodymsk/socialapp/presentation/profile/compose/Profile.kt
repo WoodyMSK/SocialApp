@@ -309,7 +309,7 @@ private fun PostListItems(
                                 ) {
                                     Image(
                                         painterResource(id = if (isLikedByMe.value) {
-                                            R.drawable.ic_like_filled_24dp
+                                            R.drawable.ic_like_filled_24
                                         } else {
                                             R.drawable.ic_like_outlined_24
                                         }),
