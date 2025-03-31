@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.AttachmentType
-import ru.woodymsk.socialapp.domain.parseAndFormatDate
+import ru.woodymsk.socialapp.domain.formatDate
 import ru.woodymsk.socialapp.domain.post.model.Post
 import ru.woodymsk.socialapp.domain.profile.model.User
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
@@ -227,7 +227,7 @@ private fun PostListItems(
                                         text = post.author,
                                         maxLines = 1,
                                     )
-                                    Text(text = parseAndFormatDate(post.published))
+                                    Text(text = formatDate(post.published))
                                 }
                                 Box(
                                     modifier = Modifier

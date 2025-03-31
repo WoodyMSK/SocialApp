@@ -58,7 +58,7 @@ fun LoadImage(url: String) {
                     .fillMaxSize()
                     .wrapContentSize(Alignment.Center)
                     .size(40.dp),
-                color = colorResource(id = R.color.purple_typography_label_large),
+                color = colorResource(id = R.color.purple_typography),
             )
         },
         contentScale = ContentScale.Crop,

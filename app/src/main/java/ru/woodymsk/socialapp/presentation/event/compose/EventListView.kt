@@ -12,14 +12,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
-import ru.woodymsk.socialapp.presentation.event.EventViewModel
-import ru.woodymsk.socialapp.presentation.event.model.EventsEvent
-import ru.woodymsk.socialapp.presentation.event.model.EventsEvent.LoadingState
-import ru.woodymsk.socialapp.presentation.event.model.EventsEvent.ShowEvents
+import ru.woodymsk.socialapp.presentation.event.EventListViewModel
+import ru.woodymsk.socialapp.presentation.event.model.EventUiState.LoadingState
+import ru.woodymsk.socialapp.presentation.event.model.EventUiState.ShowEvents
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen
 
 @Composable
-fun EventView(eventViewModel: EventViewModel) {
-    val state: EventsEvent by eventViewModel.events.collectAsState(LoadingState)
+fun EventListView(
+    viewModel: EventListViewModel,
+    onNavigateTo: (Screen) -> Unit,
+) {
+
+    val uiState by viewModel.state.collectAsState(LoadingState)
+    val isAuth by viewModel.isAuth.collectAsState()
 
     Box(Modifier.fillMaxSize()) {
 
@@ -27,11 +32,13 @@ fun EventView(eventViewModel: EventViewModel) {
         val window = (view.context as Activity).window
         window.statusBarColor = MaterialTheme.colorScheme.background.toArgb()
 
-        when (val event = state) {
+        when (uiState) {
             is ShowEvents -> {
-                EventScreen(
-                    eventList = event.events,
-                    isAuth = eventViewModel::isAuth,
+                EventListScreen(
+                    eventList = (uiState as ShowEvents).events,
+                    onNavigateTo = onNavigateTo,
+                    onEvent = viewModel::onEvent,
+                    isAuth = isAuth,
                 )
             }
 
