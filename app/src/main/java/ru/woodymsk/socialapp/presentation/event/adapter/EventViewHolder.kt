@@ -8,7 +8,7 @@ import ru.woodymsk.socialapp.data.model.AttachmentType.IMAGE
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.databinding.ItemCardEventBinding
 import ru.woodymsk.socialapp.domain.load
-import ru.woodymsk.socialapp.domain.parseAndFormatDate
+import ru.woodymsk.socialapp.domain.formatDate
 
 class EventViewHolder(
     private val binding: ItemCardEventBinding,
@@ -17,8 +17,8 @@ class EventViewHolder(
     fun bind(event: Event) {
         binding.apply {
             tvCardEventAuthor.text = event.author
-            tvCardEventPublished.text = parseAndFormatDate(event.published)
-            tvCardEventEventDate.text = parseAndFormatDate(event.datetime)
+            tvCardEventPublished.text = formatDate(event.published)
+            tvCardEventEventDate.text = formatDate(event.datetime)
             tvCardEventEventFormat.text = event.type.toString()
             tvCardEventParticipantCount.text = event.speakerIds.size.toString()
             tvCardEventDescription.text = event.content

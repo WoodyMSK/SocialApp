@@ -49,23 +49,28 @@ import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
-import ru.woodymsk.socialapp.domain.parseAndFormatDate
+import ru.woodymsk.socialapp.domain.formatDate
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
 import ru.woodymsk.socialapp.presentation.common.compose.getTextLayoutResult
+import ru.woodymsk.socialapp.presentation.event.model.EventEvents
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.robotoFamily
 import ru.woodymsk.socialapp.presentation.theme.typography
 
 private const val VISIBLE_ROW_COUNT = 3
 
+// Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=MYc1RzcPw7trI81f-1
 @Composable
-fun EventScreen(
+fun EventListScreen(
     eventList: List<Event>,
-    isAuth: () -> Boolean,
+    onNavigateTo: (Screen) -> Unit,
+    onEvent: (EventEvents) -> Unit,
+    isAuth: Boolean,
 ) {
-    val isFabVisibility = remember { MutableTransitionState(isAuth()) }
+    val isFabVisibility = remember { MutableTransitionState(isAuth) }
     val textMeasurer = rememberTextMeasurer()
 
     LazyColumn(
@@ -134,7 +139,7 @@ fun EventScreen(
                             )
                             // publication time
                             Text(
-                                text = parseAndFormatDate(event.published),
+                                text = formatDate(event.published),
                                 style = typography().bodyMedium,
                                 maxLines = 1,
                             )
@@ -204,7 +209,7 @@ fun EventScreen(
                         }
                         // event time
                         Text(
-                            text = parseAndFormatDate(event.datetime),
+                            text = formatDate(event.datetime),
                             style = typography().bodyMedium,
                             maxLines = 1,
                         )
@@ -217,7 +222,7 @@ fun EventScreen(
                                         fontSize = 14.sp,
                                         fontFamily = robotoFamily,
                                         fontWeight = FontWeight.W500,
-                                        color = colorResource(R.color.purple_typography_label_large),
+                                        color = colorResource(R.color.purple_typography),
                                     )
                                 ) {
                                     // if isn't Expanded, add button "read more"
@@ -331,7 +336,7 @@ fun EventScreen(
         ) {
             FloatingActionButton(
                 onClick = {
-                    // TODO add an event add function
+                    onNavigateTo(Screen.NewEventScreen)
                 },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(16.dp),
@@ -346,9 +351,11 @@ fun EventScreen(
 @Composable
 fun EventScreenPreview() {
     SocialAppTheme {
-        EventScreen(
+        EventListScreen(
             eventList = mockEvents,
-            isAuth = { true },
+            onNavigateTo = {},
+            onEvent = {},
+            isAuth = true,
         )
     }
 }

@@ -40,6 +40,6 @@ fun typography() = Typography(
         fontSize = 14.sp,
         fontFamily = robotoFamily,
         fontWeight = FontWeight.W500,
-        color = colorResource(id = R.color.purple_typography_label_large)
+        color = colorResource(id = R.color.purple_typography)
     ),
 )

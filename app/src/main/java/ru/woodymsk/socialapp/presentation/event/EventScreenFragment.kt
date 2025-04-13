@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.AndroidSupportInjection
 import ru.woodymsk.socialapp.presentation.common.BackButtonListener
 import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
-import ru.woodymsk.socialapp.presentation.event.compose.EventView
+import ru.woodymsk.socialapp.presentation.event.compose.EventScreenContainer
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class EventScreenFragment : Fragment(), BackButtonListener {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: EventViewModel
+    private lateinit var viewModel: EventListViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -35,7 +35,7 @@ class EventScreenFragment : Fragment(), BackButtonListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this, viewModelFactory)[EventViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[EventListViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -47,7 +47,7 @@ class EventScreenFragment : Fragment(), BackButtonListener {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 SocialAppTheme {
-                    EventView(viewModel)
+                    EventScreenContainer(viewModelFactory)
                 }
             }
         }

@@ -16,5 +16,6 @@
     <color name="link_color">#3661F8</color>
     <color name="red">#ff0000</color>
     <color name="gray">#919191</color>
-    <color name="purple_typography_label_large">#6750A4</color>
+    <color name="purple_typography">#6750A4</color>
+    <color name="dark_gray_typography">#49454F</color>
 </resources>

@@ -8,8 +8,9 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.woodymsk.socialapp.presentation.auth.AuthViewModel
 import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
-import ru.woodymsk.socialapp.presentation.event.EventViewModel
+import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.login.LoginViewModel
+import ru.woodymsk.socialapp.presentation.new_event.NewEventViewModel
 import ru.woodymsk.socialapp.presentation.new_post.NewPostViewModel
 import ru.woodymsk.socialapp.presentation.post.PostViewModel
 import ru.woodymsk.socialapp.presentation.profile.ProfileViewModel
@@ -35,8 +36,8 @@ interface ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(EventViewModel::class)
-    fun bindEventViewModel(eventViewModel: EventViewModel): ViewModel
+    @ViewModelKey(EventListViewModel::class)
+    fun bindEventListViewModel(eventListViewModel: EventListViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -57,6 +58,11 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(RegistrationViewModel::class)
     fun bindRegistrationViewModel(registrationViewModel: RegistrationViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(NewEventViewModel::class)
+    fun bindNewEventViewModel(newEventViewModel: NewEventViewModel): ViewModel
 }
 
 @MustBeDocumented

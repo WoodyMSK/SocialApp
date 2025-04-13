@@ -42,7 +42,7 @@ class ApiModule {
             .addInterceptor(logging)
             .addInterceptor { chain ->
                 val newRequest = chain.request().newBuilder()
-                    .header("Api-Key", "")
+                    .header("Api-Key", BuildConfig.API_KEY)
                     .build()
                 return@addInterceptor chain.proceed(newRequest)
             }

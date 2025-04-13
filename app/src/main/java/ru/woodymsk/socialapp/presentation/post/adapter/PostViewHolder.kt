@@ -13,7 +13,7 @@ import ru.woodymsk.socialapp.databinding.ItemCardPostBinding
 import ru.woodymsk.socialapp.domain.load
 import ru.woodymsk.socialapp.domain.orFalse
 import ru.woodymsk.socialapp.domain.orZero
-import ru.woodymsk.socialapp.domain.parseAndFormatDate
+import ru.woodymsk.socialapp.domain.formatDate
 import ru.woodymsk.socialapp.presentation.post.model.PostPayload
 
 class PostViewHolder(
@@ -36,7 +36,7 @@ class PostViewHolder(
     fun bind(post: Post) {
         binding.apply {
             tvCardPostAuthor.text = post.author
-            tvCardPostPublished.text = parseAndFormatDate(post.published)
+            tvCardPostPublished.text = formatDate(post.published)
             tvCardPostText.text = post.content
             like(post.likedByMe)
             bCardPostMoreContentText.isVisible = post.content.length > 200

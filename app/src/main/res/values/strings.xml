@@ -59,7 +59,31 @@
     <string name="add_event">Add event</string>
     <string name="like_button">Like button</string>
     <string name="share_button">Share button</string>
+    <string name="photo_camera_button">Photo camera button</string>
+    <string name="attach_file_button">Attach file button</string>
+    <string name="speaker_selection_button">Speaker selection button</string>
+    <string name="choosing_location_button">Choosing a location button</string>
+    <string name="event_timing_button">event timing</string>
+    <string name="back_button">Button to return to the previous screen</string>
+    <string name="save_button">Save button</string>
+    <string name="event_date_selection_button">Event date selection button</string>
+    <string name="new_event_screen_title">New event</string>
+    <string name="remove_button_label">Remove</string>
     <string name="participants_icon">Participants icon</string>
+    <string name="event_content_placeholder">Введите текст...</string>
+    <string name="event_format_online">Online</string>
+    <string name="event_format_offline">Offline</string>
+    <string name="event_date">Date</string>
+    <string name="event_date_format">dd/MM/yyyy HH:mm</string>
+    <string name="type">Type</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Отмена</string>
+    <string name="choose_time">Выбрать время</string>
+    <string name="event_datetime_validation_error">event datetime validation error</string>
+    <string name="сamera_access_is_required">Требуется доступ к камере</string>
+    <string name="media_access_is_required">Требуется доступ к фото и медиа файлам</string>
+    <string name="go_to_settings_to_allow_access">Перейдите в настройки, чтобы разрешить доступ</string>
+    <string name="go_over">Перейти</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>
