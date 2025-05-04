@@ -4,8 +4,12 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.content.FileProvider
 import java.io.File
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -26,6 +30,28 @@ fun formatDate(inputDate: String): String {
     }
 
     return ""
+}
+
+// Преобразование "230420252326" -> "2025-04-23T23:26:00Z"
+fun convertToIsoFormat(datetime: String): String? {
+    if (datetime.length != 12) return null
+
+    return try {
+        val day = datetime.substring(0..1).toInt()
+        val month = datetime.substring(2..3).toInt()
+        val year = datetime.substring(4..7).toInt()
+        val hour = datetime.substring(8..9).toInt()
+        val minute = datetime.substring(10..11).toInt()
+
+        // Создание LocalDateTime и форматирование в ISO
+        LocalDateTime.of(year, month, day, hour, minute)
+            .atZone(ZoneId.systemDefault())
+            .withZoneSameInstant(ZoneOffset.UTC)
+            .format(DateTimeFormatter.ISO_INSTANT) // "2025-04-23T23:26:00Z"
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 fun parseDate(datetime: String): LocalDateTime? {
@@ -95,6 +121,32 @@ fun createTempImageUri(context: Context): Uri? {
             tempFile
         )
     } catch (e: Exception) {
+        null
+    }
+}
+
+fun copyUriToFile(context: Context, contentUri: Uri): File? {
+    return try {
+        // Получаем InputStream из ContentResolver
+        val inputStream: InputStream? = context.contentResolver.openInputStream(contentUri)
+
+        // Создаем временный файл в кэше приложения
+        val outputFile = File.createTempFile(
+            "IMG_${System.currentTimeMillis()}",
+            ".jpg",
+            context.cacheDir // или context.filesDir для постоянного хранения
+        )
+
+        // Копируем данные
+        inputStream?.use { input ->
+            outputFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        outputFile // Возвращаем File с путем типа: /data/data/ru.woodymsk.socialapp/cache/IMG_123.jpg
+    } catch (e: Exception) {
+        e.printStackTrace()
         null
     }
 }

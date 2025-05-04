@@ -3,13 +3,14 @@ package ru.woodymsk.socialapp.data.event.model
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.Coords
 import ru.woodymsk.socialapp.data.model.EventType
+import ru.woodymsk.socialapp.data.model.UserPreview
 
 data class EventDTO(
     val id: Int?,
     val authorId: Int?,
     val author: String?,
-    val authorAvatar: String?,
     val authorJob: String?,
+    val authorAvatar: String?,
     val content: String?,
     val datetime: String?,
     val published: String?,
@@ -22,5 +23,5 @@ data class EventDTO(
     val participatedByMe: Boolean?,
     val attachment: Attachment?,
     val link: String?,
-    val ownedByMe: Boolean?,
+    val users: Map<Int, UserPreview>,
 )

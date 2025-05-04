@@ -59,15 +59,14 @@ import androidx.compose.ui.unit.dp
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.AttachmentType.IMAGE
+import ru.woodymsk.socialapp.domain.copyUriToFile
 import ru.woodymsk.socialapp.domain.createTempImageUri
-import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.presentation.common.compose.LaunchSettingsDialog
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
 import ru.woodymsk.socialapp.presentation.common.compose.rememberPermissionsState
 import ru.woodymsk.socialapp.presentation.common.getImagePermissionType
-import ru.woodymsk.socialapp.presentation.navigation.model.Screen
-import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventScreen
 import ru.woodymsk.socialapp.presentation.new_event.model.NewEventEvents
+import ru.woodymsk.socialapp.presentation.new_event.model.NewEventUiState
 import ru.woodymsk.socialapp.presentation.theme.typography
 
 
@@ -77,8 +76,7 @@ private const val URI_PACKAGE_SCHEME = "package"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewEventScreen(
-    state: Event = Event(),
-    onNavigateTo: (Screen) -> Unit = {},
+    state: NewEventUiState = NewEventUiState(),
     onEvent: (NewEventEvents) -> Unit = {},
 ) {
 
@@ -87,7 +85,7 @@ fun NewEventScreen(
     val sheetState = rememberModalBottomSheetState()
     val interactionSource = remember { MutableInteractionSource() }
     val context = LocalContext.current
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by remember { mutableStateOf(state.isShowDateTimeBottomSheet) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var showSettingsDialog by remember { mutableStateOf(false) }
     var isMediaPermission by remember { mutableStateOf(false) }
@@ -113,14 +111,18 @@ fun NewEventScreen(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
                 uri?.let {
-                    onEvent(
-                        NewEventEvents.AttachmentUpdated(
-                            Attachment(
-                                type = IMAGE,
-                                url = uri.toString()
+                    val copiedFile = copyUriToFile(context, uri)
+                    copiedFile?.let { file ->
+                        val fileUri = Uri.fromFile(file).toString()
+                        onEvent(
+                            NewEventEvents.AttachmentUpdated(
+                                Attachment(
+                                    type = IMAGE,
+                                    url = fileUri
+                                )
                             )
                         )
-                    )
+                    }
                 }
             }
         )
@@ -154,6 +156,10 @@ fun NewEventScreen(
         }
     )
 
+    LaunchedEffect(state.isShowDateTimeBottomSheet) {
+        showBottomSheet = state.isShowDateTimeBottomSheet
+    }
+
     // focus on BasicTextField and launch keyboard at the start of the NewEventScreen
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -185,7 +191,8 @@ fun NewEventScreen(
                                 indication = null,
                                 interactionSource = interactionSource,
                             ) {
-                                onNavigateTo(EventScreen)
+                                keyboardController?.hide()
+                                onEvent(NewEventEvents.GoToBackScreen)
                             }
                     )
                 },
@@ -198,10 +205,11 @@ fun NewEventScreen(
                         modifier = Modifier
                             .padding(horizontal = 12.dp, vertical = 20.dp)
                             .clickable(
+                                enabled = !state.isLoading,
                                 indication = null,
                                 interactionSource = interactionSource,
                             ) {
-                                // TODO add to save event function
+                                onEvent(NewEventEvents.CreateEvent)
                             }
                     )
                 },
@@ -211,7 +219,7 @@ fun NewEventScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    showBottomSheet = true
+                    onEvent(NewEventEvents.DateTimeBottomSheetState(true))
                 },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(16.dp),
@@ -301,7 +309,7 @@ fun NewEventScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
-                    value = state.content,
+                    value = state.event.content,
                     onValueChange = {
                         onEvent(NewEventEvents.ContentUpdated(it))
                     },
@@ -312,7 +320,7 @@ fun NewEventScreen(
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
                     decorationBox = { innerTextField ->
                         innerTextField()
-                        if (state.content.isEmpty()) {
+                        if (state.event.content.isEmpty()) {
                             Text(
                                 text = stringResource(R.string.event_content_placeholder),
                                 style = typography().bodyMedium.copy(
@@ -323,14 +331,14 @@ fun NewEventScreen(
                     }
                 )
 
-                if (state.attachment?.type == IMAGE) {
+                if (state.event.attachment?.type == IMAGE) {
                     Spacer(modifier = Modifier.height(16.dp))
                     // event image with remove button
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        LoadImage(url = state.attachment.url)
+                        LoadImage(url = state.event.attachment.url)
                         Button(
                             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_typography)),
                             onClick = {
@@ -353,13 +361,13 @@ fun NewEventScreen(
             if (showBottomSheet) {
                 ModalBottomSheet(
                     onDismissRequest = {
-                        showBottomSheet = false
+                        onEvent(NewEventEvents.DateTimeBottomSheetState(false))
                     },
                     sheetState = sheetState
                 ) {
                     // bottomSheet content
                     NewEventDateTimeBottomSheet(
-                        state = state,
+                        state = state.event,
                         onEvent = onEvent,
                     )
                 }

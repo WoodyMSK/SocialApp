@@ -26,10 +26,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Set up Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 -d > app/keystore.jks
+          chmod 644 app/keystore.jks
+
       - name: Configure local.properties
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" >> local.properties
           echo "BASE_URL=${{ secrets.BASE_URL }}" >> local.properties
+          echo "STORE_FILE=keystore.jks" >> local.properties
+          echo "STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> local.properties
+          echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
 
       - name: Build Release APK
         run: ./gradlew assembleRelease

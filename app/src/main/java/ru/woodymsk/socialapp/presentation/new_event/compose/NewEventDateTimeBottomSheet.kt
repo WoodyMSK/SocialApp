@@ -33,8 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,6 +72,8 @@ fun NewEventDateTimeBottomSheet(
     val timePickerState = rememberTimePickerState()
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // Datetime update function in ViewModel
     fun updateDateTime(dateTime: LocalDateTime) {
@@ -103,6 +108,12 @@ fun NewEventDateTimeBottomSheet(
         }
     }
 
+    // focus on BasicTextField and launch keyboard at the start of the NewEventDateTimeBottomSheet
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
     Surface(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -113,7 +124,9 @@ fun NewEventDateTimeBottomSheet(
         ) {
             // Date and time selection field
             OutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = state.datetime,
