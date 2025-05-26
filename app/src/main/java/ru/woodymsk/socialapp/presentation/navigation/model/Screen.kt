@@ -9,4 +9,7 @@ sealed class Screen {
 
     @Serializable
     data object NewEventScreen: Screen()
+
+    @Serializable
+    data object PopBackStack: Screen()
 }

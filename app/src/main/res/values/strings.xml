@@ -83,6 +83,8 @@
     <string name="сamera_access_is_required">Требуется доступ к камере</string>
     <string name="media_access_is_required">Требуется доступ к фото и медиа файлам</string>
     <string name="go_to_settings_to_allow_access">Перейдите в настройки, чтобы разрешить доступ</string>
+    <string name="message_is_blank">Сообщение не должно быть пустым</string>
+    <string name="date_in_past">Дата проведения события должна быть позже текущей</string>
     <string name="go_over">Перейти</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>

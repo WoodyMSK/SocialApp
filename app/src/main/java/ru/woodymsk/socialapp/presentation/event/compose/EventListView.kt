@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.presentation.event.compose
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -11,10 +12,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState.LoadingState
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState.ShowEvents
+import ru.woodymsk.socialapp.presentation.event.model.EventUiState.ErrorEvents
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen
 
 @Composable
@@ -25,6 +28,7 @@ fun EventListView(
 
     val uiState by viewModel.state.collectAsState(LoadingState)
     val isAuth by viewModel.isAuth.collectAsState()
+    val context = LocalContext.current
 
     Box(Modifier.fillMaxSize()) {
 
@@ -41,7 +45,14 @@ fun EventListView(
                     isAuth = isAuth,
                 )
             }
-
+            is ErrorEvents -> {
+                Toast.makeText(
+                    context,
+                    (uiState as ErrorEvents).appError.code,
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
             is LoadingState -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),

@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.domain.event.interactor
 
+import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.event.EventRepository
 import ru.woodymsk.socialapp.domain.event.mapper.EventMapper
 import ru.woodymsk.socialapp.domain.event.model.Event
@@ -12,4 +13,14 @@ class EventInteractor @Inject constructor(
 
     suspend fun getAllEventList(): List<Event> =
         eventMapper.mapEventFromDao(eventRepository.getAllEventList())
+
+    suspend fun createEvent(
+        event: Event,
+        upload: MediaUpload?
+    ) {
+        eventRepository.createEvent(
+            eventDAO = eventMapper.mapSingleEventToDAO(event),
+            upload = upload,
+        )
+    }
 }

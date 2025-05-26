@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.event.compose.EventListView
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen.PopBackStack
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.NewEventScreen
 import ru.woodymsk.socialapp.presentation.new_event.NewEventViewModel
@@ -45,6 +46,10 @@ fun Navigation(
             NewEventView(viewModel) { navigateTo ->
                 navHostController.navigate(navigateTo)
             }
+        }
+
+        composable<PopBackStack> {
+            navHostController.navigateUp()
         }
     }
 }
