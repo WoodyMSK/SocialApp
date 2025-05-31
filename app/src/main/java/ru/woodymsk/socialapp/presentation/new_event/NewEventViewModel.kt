@@ -66,7 +66,7 @@ class NewEventViewModel @Inject constructor(
                 it.copy(error = event.error)
             }
             is NewEventEvents.GoToBackScreen -> updateUIState {
-                it.copy(isGoToBackScreen = true)
+                it.copy(isGoToBackScreen = event.isGoToBackScreen)
             }
             is NewEventEvents.DismissDataInvalid -> updateUIState {
                 it.copy(eventDataInvalid = null)

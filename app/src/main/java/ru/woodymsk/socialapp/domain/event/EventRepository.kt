@@ -7,4 +7,5 @@ interface EventRepository {
 
     suspend fun getAllEventList(): List<EventDAO>
     suspend fun createEvent(eventDAO: EventDAO, upload: MediaUpload?)
+    suspend fun deleteEvent(id: String)
 }

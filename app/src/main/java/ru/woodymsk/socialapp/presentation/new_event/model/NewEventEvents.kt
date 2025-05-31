@@ -12,7 +12,7 @@ sealed class NewEventEvents {
     data class DateTimeBottomSheetState(val isShowDateTimeBottomSheet: Boolean) : NewEventEvents()
     data class Loading(val isLoading: Boolean) : NewEventEvents()
     data class Error(val error: AppError?) : NewEventEvents()
+    data class GoToBackScreen(val isGoToBackScreen: Boolean) : NewEventEvents()
     data object CreateEvent : NewEventEvents()
-    data object GoToBackScreen : NewEventEvents()
     data object DismissDataInvalid : NewEventEvents()
 }

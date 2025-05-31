@@ -55,7 +55,7 @@ import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
 import ru.woodymsk.socialapp.presentation.common.compose.getTextLayoutResult
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
-import ru.woodymsk.socialapp.presentation.navigation.model.Screen
+import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.robotoFamily
 import ru.woodymsk.socialapp.presentation.theme.typography
@@ -65,12 +65,10 @@ private const val VISIBLE_ROW_COUNT = 3
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=MYc1RzcPw7trI81f-1
 @Composable
 fun EventListScreen(
-    eventList: List<Event>,
-    onNavigateTo: (Screen) -> Unit,
+    state: EventUiState,
     onEvent: (EventEvents) -> Unit,
-    isAuth: Boolean,
 ) {
-    val isFabVisibility = remember { MutableTransitionState(isAuth) }
+    val isFabVisibility = remember { MutableTransitionState(state.isAuth) }
     val textMeasurer = rememberTextMeasurer()
 
     LazyColumn(
@@ -79,7 +77,7 @@ fun EventListScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surfaceContainerHigh),
     ) {
-        items(items = eventList, key = { item -> item.id }) { event ->
+        items(items = state.events, key = { item -> item.id }) { event ->
 
             val textLayoutResult = getTextLayoutResult(
                 textMeasurer = textMeasurer,
@@ -178,13 +176,15 @@ fun EventListScreen(
                                     text = { Text(stringResource(R.string.edit)) },
                                     onClick = {
                                         // TODO add edit event function
+                                        isMenuExpanded.value = false
                                     },
                                 )
                                 HorizontalDivider()
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.delete)) },
                                     onClick = {
-                                        // TODO add remove event function
+                                        onEvent(EventEvents.DeleteEvent(event.id.toString()))
+                                        isMenuExpanded.value = false
                                     },
                                 )
                             }
@@ -336,7 +336,7 @@ fun EventListScreen(
         ) {
             FloatingActionButton(
                 onClick = {
-                    onNavigateTo(Screen.NewEventScreen)
+                    onEvent(EventEvents.GoToNewEventScreen(true))
                 },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(16.dp),
@@ -352,10 +352,8 @@ fun EventListScreen(
 fun EventScreenPreview() {
     SocialAppTheme {
         EventListScreen(
-            eventList = mockEvents,
-            onNavigateTo = {},
+            state = EventUiState(events = mockEvents),
             onEvent = {},
-            isAuth = true,
         )
     }
 }

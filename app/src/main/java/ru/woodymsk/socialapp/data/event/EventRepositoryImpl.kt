@@ -8,6 +8,7 @@ import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.event.EventRepository
 import ru.woodymsk.socialapp.domain.post.PostRepository
+import ru.woodymsk.socialapp.domain.throwAppError
 import ru.woodymsk.socialapp.error.handler
 import withContextIO
 import javax.inject.Inject
@@ -20,12 +21,13 @@ class EventRepositoryImpl @Inject constructor(
 
     override suspend fun getAllEventList(): List<EventDAO> = withContextIO(handler) {
         val response = eventService.getAllEventList()
+        if (!response.isSuccessful) response.body().throwAppError(response)
         eventMapper.mapToDao(response.body().orEmpty())
     }
 
     override suspend fun createEvent(eventDAO: EventDAO, upload: MediaUpload?): Unit =
         withContextIO(handler) {
-            if (upload == null) {
+            val response = if (upload == null) {
                 eventService.createEvent(eventMapper.mapToDto(eventDAO))
             } else {
                 val media = postRepository.uploadMedia(upload)
@@ -41,5 +43,12 @@ class EventRepositoryImpl @Inject constructor(
                     )
                 )
             }
+            if (!response.isSuccessful) response.body().throwAppError(response)
+        }
+
+    override suspend fun deleteEvent(id: String) =
+        withContextIO(handler) {
+            val response = eventService.removeEventById(id)
+            if (!response.isSuccessful) response.body().throwAppError(response)
         }
 }

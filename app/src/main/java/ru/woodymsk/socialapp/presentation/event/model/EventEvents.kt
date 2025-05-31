@@ -1,5 +1,10 @@
 package ru.woodymsk.socialapp.presentation.event.model
 
+import ru.woodymsk.socialapp.error.AppError
+
 sealed class EventEvents {
-    // TODO add events that will occur on the event screen
+    data class Loading(val isLoading: Boolean) : EventEvents()
+    data class DeleteEvent(val id: String) : EventEvents()
+    data class Error(val error: AppError?) : EventEvents()
+    data class GoToNewEventScreen(val isGoToNewEventScreen: Boolean) : EventEvents()
 }
