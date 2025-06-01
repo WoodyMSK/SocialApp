@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.auth.AppAuth
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
@@ -21,11 +22,8 @@ class EventListViewModel @Inject constructor(
     private val router: Router,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<EventUiState>(EventUiState.LoadingState)
-    val state: StateFlow<EventUiState> = _state.asStateFlow()
-
-    private val _isAuth = MutableStateFlow(false)
-    val isAuth: StateFlow<Boolean> = _isAuth.asStateFlow()
+    private val _uiState = MutableStateFlow(EventUiState())
+    val uiState: StateFlow<EventUiState> = _uiState.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         handleError(exception)
@@ -33,8 +31,16 @@ class EventListViewModel @Inject constructor(
 
     fun onEvent(event: EventEvents) {
         when (event) {
-            // TODO add event handling that will occur on the event screen
-            else -> {}
+            is EventEvents.Loading -> updateUIState {
+                it.copy(isLoading = event.isLoading)
+            }
+            is EventEvents.Error -> updateUIState {
+                it.copy(error = event.error)
+            }
+            is EventEvents.DeleteEvent -> deleteEvent(event.id)
+            is EventEvents.GoToNewEventScreen -> updateUIState {
+                it.copy(isGoToNewEventScreen = event.isGoToNewEventScreen)
+            }
         }
     }
 
@@ -46,15 +52,26 @@ class EventListViewModel @Inject constructor(
     fun onBackPressed() = router.exit()
 
     private fun isAuth() {
-        _isAuth.value = auth.authStateFlow.value.id != 0
+        updateUIState { it.copy(isAuth = auth.authStateFlow.value.id != 0) }
     }
 
     private fun loadAllEvents() = viewModelScope.launch(exceptionHandler) {
-        _state.value = EventUiState.LoadingState
+        updateUIState { it.copy(isLoading = true) }
         val eventList = eventInteractor.getAllEventList()
-        _state.value = EventUiState.ShowEvents(eventList)
+        updateUIState { it.copy(events = eventList) }
+        updateUIState { it.copy(isLoading = false) }
+    }
+
+    private fun deleteEvent(id: String) {
+        viewModelScope.launch(exceptionHandler) {
+            eventInteractor.deleteEvent(id)
+        }
+    }
+
+    private fun updateUIState(updater: (EventUiState) -> EventUiState) {
+        _uiState.update(updater)
     }
 
     private fun handleError(e: Throwable) =
-        _state.tryEmit(EventUiState.ErrorEvents(AppError.handleError(e)))
+        updateUIState { it.copy(error = AppError.handleError(e)) }
 }

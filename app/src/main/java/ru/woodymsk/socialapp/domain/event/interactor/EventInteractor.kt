@@ -23,4 +23,6 @@ class EventInteractor @Inject constructor(
             upload = upload,
         )
     }
+
+    suspend fun deleteEvent(id: String) = eventRepository.deleteEvent(id)
 }

@@ -67,10 +67,9 @@ fun NewEventView(
             }
 
             uiState.isGoToBackScreen -> {
+                viewModel.onEvent(NewEventEvents.GoToBackScreen(false))
                 onNavigateTo(Screen.PopBackStack)
             }
-
-            else -> {}
         }
 
     }
