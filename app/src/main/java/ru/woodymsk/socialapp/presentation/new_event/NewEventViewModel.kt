@@ -3,7 +3,6 @@ package ru.woodymsk.socialapp.presentation.new_event
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toFile
 import androidx.core.net.toUri
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +13,11 @@ import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
+import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.isValidDate
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.BaseViewModel
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen
 import ru.woodymsk.socialapp.presentation.new_event.model.NewEventEvents
 import ru.woodymsk.socialapp.presentation.new_event.model.NewEventUiState
 import ru.woodymsk.socialapp.presentation.post.model.PictureModel
@@ -23,7 +25,7 @@ import javax.inject.Inject
 
 class NewEventViewModel @Inject constructor(
     private val eventInteractor: EventInteractor,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(NewEventUiState())
     val uiState: StateFlow<NewEventUiState> = _uiState.asStateFlow()
@@ -65,15 +67,17 @@ class NewEventViewModel @Inject constructor(
             is NewEventEvents.Error -> updateUIState {
                 it.copy(error = event.error)
             }
-            is NewEventEvents.GoToBackScreen -> updateUIState {
-                it.copy(isGoToBackScreen = event.isGoToBackScreen)
+            is NewEventEvents.EditEvent -> updateUIState {
+                it.copy(event = event.editEvent ?: Event())
             }
+            is NewEventEvents.GoToBackScreen -> onBackPressed()
             is NewEventEvents.DismissDataInvalid -> updateUIState {
                 it.copy(eventDataInvalid = null)
             }
         }
-
     }
+
+    fun onBackPressed() = navigateTo(Screen.PopBackStack)
 
     private fun updateUIState(updater: (NewEventUiState) -> NewEventUiState) {
         _uiState.update(updater)
@@ -93,7 +97,7 @@ class NewEventViewModel @Inject constructor(
             _uiState.value = NewEventUiState()
             eventPicture.value = PictureModel()
             updateUIState { it.copy(isLoading = false) }
-            updateUIState { it.copy(isGoToBackScreen = true) }
+            onBackPressed()
         }
 
     private fun createDataChecked() {

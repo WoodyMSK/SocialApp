@@ -1,6 +1,5 @@
 package ru.woodymsk.socialapp.presentation.event
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -10,17 +9,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.auth.AppAuth
+import ru.woodymsk.socialapp.domain.convertDateFromIsoFormat
 import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
+import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.BaseViewModel
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen
 import javax.inject.Inject
 
 class EventListViewModel @Inject constructor(
     private val eventInteractor: EventInteractor,
     private val auth: AppAuth,
     private val router: Router,
-) : ViewModel() {
+) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow(EventUiState())
     val uiState: StateFlow<EventUiState> = _uiState.asStateFlow()
@@ -38,9 +41,11 @@ class EventListViewModel @Inject constructor(
                 it.copy(error = event.error)
             }
             is EventEvents.DeleteEvent -> deleteEvent(event.id)
-            is EventEvents.GoToNewEventScreen -> updateUIState {
-                it.copy(isGoToNewEventScreen = event.isGoToNewEventScreen)
-            }
+            is EventEvents.GoToNewEventScreen -> goToNewEventScreen(
+                event.event?.run {
+                    copy(datetime = convertDateFromIsoFormat(datetime))
+                }
+            )
         }
     }
 
@@ -50,6 +55,9 @@ class EventListViewModel @Inject constructor(
     }
 
     fun onBackPressed() = router.exit()
+
+    private fun goToNewEventScreen(event: Event?) =
+        navigateTo(Screen.NewEventScreen(event))
 
     private fun isAuth() {
         updateUIState { it.copy(isAuth = auth.authStateFlow.value.id != 0) }

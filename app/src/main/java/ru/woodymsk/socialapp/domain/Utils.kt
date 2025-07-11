@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -33,41 +34,28 @@ fun formatDate(inputDate: String): String {
 }
 
 // Преобразование "230420252326" -> "2025-04-23T23:26:00Z"
-fun convertToIsoFormat(datetime: String): String? {
-    if (datetime.length != 12) return null
-
-    return try {
-        val day = datetime.substring(0..1).toInt()
-        val month = datetime.substring(2..3).toInt()
-        val year = datetime.substring(4..7).toInt()
-        val hour = datetime.substring(8..9).toInt()
-        val minute = datetime.substring(10..11).toInt()
-
-        // Создание LocalDateTime и форматирование в ISO
-        LocalDateTime.of(year, month, day, hour, minute)
-            .atZone(ZoneId.systemDefault())
-            .withZoneSameInstant(ZoneOffset.UTC)
-            .format(DateTimeFormatter.ISO_INSTANT) // "2025-04-23T23:26:00Z"
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
+fun convertDateToIsoFormat(datetime: String): String {
+    val inputFormatter = DateTimeFormatter.ofPattern("ddMMyyyyHHmm")
+    val localDateTime = LocalDateTime.parse(datetime, inputFormatter)
+    return localDateTime
+        .atZone(ZoneId.systemDefault())
+        .withZoneSameInstant(ZoneOffset.UTC)
+        .format(DateTimeFormatter.ISO_INSTANT)
 }
 
-fun parseDate(datetime: String): LocalDateTime? {
-    if (datetime.length != 12) return null
-    return try {
-        LocalDateTime.of(
-            datetime.substring(4..7).toInt(),   // Год
-            datetime.substring(2..3).toInt(),    // Месяц
-            datetime.substring(0..1).toInt(),    // День
-            datetime.substring(8..9).toInt(),   // Часы
-            datetime.substring(10..11).toInt(), // Минуты
-        )
-    } catch (e: Exception) {
-        null
-    }
+// Преобразование "2025-04-23T23:26:00Z" -> "230420252326"
+fun convertDateFromIsoFormat(isoDateTime: String): String {
+        val zonedDateTime = ZonedDateTime.parse(isoDateTime, DateTimeFormatter.ISO_DATE_TIME)
+        val formatter = DateTimeFormatter.ofPattern("ddMMyyyyHHmm")
+        // Конвертируем в системную временную зону вместо UTC
+        return zonedDateTime
+            .withZoneSameInstant(ZoneId.systemDefault())
+            .format(formatter)
 }
+
+// Преобразование "190720250000" -> "2025-07-19T00:00"
+fun parseDate(datetime: String): LocalDateTime =
+    LocalDateTime.parse(datetime, DateTimeFormatter.ofPattern("ddMMyyyyHHmm"))
 
 fun isValidDate(datetime: String): Boolean {
     if (datetime.length != 12) return false

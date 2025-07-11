@@ -1,7 +1,7 @@
 package ru.woodymsk.socialapp.domain.event.mapper
 
 import ru.woodymsk.socialapp.data.event.model.EventDAO
-import ru.woodymsk.socialapp.domain.convertToIsoFormat
+import ru.woodymsk.socialapp.domain.convertDateToIsoFormat
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.orFalse
 import ru.woodymsk.socialapp.domain.orZero
@@ -40,7 +40,7 @@ class EventMapper @Inject constructor() {
         authorJob = item.authorJob,
         authorAvatar = item.authorAvatar,
         content = item.content,
-        datetime = convertToIsoFormat(item.datetime).orEmpty(),
+        datetime = convertDateToIsoFormat(item.datetime),
         published = item.published,
         coords = item.coords,
         type = item.type,

@@ -192,7 +192,7 @@ fun NewEventScreen(
                                 interactionSource = interactionSource,
                             ) {
                                 keyboardController?.hide()
-                                onEvent(NewEventEvents.GoToBackScreen(true))
+                                onEvent(NewEventEvents.GoToBackScreen)
                             }
                     )
                 },

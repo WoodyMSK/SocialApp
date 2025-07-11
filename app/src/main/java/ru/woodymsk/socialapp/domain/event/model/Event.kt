@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.domain.event.model
 
+import kotlinx.serialization.Serializable
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.Coords
 import ru.woodymsk.socialapp.data.model.EventType
@@ -7,6 +8,7 @@ import ru.woodymsk.socialapp.data.model.UserPreview
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@Serializable
 data class Event(
     val id: Int = 0,
     val authorId: Int = 0,
