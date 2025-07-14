@@ -175,7 +175,7 @@ fun EventListScreen(
                                 DropdownMenuItem(
                                     text = { Text(stringResource(R.string.edit)) },
                                     onClick = {
-                                        // TODO add edit event function
+                                        onEvent(EventEvents.GoToNewEventScreen(event))
                                         isMenuExpanded.value = false
                                     },
                                 )
@@ -336,7 +336,7 @@ fun EventListScreen(
         ) {
             FloatingActionButton(
                 onClick = {
-                    onEvent(EventEvents.GoToNewEventScreen(true))
+                    onEvent(EventEvents.GoToNewEventScreen())
                 },
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 shape = RoundedCornerShape(16.dp),

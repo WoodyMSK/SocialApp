@@ -55,7 +55,7 @@ import ru.woodymsk.socialapp.presentation.new_event.model.NewEventEvents
 import ru.woodymsk.socialapp.presentation.theme.typography
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.ZoneOffset
 
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=33-8385&t=FGNxHroHn1Ruq1No-1
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +91,7 @@ fun NewEventDateTimeBottomSheet(
     LaunchedEffect(datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let { millis ->
             val selectedDate = Instant.ofEpochMilli(millis)
-                .atZone(ZoneId.systemDefault())
+                .atZone(ZoneOffset.UTC)
                 .toLocalDateTime()
             updateDateTime(selectedDate)
         }
@@ -100,7 +100,7 @@ fun NewEventDateTimeBottomSheet(
     // time selection handler
     LaunchedEffect(timePickerState.hour, timePickerState.minute) {
         if (showTimePicker) {
-            val current = parseDate(state.datetime) ?: LocalDateTime.now()
+            val current = parseDate(state.datetime)
             val updated = current
                 .withHour(timePickerState.hour)
                 .withMinute(timePickerState.minute)

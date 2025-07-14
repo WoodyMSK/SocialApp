@@ -2,6 +2,7 @@ package ru.woodymsk.socialapp.presentation.event.compose
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,6 +49,11 @@ fun EventListView(
         }
     }
 
+    LaunchedEffect(Unit) {
+        Log.d("EventListView","LaunchedEffect(Unit), GoToNewEventScreen")
+        viewModel.navigationEvents.collect { onNavigateTo(it) }
+    }
+
     LaunchedEffect(uiState) {
         when {
             uiState.error != null -> {
@@ -61,11 +67,6 @@ fun EventListView(
                 }
                 viewModel.onEvent(EventEvents.Error(null))
                 viewModel.onEvent(EventEvents.Loading(false))
-            }
-
-            uiState.isGoToNewEventScreen -> {
-                viewModel.onEvent(EventEvents.GoToNewEventScreen(false))
-                onNavigateTo(Screen.NewEventScreen)
             }
         }
     }

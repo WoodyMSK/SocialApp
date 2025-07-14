@@ -9,5 +9,4 @@ data class NewEventUiState(
     val isShowDateTimeBottomSheet: Boolean = false,
     val isLoading: Boolean = false,
     val error: AppError? = null,
-    val isGoToBackScreen : Boolean = false,
 )

@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.presentation.new_event.compose
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,6 +41,11 @@ fun NewEventView(
         }
     }
 
+    LaunchedEffect(Unit) {
+        Log.d("NewEventView","LaunchedEffect(Unit), onBackPressed")
+        viewModel.navigationEvents.collect { onNavigateTo(it) }
+    }
+
     LaunchedEffect(uiState) {
         when {
             uiState.eventDataInvalid != null -> {
@@ -64,11 +70,6 @@ fun NewEventView(
                 }
                 viewModel.onEvent(NewEventEvents.Error(null))
                 viewModel.onEvent(NewEventEvents.Loading(false))
-            }
-
-            uiState.isGoToBackScreen -> {
-                viewModel.onEvent(NewEventEvents.GoToBackScreen(false))
-                onNavigateTo(Screen.PopBackStack)
             }
         }
 

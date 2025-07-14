@@ -8,5 +8,4 @@ data class EventUiState(
     val isAuth: Boolean = false,
     val isLoading: Boolean = false,
     val error: AppError? = null,
-    val isGoToNewEventScreen : Boolean = false,
 )
