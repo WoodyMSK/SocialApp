@@ -248,6 +248,7 @@ fun EventListScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             // like button
+                            // TODO bug картинка лайка не меняется когда пользователь лайкает ивенты
                             Image(
                                 painterResource(
                                     id = if (event.likedByMe) {

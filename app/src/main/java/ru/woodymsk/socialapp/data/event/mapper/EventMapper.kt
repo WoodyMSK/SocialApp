@@ -1,7 +1,7 @@
 package ru.woodymsk.socialapp.data.event.mapper
 
 import ru.woodymsk.socialapp.data.auth.AppAuth
-import ru.woodymsk.socialapp.data.event.model.EventDAO
+import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.data.event.model.EventDTO
 import ru.woodymsk.socialapp.domain.orFalse
 import ru.woodymsk.socialapp.domain.orZero
@@ -15,8 +15,8 @@ class EventMapper @Inject constructor() {
     @Inject
     lateinit var auth: AppAuth
 
-    fun mapToDao(items: List<EventDTO>): List<EventDAO> = items.map {
-        EventDAO(
+    fun mapListDtoToListEntity(items: List<EventDTO>): List<EventEntity> = items.map {
+        EventEntity(
             id = it.id.orZero(),
             authorId = it.authorId.orZero(),
             author = it.author.orEmpty(),
@@ -26,7 +26,7 @@ class EventMapper @Inject constructor() {
             datetime = it.datetime.orEmpty(),
             published = it.published.orEmpty(),
             coords = it.coords,
-            type = it.type,
+            eventType = it.type,
             likeOwnerIds = it.likeOwnerIds.orEmpty(),
             likedByMe = it.likedByMe.orFalse(),
             likes = it.likeOwnerIds.orEmpty().size,
@@ -40,7 +40,32 @@ class EventMapper @Inject constructor() {
         )
     }
 
-    fun mapToDto(item: EventDAO): EventDTO =
+    fun mapDtoToEntity(item: EventDTO): EventEntity =
+        EventEntity(
+            id = item.id.orZero(),
+            authorId = item.authorId.orZero(),
+            author = item.author.orEmpty(),
+            authorJob = item.authorJob,
+            authorAvatar = item.authorAvatar,
+            content = item.content.orEmpty(),
+            datetime = item.datetime.orEmpty(),
+            published = item.published.orEmpty(),
+            coords = item.coords,
+            eventType = item.type,
+            likeOwnerIds = item.likeOwnerIds.orEmpty(),
+            likedByMe = item.likedByMe.orFalse(),
+            likes = item.likeOwnerIds.orEmpty().size,
+            speakerIds = item.speakerIds.orEmpty(),
+            participantsIds = item.participantsIds.orEmpty(),
+            participatedByMe = item.participatedByMe.orFalse(),
+            attachment = item.attachment,
+            link = item.link,
+            ownedByMe = item.authorId == auth.authStateFlow.value.id,
+            users = item.users,
+        )
+
+
+    fun mapEntityToDto(item: EventEntity): EventDTO =
         EventDTO(
             id = item.id,
             authorId = item.authorId,
@@ -52,7 +77,7 @@ class EventMapper @Inject constructor() {
             published = OffsetDateTime.now(ZoneOffset.UTC)
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
             coords = item.coords,
-            type = item.type,
+            type = item.eventType,
             likeOwnerIds = item.likeOwnerIds,
             likedByMe = item.likedByMe,
             speakerIds = item.speakerIds,
