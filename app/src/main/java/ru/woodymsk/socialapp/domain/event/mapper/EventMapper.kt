@@ -1,6 +1,6 @@
 package ru.woodymsk.socialapp.domain.event.mapper
 
-import ru.woodymsk.socialapp.data.event.model.EventDAO
+import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.domain.convertDateToIsoFormat
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.orFalse
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class EventMapper @Inject constructor() {
 
-    fun mapEventFromDao(items: List<EventDAO>): List<Event> = items.map {
+    fun mapEventFromDao(items: List<EventEntity>): List<Event> = items.map {
         Event(
             id = it.id,
             authorId = it.authorId,
@@ -19,7 +19,7 @@ class EventMapper @Inject constructor() {
             datetime = it.datetime,
             published = it.published,
             coords = it.coords,
-            type = it.type,
+            type = it.eventType,
             likeOwnerIds = it.likeOwnerIds,
             likedByMe = it.likedByMe.orFalse(),
             likes = it.likeOwnerIds.size,
@@ -33,7 +33,7 @@ class EventMapper @Inject constructor() {
         )
     }
 
-    fun mapSingleEventToDAO(item: Event): EventDAO = EventDAO(
+    fun mapSingleEventToDAO(item: Event): EventEntity = EventEntity(
         id = item.id.orZero(),
         authorId = item.authorId.orZero(),
         author = item.author,
@@ -43,7 +43,7 @@ class EventMapper @Inject constructor() {
         datetime = convertDateToIsoFormat(item.datetime),
         published = item.published,
         coords = item.coords,
-        type = item.type,
+        eventType = item.type,
         likeOwnerIds = item.likeOwnerIds,
         likedByMe = item.likedByMe.orFalse(),
         likes = item.likeOwnerIds.size,

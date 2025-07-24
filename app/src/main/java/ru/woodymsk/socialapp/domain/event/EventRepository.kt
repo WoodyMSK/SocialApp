@@ -1,11 +1,13 @@
 package ru.woodymsk.socialapp.domain.event
 
-import ru.woodymsk.socialapp.data.event.model.EventDAO
+import kotlinx.coroutines.flow.Flow
+import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.data.model.MediaUpload
 
 interface EventRepository {
 
-    suspend fun getAllEventList(): List<EventDAO>
-    suspend fun createEvent(eventDAO: EventDAO, upload: MediaUpload?)
+    fun getEventFlow(): Flow<List<EventEntity>>
+    suspend fun createEvent(eventEntity: EventEntity, upload: MediaUpload?)
     suspend fun deleteEvent(id: String)
+    suspend fun refreshEventList()
 }

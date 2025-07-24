@@ -26,6 +26,7 @@ import javax.inject.Singleton
         RepositoryModule::class,
         NavigationModule::class,
         PostDatabaseModule::class,
+        EventDatabaseModule::class,
         ViewModelModule::class,
         ActivityModule::class,
         FragmentModule::class,

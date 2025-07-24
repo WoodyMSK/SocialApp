@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.auth.AppAuth
@@ -32,6 +33,12 @@ class EventListViewModel @Inject constructor(
         handleError(exception)
     }
 
+    init {
+        isAuth()
+        getEventFlow()
+        refreshEventList()
+    }
+
     fun onEvent(event: EventEvents) {
         when (event) {
             is EventEvents.Loading -> updateUIState {
@@ -49,11 +56,6 @@ class EventListViewModel @Inject constructor(
         }
     }
 
-    init {
-        loadAllEvents()
-        isAuth()
-    }
-
     fun onBackPressed() = router.exit()
 
     private fun goToNewEventScreen(event: Event?) =
@@ -63,11 +65,20 @@ class EventListViewModel @Inject constructor(
         updateUIState { it.copy(isAuth = auth.authStateFlow.value.id != 0) }
     }
 
-    private fun loadAllEvents() = viewModelScope.launch(exceptionHandler) {
-        updateUIState { it.copy(isLoading = true) }
-        val eventList = eventInteractor.getAllEventList()
-        updateUIState { it.copy(events = eventList) }
-        updateUIState { it.copy(isLoading = false) }
+    private fun getEventFlow() {
+        viewModelScope.launch(exceptionHandler) {
+            eventInteractor.getEventFlow().collectLatest { events ->
+                updateUIState { it.copy(events = events) }
+            }
+        }
+    }
+
+    private fun refreshEventList() {
+        viewModelScope.launch(exceptionHandler) {
+            updateUIState { it.copy(isLoading = true) }
+            eventInteractor.refreshEventList()
+            updateUIState { it.copy(isLoading = false) }
+        }
     }
 
     private fun deleteEvent(id: String) {
