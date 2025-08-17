@@ -1,15 +1,25 @@
 package ru.woodymsk.socialapp.presentation.common.compose
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +36,7 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import ru.woodymsk.socialapp.R
+import ru.woodymsk.socialapp.presentation.theme.typography
 
 @Composable
 fun LoadAvatar(url: String) {
@@ -101,4 +112,68 @@ fun getLineSymbolCount(
     }
 
     return lineSymbolCount
+}
+
+@Composable
+fun AppendLoadError(onRetry: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 32.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier,
+            text = stringResource(R.string.download_error),
+            style = typography().bodyMedium,
+            color = Color.Gray,
+        )
+        Text(
+            modifier = Modifier.clickable { onRetry() },
+            text = stringResource(R.string.retry),
+            style = typography().labelLarge,
+        )
+    }
+}
+
+@Composable
+fun RefreshLoadError(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(
+            painterResource(id = R.drawable.ic_wifi_4_bar_off_96),
+            contentDescription = stringResource(R.string.participants_icon),
+            modifier = Modifier,
+        )
+        Text(
+            modifier = Modifier,
+            text = stringResource(R.string.download_error_check_connection),
+            style = typography().bodyMedium,
+            color = Color.Gray,
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 32.dp)
+                .clickable { onRetry() },
+            text = stringResource(R.string.try_again),
+            style = typography().labelLarge,
+        )
+    }
+}
+
+@Composable
+fun LoadingIndicator(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.align(Alignment.Center),
+            color = MaterialTheme.colorScheme.primary
+        )
+    }
 }

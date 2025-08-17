@@ -1,8 +1,14 @@
 package ru.woodymsk.socialapp.data.event
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import ru.woodymsk.socialapp.data.api.EventService
 import ru.woodymsk.socialapp.data.event.db.EventDao
+import ru.woodymsk.socialapp.data.event.db.EventDatabase
+import ru.woodymsk.socialapp.data.event.db.EventKeyDao
 import ru.woodymsk.socialapp.data.event.mapper.EventMapper
 import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.data.model.Attachment
@@ -20,17 +26,32 @@ class EventRepositoryImpl @Inject constructor(
     private val eventMapper: EventMapper,
     private val postRepository: PostRepository,
     private val eventDao: EventDao,
+    private val eventKeyDao: EventKeyDao,
+    private val eventDatabase: EventDatabase,
 ) : EventRepository {
 
-    override fun getEventFlow() : Flow<List<EventEntity>> = eventDao.getEventFlow()
-
-    override suspend fun refreshEventList() = withContextIO(handler) {
-        val response = eventService.getAllEventList()
-        if (!response.isSuccessful) response.body().throwAppError(response)
-        val events = eventMapper.mapListDtoToListEntity(response.body().orEmpty())
-        eventDao.removeAllEvents()
-        eventDao.insertEventList(events)
+    companion object {
+        const val PAGE_SIZE = 10
     }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getPagedEventList(): Flow<PagingData<EventEntity>> =
+        Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = true,
+                prefetchDistance = 3 * PAGE_SIZE,
+                initialLoadSize = 2 * PAGE_SIZE,
+            ),
+            pagingSourceFactory = eventDao::getPagingSource,
+            remoteMediator = EventRemoteMediator(
+                eventService = eventService,
+                eventDao = eventDao,
+                eventKeyDao = eventKeyDao,
+                eventDatabase = eventDatabase,
+                eventMapper = eventMapper,
+            )
+        ).flow
 
     override suspend fun createEvent(eventEntity: EventEntity, upload: MediaUpload?): Unit =
         withContextIO(handler) {
@@ -59,5 +80,10 @@ class EventRepositoryImpl @Inject constructor(
             val response = eventService.removeEventById(id)
             if (!response.isSuccessful) response.body().throwAppError(response)
             eventDao.removeEventById(id.toInt())
+        }
+
+    override suspend fun removeAllDbEvents() =
+        withContextIO(handler) {
+            eventDao.removeAllEvents()
         }
 }

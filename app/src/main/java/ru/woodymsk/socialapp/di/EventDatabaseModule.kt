@@ -6,6 +6,7 @@ import dagger.Module
 import dagger.Provides
 import ru.woodymsk.socialapp.data.event.db.EventDao
 import ru.woodymsk.socialapp.data.event.db.EventDatabase
+import ru.woodymsk.socialapp.data.event.db.EventKeyDao
 import javax.inject.Singleton
 
 @Module
@@ -21,5 +22,8 @@ object EventDatabaseModule {
             .build()
 
     @Provides
-    fun provideEventDao(eventDb: EventDatabase): EventDao = eventDb.EventDao()
+    fun provideEventDao(eventDb: EventDatabase): EventDao = eventDb.eventDao()
+
+    @Provides
+    fun provideEventKeyDao(eventKeyDb: EventDatabase): EventKeyDao = eventKeyDb.eventKeyDao()
 }

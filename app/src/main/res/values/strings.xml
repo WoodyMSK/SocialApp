@@ -34,6 +34,7 @@
     <string name="filter_symbol"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890`~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
     <string name="filter_symbol_name"><![CDATA[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя1234567890 `~!@#$%^*()_-+={}[]|:;\'>,.?/]]></string>
     <string name="try_again">Повторить попытку</string>
+    <string name="retry">Повторить</string>
     <string name="something_went_wrong">Что-то пошло не так :(</string>
     <string name="require_authorization">Необходимо авторизоваться</string>
     <string name="execute_login">Выполнить вход?</string>
@@ -49,6 +50,8 @@
     <string name="edit">Редактировать</string>
     <string name="delete">Удалить</string>
     <string name="unknown_error">Ошибка: %1$s</string>
+    <string name="download_error">Ошибка загрузки</string>
+    <string name="download_error_check_connection">Ошибка загрузки. Проверьте подключение к сети</string>
     <string name="empty_text">""</string>
     <string name="exit_profile">ExitProfile</string>
     <string name="add_job">AddJob</string>

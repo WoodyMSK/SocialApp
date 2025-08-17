@@ -1,5 +1,9 @@
 package ru.woodymsk.socialapp.domain.event.mapper
 
+import androidx.paging.PagingData
+import androidx.paging.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.domain.convertDateToIsoFormat
 import ru.woodymsk.socialapp.domain.event.model.Event
@@ -9,28 +13,30 @@ import javax.inject.Inject
 
 class EventMapper @Inject constructor() {
 
-    fun mapEventFromDao(items: List<EventEntity>): List<Event> = items.map {
-        Event(
-            id = it.id,
-            authorId = it.authorId,
-            author = it.author,
-            authorAvatar = it.authorAvatar,
-            content = it.content,
-            datetime = it.datetime,
-            published = it.published,
-            coords = it.coords,
-            type = it.eventType,
-            likeOwnerIds = it.likeOwnerIds,
-            likedByMe = it.likedByMe.orFalse(),
-            likes = it.likeOwnerIds.size,
-            speakerIds = it.speakerIds,
-            participantsIds = it.participantsIds,
-            participatedByMe = it.participatedByMe,
-            attachment = it.attachment,
-            link = it.link,
-            ownedByMe = it.ownedByMe,
-            users = it.users,
-        )
+    fun mapEventFromEntity(items: Flow<PagingData<EventEntity>>): Flow<PagingData<Event>> = items.map {
+        it.map { eventEntity ->
+            Event(
+                id = eventEntity.id,
+                authorId = eventEntity.authorId,
+                author = eventEntity.author,
+                authorAvatar = eventEntity.authorAvatar,
+                content = eventEntity.content,
+                datetime = eventEntity.datetime,
+                published = eventEntity.published,
+                coords = eventEntity.coords,
+                type = eventEntity.eventType,
+                likeOwnerIds = eventEntity.likeOwnerIds,
+                likedByMe = eventEntity.likedByMe.orFalse(),
+                likes = eventEntity.likeOwnerIds.size,
+                speakerIds = eventEntity.speakerIds,
+                participantsIds = eventEntity.participantsIds,
+                participatedByMe = eventEntity.participatedByMe,
+                attachment = eventEntity.attachment,
+                link = eventEntity.link,
+                ownedByMe = eventEntity.ownedByMe,
+                users = eventEntity.users,
+            )
+        }
     }
 
     fun mapSingleEventToDAO(item: Event): EventEntity = EventEntity(

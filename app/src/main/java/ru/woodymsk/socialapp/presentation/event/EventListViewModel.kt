@@ -1,12 +1,12 @@
 package ru.woodymsk.socialapp.presentation.event
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.github.terrakok.cicerone.Router
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.woodymsk.socialapp.data.auth.AppAuth
@@ -35,15 +35,11 @@ class EventListViewModel @Inject constructor(
 
     init {
         isAuth()
-        getEventFlow()
-        refreshEventList()
+        loadEvents()
     }
 
     fun onEvent(event: EventEvents) {
         when (event) {
-            is EventEvents.Loading -> updateUIState {
-                it.copy(isLoading = event.isLoading)
-            }
             is EventEvents.Error -> updateUIState {
                 it.copy(error = event.error)
             }
@@ -58,27 +54,20 @@ class EventListViewModel @Inject constructor(
 
     fun onBackPressed() = router.exit()
 
+    private fun loadEvents() {
+        _uiState.update {
+            it.copy(
+                pagingDataFlow = eventInteractor.getPagedEventList()
+                    .cachedIn(viewModelScope)
+            )
+        }
+    }
+
     private fun goToNewEventScreen(event: Event?) =
         navigateTo(Screen.NewEventScreen(event))
 
     private fun isAuth() {
         updateUIState { it.copy(isAuth = auth.authStateFlow.value.id != 0) }
-    }
-
-    private fun getEventFlow() {
-        viewModelScope.launch(exceptionHandler) {
-            eventInteractor.getEventFlow().collectLatest { events ->
-                updateUIState { it.copy(events = events) }
-            }
-        }
-    }
-
-    private fun refreshEventList() {
-        viewModelScope.launch(exceptionHandler) {
-            updateUIState { it.copy(isLoading = true) }
-            eventInteractor.refreshEventList()
-            updateUIState { it.copy(isLoading = false) }
-        }
     }
 
     private fun deleteEvent(id: String) {
@@ -91,6 +80,5 @@ class EventListViewModel @Inject constructor(
         _uiState.update(updater)
     }
 
-    private fun handleError(e: Throwable) =
-        updateUIState { it.copy(error = AppError.handleError(e)) }
+    private fun handleError(e: Throwable) = updateUIState { it.copy(error = AppError.handleError(e)) }
 }
