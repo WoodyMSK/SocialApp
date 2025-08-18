@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.data.event.db
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,6 +10,9 @@ import ru.woodymsk.socialapp.data.event.model.EventEntity
 
 @Dao
 interface EventDao {
+
+    @Query("SELECT * FROM EventEntity ORDER BY id DESC")
+    fun getPagingSource(): PagingSource<Int, EventEntity>
 
     @Query("SELECT * FROM EventEntity ORDER BY id DESC")
     fun getEventFlow() : Flow<List<EventEntity>>
@@ -27,4 +31,7 @@ interface EventDao {
 
     @Query("DELETE FROM EventEntity")
     suspend fun removeAllEvents()
+
+    @Query ("SELECT COUNT(*) == 0 FROM EventEntity")
+    suspend fun isEmpty(): Boolean
 }

@@ -1,349 +1,189 @@
 package ru.woodymsk.socialapp.presentation.event.compose
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.foundation.Image
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
+import kotlinx.coroutines.flow.flowOf
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
-import ru.woodymsk.socialapp.domain.formatDate
-import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
-import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
-import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
-import ru.woodymsk.socialapp.presentation.common.compose.getTextLayoutResult
+import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.compose.AppendLoadError
+import ru.woodymsk.socialapp.presentation.common.compose.LoadingIndicator
+import ru.woodymsk.socialapp.presentation.common.compose.RefreshLoadError
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
-import ru.woodymsk.socialapp.presentation.theme.robotoFamily
-import ru.woodymsk.socialapp.presentation.theme.typography
 
-private const val VISIBLE_ROW_COUNT = 3
 
-// Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=MYc1RzcPw7trI81f-1
+// Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=1S5gJ3zZWiBBGUYm-1
 @Composable
 fun EventListScreen(
     state: EventUiState,
     onEvent: (EventEvents) -> Unit,
 ) {
+    val lazyPagingItems = state.pagingDataFlow.collectAsLazyPagingItems()
     val isFabVisibility = remember { MutableTransitionState(state.isAuth) }
-    val textMeasurer = rememberTextMeasurer()
+    var isLoadingIndicatorVisibility by remember { mutableStateOf(false) }
+    var isRefreshLoadErrorVisibility by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-    ) {
-        items(items = state.events, key = { item -> item.id }) { event ->
+    // Initial Upload processing
+    LaunchedEffect(lazyPagingItems.loadState) {
+        when (lazyPagingItems.loadState.refresh) {
+            is LoadState.Loading -> {
+                isLoadingIndicatorVisibility = true
+                isRefreshLoadErrorVisibility = false
+            }
 
-            val textLayoutResult = getTextLayoutResult(
-                textMeasurer = textMeasurer,
-                text = event.content,
-                style = typography().bodyMedium,
+            is LoadState.Error -> {
+                val error = (lazyPagingItems.loadState.refresh as LoadState.Error).error
+                onEvent(EventEvents.Error(AppError.handleError(error)))
+                isLoadingIndicatorVisibility = false
+                isRefreshLoadErrorVisibility = lazyPagingItems.itemCount == 0
+            }
+
+            is LoadState.NotLoading -> {
+                isLoadingIndicatorVisibility = false
+                isRefreshLoadErrorVisibility = false
+            }
+        }
+    }
+
+    // show Toast message in case of an error
+    LaunchedEffect(state.error) {
+        state.error?.let { error ->
+            Toast.makeText(
+                context,
+                error.message ?: context.getString(R.string.unknown_error),
+                Toast.LENGTH_LONG
+            ).show()
+            // Сбрасываем ошибку после показа
+            onEvent(EventEvents.Error(null))
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        if (isRefreshLoadErrorVisibility) {
+            // show the error screen in case of an error
+            RefreshLoadError(
+                onRetry = { lazyPagingItems.refresh() } // TODO исправить мерцание экрана при обновлении
             )
-            val lineCount = textLayoutResult.lineCount
-            val lineSymbolCount = getLineSymbolCount(
-                text = event.content,
-                lineCount = lineCount,
-                textLayoutResult = textLayoutResult,
-                visibleRowCount = VISIBLE_ROW_COUNT
-            )
-            val isContentExpanded = remember { mutableStateOf(lineCount <= VISIBLE_ROW_COUNT) }
-            val isMenuExpanded = remember { mutableStateOf(false) }
-            val isMenuVisibility = remember { MutableTransitionState(event.ownedByMe) }
-            val interactionSource = remember { MutableInteractionSource() }
-            val displayDescriptionText =
-                if (isContentExpanded.value) event.content else event.content.take(lineSymbolCount)
-
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(4.dp),
-            ) {
-                Column(
-                    Modifier.background(MaterialTheme.colorScheme.surface),
+        } else if (lazyPagingItems.itemCount > 0 || lazyPagingItems.loadState.refresh is LoadState.Loading) {
+            // show event list
+            Column {
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
                 ) {
-                    // header
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, top = 12.dp, bottom = 12.dp, end = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        // author avatar image
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp),
-                        ) {
-                            LoadAvatar(url = event.authorAvatar.orEmpty())
-                        }
-                        Column(
-                            modifier = Modifier
-                                .size(height = 48.dp, width = 236.dp)
-                                .padding(start = 16.dp),
-                            verticalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            // author name
-                            Text(
-                                text = event.author,
-                                style = typography().titleMedium,
-                                maxLines = 1,
+                    items(
+                        count = lazyPagingItems.itemCount,
+                        key = lazyPagingItems.itemKey { event -> event.id },
+                        contentType = lazyPagingItems.itemContentType { "Events" },
+                    ) { index ->
+                        val event = lazyPagingItems[index]
+                        if (event != null) {
+                            EventItem(
+                                event = event,
+                                onEvent = onEvent
                             )
-                            // publication time
-                            Text(
-                                text = formatDate(event.published),
-                                style = typography().bodyMedium,
-                                maxLines = 1,
-                            )
-                        }
-                        // spacer
-                        Spacer(
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(48.dp)
-                        )
-                        // context menu button
-                        AnimatedVisibility(visibleState = isMenuVisibility) {
-                            Box(
-                                modifier = Modifier.size(48.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                Image(
-                                    painterResource(id = R.drawable.ic_more_vert_24),
-                                    contentDescription = stringResource(id = R.string.more),
-                                    modifier = Modifier
-                                        .clickable(
-                                            indication = null,
-                                            interactionSource = interactionSource,
-                                        ) {
-                                            isMenuExpanded.value = !isMenuExpanded.value
-                                        }
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = isMenuExpanded.value,
-                                onDismissRequest = { isMenuExpanded.value = false },
-                                modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.edit)) },
-                                    onClick = {
-                                        onEvent(EventEvents.GoToNewEventScreen(event))
-                                        isMenuExpanded.value = false
-                                    },
-                                )
-                                HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(R.string.delete)) },
-                                    onClick = {
-                                        onEvent(EventEvents.DeleteEvent(event.id.toString()))
-                                        isMenuExpanded.value = false
-                                    },
-                                )
-                            }
                         }
                     }
-                    // event attachment image
-                    if (event.attachment?.type == AttachmentType.IMAGE) {
-                        LoadImage(url = event.attachment.url)
-                    }
-                    // text content
-                    Column(
-                        modifier = Modifier
-                            .padding(16.dp),
-                    ) {
-                        // event type
-                        event.type?.name?.let {
-                            Text(
-                                text = it,
-                                style = typography().bodyLarge,
-                                maxLines = 1,
-                            )
-                        }
-                        // event time
-                        Text(
-                            text = formatDate(event.datetime),
-                            style = typography().bodyMedium,
-                            maxLines = 1,
-                        )
-                        // event description
-                        Text(
-                            text = buildAnnotatedString {
-                                append(displayDescriptionText)
-                                withStyle(
-                                    SpanStyle(
-                                        fontSize = 14.sp,
-                                        fontFamily = robotoFamily,
-                                        fontWeight = FontWeight.W500,
-                                        color = colorResource(R.color.purple_typography),
-                                    )
-                                ) {
-                                    // if isn't Expanded, add button "read more"
-                                    if (!isContentExpanded.value) {
-                                        append(stringResource(R.string.read_next))
+                    // processing the loading states of new events
+                    lazyPagingItems.loadState.apply {
+                        when {
+                            // load indicator
+                            append is LoadState.Loading -> {
+                                item {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(32.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        LoadingIndicator()
                                     }
                                 }
-                            },
-                            style = typography().bodyMedium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 32.dp)
-                                .clickable(
-                                    indication = null,
-                                    interactionSource = interactionSource,
-                                ) {
-                                    isContentExpanded.value = !isContentExpanded.value
-                                },
-                        )
-                        // actions bar
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            // like button
-                            // TODO bug картинка лайка не меняется когда пользователь лайкает ивенты
-                            Image(
-                                painterResource(
-                                    id = if (event.likedByMe) {
-                                        R.drawable.ic_like_filled_18
-                                    } else {
-                                        R.drawable.ic_like_outlined_18
-                                    }
-                                ),
-                                contentDescription = stringResource(R.string.like_button),
-                                modifier = Modifier
-                                    .padding(start = 12.dp, end = 8.dp)
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = interactionSource,
-                                    ) {
-                                        // TODO add like event function
-                                    }
-                            )
-                            // count of likes
-                            Box(
-                                modifier = Modifier.size(width = 33.dp, height = 40.dp),
-                                contentAlignment = Alignment.CenterStart,
-                            ) {
-                                Text(
-                                    text = if (event.likes != 0) {
-                                        event.likes.toString() // TODO add converter function, more than 999 likes can be converted to 1k and so on
-                                    } else {
-                                        stringResource(R.string.empty_text)
-                                    },
-                                    modifier = Modifier.padding(end = 4.dp),
-                                    style = typography().labelLarge,
-                                )
                             }
-                            // share button
-                            Image(
-                                painterResource(id = R.drawable.ic_share_figma_18),
-                                contentDescription = stringResource(id = R.string.share_button),
-                                modifier = Modifier
-                                    .padding(start = 20.dp)
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = interactionSource,
-                                    ) {
-                                        // TODO add share event function
-                                    }
-                            )
-                            // spacer
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(40.dp)
-                            )
-                            // number of participants counter
-                            Image(
-                                painterResource(id = R.drawable.ic_people_outline_22),
-                                contentDescription = stringResource(R.string.participants_icon),
-                                modifier = Modifier.padding(end = 8.dp),
-                            )
-                            // participants number
-                            Box(
-                                modifier = Modifier.size(width = 26.dp, height = 40.dp),
-                                contentAlignment = Alignment.CenterStart,
-                            ) {
-                                Text(
-                                    text = if (event.participantsIds.isNotEmpty()) {
-                                        event.participantsIds.size.toString()
-                                    } else {
-                                        stringResource(R.string.empty_text)
-                                    },
-                                    style = typography().labelLarge,
-                                )
+                            // show the error at the end of the list
+                            append is LoadState.Error -> {
+                                item {
+                                    AppendLoadError(
+                                        onRetry = { lazyPagingItems.retry() } // TODO исправить мерцание экрана при обновлении
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-    // add event fab
-    AnimatedVisibility(visibleState = isFabVisibility) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = 24.dp, bottom = 24.dp),
-            contentAlignment = Alignment.BottomEnd,
+        // add event fab
+        AnimatedVisibility(
+            visibleState = isFabVisibility
         ) {
-            FloatingActionButton(
-                onClick = {
-                    onEvent(EventEvents.GoToNewEventScreen())
-                },
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                shape = RoundedCornerShape(16.dp),
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 24.dp, bottom = 24.dp),
+                contentAlignment = Alignment.BottomEnd,
             ) {
-                Icon(painterResource(id = R.drawable.ic_add_24), stringResource(R.string.add_event))
+                FloatingActionButton(
+                    onClick = {
+                        onEvent(EventEvents.GoToNewEventScreen())
+                    },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.ic_add_24),
+                        stringResource(R.string.add_event)
+                    )
+                }
             }
+        }
+        // load indicator
+        AnimatedVisibility(
+            visible = isLoadingIndicatorVisibility,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            LoadingIndicator()
         }
     }
 }
@@ -351,9 +191,14 @@ fun EventListScreen(
 @Preview
 @Composable
 fun EventScreenPreview() {
+        val mockState = EventUiState(
+        isAuth = true,
+        pagingDataFlow = flowOf(PagingData.from(mockEvents))
+    )
+
     SocialAppTheme {
         EventListScreen(
-            state = EventUiState(events = mockEvents),
+            state = mockState,
             onEvent = {},
         )
     }
