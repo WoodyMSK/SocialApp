@@ -3,8 +3,6 @@ package ru.woodymsk.socialapp.presentation.event.compose
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,6 +52,7 @@ import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 
 
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=1S5gJ3zZWiBBGUYm-1
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EventListScreen(
     state: EventUiState,
@@ -60,6 +63,12 @@ fun EventListScreen(
     var isLoadingIndicatorVisibility by remember { mutableStateOf(false) }
     var isRefreshLoadErrorVisibility by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isLoadingIndicatorVisibility,
+        onRefresh = {
+            lazyPagingItems.refresh()
+        }
+    )
 
     // Initial Upload processing
     LaunchedEffect(lazyPagingItems.loadState) {
@@ -88,7 +97,7 @@ fun EventListScreen(
         state.error?.let { error ->
             Toast.makeText(
                 context,
-                error.message ?: context.getString(R.string.unknown_error),
+                error.message ?: context.getString(R.string.download_error),
                 Toast.LENGTH_LONG
             ).show()
             // Сбрасываем ошибку после показа
@@ -97,14 +106,14 @@ fun EventListScreen(
     }
 
     Box(Modifier.fillMaxSize()) {
-        if (isRefreshLoadErrorVisibility) {
+        if (isRefreshLoadErrorVisibility && isLoadingIndicatorVisibility.not()) {
             // show the error screen in case of an error
             RefreshLoadError(
                 onRetry = { lazyPagingItems.refresh() } // TODO исправить мерцание экрана при обновлении
             )
         } else if (lazyPagingItems.itemCount > 0 || lazyPagingItems.loadState.refresh is LoadState.Loading) {
             // show event list
-            Column {
+            Column(modifier = Modifier.pullRefresh(pullRefreshState)) {
                 LazyColumn(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
@@ -136,54 +145,56 @@ fun EventListScreen(
                                             .padding(32.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        LoadingIndicator()
+                                        if (isLoadingIndicatorVisibility.not()) {
+                                            LoadingIndicator()
+                                        }
                                     }
                                 }
                             }
                             // show the error at the end of the list
                             append is LoadState.Error -> {
                                 item {
-                                    AppendLoadError(
-                                        onRetry = { lazyPagingItems.retry() } // TODO исправить мерцание экрана при обновлении
-                                    )
+                                    if (isLoadingIndicatorVisibility.not()) {
+                                        AppendLoadError(
+                                            onRetry = { lazyPagingItems.retry() } // TODO исправить мерцание экрана при обновлении
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            // pullRefresh load indicator
+            PullRefreshIndicator(
+                refreshing = isLoadingIndicatorVisibility,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
         }
-        // add event fab
-        AnimatedVisibility(
-            visibleState = isFabVisibility
+    }
+    // add event fab
+    AnimatedVisibility(
+        visibleState = isFabVisibility
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 24.dp, bottom = 24.dp),
+            contentAlignment = Alignment.BottomEnd,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(end = 24.dp, bottom = 24.dp),
-                contentAlignment = Alignment.BottomEnd,
+            FloatingActionButton(
+                onClick = {
+                    onEvent(EventEvents.GoToNewEventScreen())
+                },
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(16.dp),
             ) {
-                FloatingActionButton(
-                    onClick = {
-                        onEvent(EventEvents.GoToNewEventScreen())
-                    },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Icon(
-                        painterResource(id = R.drawable.ic_add_24),
-                        stringResource(R.string.add_event)
-                    )
-                }
+                Icon(
+                    painterResource(id = R.drawable.ic_add_24),
+                    stringResource(R.string.add_event)
+                )
             }
-        }
-        // load indicator
-        AnimatedVisibility(
-            visible = isLoadingIndicatorVisibility,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            LoadingIndicator()
         }
     }
 }
