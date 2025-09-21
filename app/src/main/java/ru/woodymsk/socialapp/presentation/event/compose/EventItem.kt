@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,10 +27,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,8 +51,11 @@ import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.formatDate
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerWithControls
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
 import ru.woodymsk.socialapp.presentation.common.compose.getTextLayoutResult
+import ru.woodymsk.socialapp.presentation.common.compose.isItemVisible
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.robotoFamily
@@ -59,7 +67,10 @@ private const val VISIBLE_ROW_COUNT = 3
 @Composable
 fun EventItem(
     event: Event,
-    onEvent: (EventEvents) -> Unit
+    onEvent: (EventEvents) -> Unit,
+    videoPlayerManager: VideoPlayerManager,
+    listState: LazyListState,
+    index: Int,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = getTextLayoutResult(
@@ -80,6 +91,18 @@ fun EventItem(
     val interactionSource = remember { MutableInteractionSource() }
     val displayDescriptionText =
         if (isContentExpanded.value) event.content else event.content.take(lineSymbolCount)
+    val isVisible = isItemVisible(listState, index)
+
+    LaunchedEffect(isVisible) {
+        if (event.attachment?.type == AttachmentType.VIDEO) {
+            if (isVisible) {
+                videoPlayerManager.playVideo(event.attachment.url)
+            } else {
+                // pause only if this video is currently playing
+                videoPlayerManager.pauseIfPlaying(event.attachment.url)
+            }
+        }
+    }
 
     Card(
         modifier = Modifier
@@ -167,6 +190,16 @@ fun EventItem(
             // event attachment image
             if (event.attachment?.type == AttachmentType.IMAGE) {
                 LoadImage(url = event.attachment.url)
+            }
+            // event attachment video
+            if (event.attachment?.type == AttachmentType.VIDEO) {
+                VideoPlayerWithControls(
+                    videoUrl = event.attachment.url,
+                    videoPlayerManager = videoPlayerManager,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16 / 9f)
+                )
             }
             // text content
             Column(modifier = Modifier.padding(16.dp)) {
@@ -294,10 +327,16 @@ fun EventItem(
 @Preview
 @Composable
 fun PreviewEventItem() {
+    val mockVideoPlayerManager = MockVideoPlayerManager(LocalContext.current)
+    val mockListState = rememberLazyListState()
+
     SocialAppTheme {
         EventItem(
             event = mockEvent,
-            onEvent = {}
+            onEvent = {},
+            videoPlayerManager = mockVideoPlayerManager,
+            listState = mockListState,
+            index = 0
         )
     }
 }

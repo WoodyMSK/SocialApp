@@ -11,11 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.presentation.theme.typography
 
@@ -176,4 +185,38 @@ fun LoadingIndicator(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.primary
         )
     }
+}
+
+@Composable
+fun isItemVisible(
+    listState: LazyListState,
+    index: Int,
+    visibilityThreshold: Float = 0.7f
+): Boolean {
+    var isVisible by remember { mutableStateOf(false) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo }
+            .map { layoutInfo ->
+                val visibleItems = layoutInfo.visibleItemsInfo
+
+                visibleItems.firstOrNull { it.index == index }?.let { item ->
+                    // Рассчитываем, какая часть элемента видна
+                    val itemTop = item.offset
+                    val itemBottom = item.offset + item.size
+                    val visibleTop = maxOf(itemTop, layoutInfo.viewportStartOffset)
+                    val visibleBottom = minOf(itemBottom, layoutInfo.viewportEndOffset)
+                    val visibleHeight = visibleBottom - visibleTop
+
+                    // Элемент считается видимым, если видно больше порогового значения
+                    visibleHeight > item.size * visibilityThreshold
+                } ?: false
+            }
+            .distinctUntilChanged()
+            .collect { visible ->
+                isVisible = visible
+            }
+    }
+
+    return isVisible
 }

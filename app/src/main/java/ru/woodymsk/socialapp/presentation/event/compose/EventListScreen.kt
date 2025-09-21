@@ -46,9 +46,14 @@ import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.compose.AppendLoadError
 import ru.woodymsk.socialapp.presentation.common.compose.LoadingIndicator
 import ru.woodymsk.socialapp.presentation.common.compose.RefreshLoadError
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
+import android.content.Context
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 
 
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=1S5gJ3zZWiBBGUYm-1
@@ -69,6 +74,7 @@ fun EventListScreen(
             lazyPagingItems.refresh()
         }
     )
+    val listState = rememberLazyListState()
 
     // Initial Upload processing
     LaunchedEffect(lazyPagingItems.loadState) {
@@ -115,6 +121,7 @@ fun EventListScreen(
             // show event list
             Column(modifier = Modifier.pullRefresh(pullRefreshState)) {
                 LazyColumn(
+                    state = listState,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
@@ -129,7 +136,10 @@ fun EventListScreen(
                         if (event != null) {
                             EventItem(
                                 event = event,
-                                onEvent = onEvent
+                                onEvent = onEvent,
+                                videoPlayerManager = state.videoPlayerManager,
+                                listState = listState,
+                                index = index,
                             )
                         }
                     }
@@ -202,9 +212,11 @@ fun EventListScreen(
 @Preview
 @Composable
 fun EventScreenPreview() {
-        val mockState = EventUiState(
+    val mockVideoPlayerManager = MockVideoPlayerManager(LocalContext.current)
+    val mockState = EventUiState(
         isAuth = true,
-        pagingDataFlow = flowOf(PagingData.from(mockEvents))
+        pagingDataFlow = flowOf(PagingData.from(mockEvents)),
+        videoPlayerManager = mockVideoPlayerManager,
     )
 
     SocialAppTheme {
@@ -212,6 +224,14 @@ fun EventScreenPreview() {
             state = mockState,
             onEvent = {},
         )
+    }
+}
+
+class MockVideoPlayerManager(context: Context) : VideoPlayerManager(context) {
+    override val player: ExoPlayer by lazy {
+        ExoPlayer.Builder(context).build().apply {
+            repeatMode = Player.REPEAT_MODE_ONE
+        }
     }
 }
 

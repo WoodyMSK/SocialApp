@@ -15,6 +15,7 @@ import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.BaseViewModel
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen
@@ -24,9 +25,10 @@ class EventListViewModel @Inject constructor(
     private val eventInteractor: EventInteractor,
     private val auth: AppAuth,
     private val router: Router,
+    private val videoPlayerManager: VideoPlayerManager,
 ) : BaseViewModel() {
 
-    private val _uiState = MutableStateFlow(EventUiState())
+    private val _uiState = MutableStateFlow(EventUiState(videoPlayerManager = videoPlayerManager))
     val uiState: StateFlow<EventUiState> = _uiState.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
@@ -78,6 +80,11 @@ class EventListViewModel @Inject constructor(
 
     private fun updateUIState(updater: (EventUiState) -> EventUiState) {
         _uiState.update(updater)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        videoPlayerManager.release()
     }
 
     private fun handleError(e: Throwable) = updateUIState { it.copy(error = AppError.handleError(e)) }
