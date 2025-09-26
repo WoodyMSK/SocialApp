@@ -21,17 +21,21 @@ class ProfileRepositoryImpl @Inject constructor(
     private val postMapper: PostMapper,
     private val postDao: PostDao,
     private val auth: AppAuth,
+    private val profilePrefs: ProfilePreferences,
 ) : ProfileRepository {
 
     override suspend fun logout() {
         auth.removeAuth()
+        profilePrefs.clearProfile()
         postRepository.removeAllDbPosts()
     }
 
     override suspend fun getProfileData(): User =
         withContextIO(handler) {
             val response = profileService.getProfileData(auth.authStateFlow.value.id.toString())
-            response.body().throwAppError(response)
+            val user = response.body().throwAppError(response)
+            profilePrefs.saveProfile(user)
+            return@withContextIO user
         }
 
     override suspend fun getProfilePostList(): List<PostEntity> =

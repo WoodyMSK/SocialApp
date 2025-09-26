@@ -26,12 +26,40 @@ import ru.woodymsk.socialapp.data.model.ErrorResponse
 import ru.woodymsk.socialapp.error.AppError
 import java.io.Serializable
 
-private const val KEY = "token"
+private const val KEY_TOKEN = "token"
+private const val KEY_USER_ID = "user_id"
+private const val KEY_USER_LOGIN = "user_login"
+private const val KEY_USER_NAME = "user_name"
+private const val KEY_USER_AVATAR = "user_avatar"
 
 var SharedPreferences.token: String?
-    get() = getString(KEY, null)
+    get() = getString(KEY_TOKEN, null)
     set(value) {
-        edit { putString(KEY, value) }
+        edit { putString(KEY_TOKEN, value) }
+    }
+
+var SharedPreferences.userId: Int
+    get() = getInt(KEY_USER_ID, 0)
+    set(value) {
+        edit { putInt(KEY_USER_ID, value) }
+    }
+
+var SharedPreferences.userLogin: String?
+    get() = getString(KEY_USER_LOGIN, null)
+    set(value) {
+        edit { putString(KEY_USER_LOGIN, value) }
+    }
+
+var SharedPreferences.userName: String?
+    get() = getString(KEY_USER_NAME, null)
+    set(value) {
+        edit { putString(KEY_USER_NAME, value) }
+    }
+
+var SharedPreferences.userAvatar: String?
+    get() = getString(KEY_USER_AVATAR, null)
+    set(value) {
+        edit { putString(KEY_USER_AVATAR, value) }
     }
 
 fun Int?.orZero(): Int = this ?: 0
