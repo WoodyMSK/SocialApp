@@ -10,4 +10,5 @@ data class EventUiState(
     val pagingDataFlow: Flow<PagingData<Event>> = emptyFlow(),
     val isAuth: Boolean = false,
     val error: AppError? = null,
+    val showAuthDialog: Boolean = false,
 )

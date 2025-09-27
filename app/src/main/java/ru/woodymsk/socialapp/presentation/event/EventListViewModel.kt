@@ -15,6 +15,7 @@ import ru.woodymsk.socialapp.domain.event.interactor.EventInteractor
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.BaseViewModel
+import ru.woodymsk.socialapp.presentation.common.Screens.authScreen
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen
@@ -49,10 +50,15 @@ class EventListViewModel @Inject constructor(
                     copy(datetime = convertDateFromIsoFormat(datetime))
                 }
             )
+            is EventEvents.Like -> like(event.id)
+            is EventEvents.GoToLoginScreen -> goToLoginScreen()
+            is EventEvents.HideAuthDialog -> hideAuthDialog()
         }
     }
 
     fun onBackPressed() = router.exit()
+
+    private fun goToLoginScreen() = router.replaceScreen(authScreen())
 
     private fun loadEvents() {
         _uiState.update {
@@ -74,6 +80,24 @@ class EventListViewModel @Inject constructor(
         viewModelScope.launch(exceptionHandler) {
             eventInteractor.deleteEvent(id)
         }
+    }
+
+    private fun like(id: Int) {
+        viewModelScope.launch(exceptionHandler) {
+            if (uiState.value.isAuth) {
+                eventInteractor.like(id)
+            } else {
+                showAuthDialog()
+            }
+        }
+    }
+
+    private fun showAuthDialog() {
+        updateUIState { it.copy(showAuthDialog = true) }
+    }
+
+    private fun hideAuthDialog() {
+        updateUIState { it.copy(showAuthDialog = false) }
     }
 
     private fun updateUIState(updater: (EventUiState) -> EventUiState) {

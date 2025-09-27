@@ -138,3 +138,20 @@ fun copyUriToFile(context: Context, contentUri: Uri): File? {
         null
     }
 }
+
+// converter function, more than 999 likes can be converted to 1k and so on
+fun Int.formatNumberShort(): String {
+    return when(this) {
+        in 0..999 -> this.toString()
+        in 1000..999_999 -> {
+            val value = this / 1000.0
+            val truncated = Math.floor(value * 10) / 10.0
+            if (truncated % 1 == 0.0) "${truncated.toInt()}k" else "%.1fk".format(truncated)
+        }
+        else -> {
+            val value = this / 1_000_000.0
+            val truncated = Math.floor(value * 10) / 10.0
+            if (truncated % 1 == 0.0) "${truncated.toInt()}kk" else "%.1fkk".format(truncated)
+        }
+    }
+}

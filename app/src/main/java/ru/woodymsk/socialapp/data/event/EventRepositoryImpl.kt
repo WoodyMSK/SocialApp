@@ -75,6 +75,16 @@ class EventRepositoryImpl @Inject constructor(
             response.body()?.let { eventDao.insertEvent(eventMapper.mapDtoToEntity(it)) }
         }
 
+    override suspend fun insertEventToDB(event: EventEntity) =
+        withContextIO(handler) {
+            eventDao.insertEvent(event)
+        }
+
+    override suspend fun getEventFromDB(id: Int): EventEntity =
+        withContextIO(handler) {
+            eventDao.getEventById(id)
+        }
+
     override suspend fun deleteEvent(id: String) =
         withContextIO(handler) {
             val response = eventService.removeEventById(id)
@@ -86,4 +96,26 @@ class EventRepositoryImpl @Inject constructor(
         withContextIO(handler) {
             eventDao.removeAllEvents()
         }
+
+    override suspend fun like(event: EventEntity) {
+        withContextIO(handler) {
+            eventDao.insertEvent(event)
+            val response = eventService.like(event.id)
+            val responseEvent = eventMapper.mapDtoToEntity(response.body().throwAppError(response))
+            if (responseEvent != event) {
+                eventDao.insertEvent(responseEvent)
+            }
+        }
+    }
+
+    override suspend fun deleteLike(event: EventEntity) {
+        withContextIO(handler) {
+            eventDao.insertEvent(event)
+            val response = eventService.deleteLike(event.id)
+            val responseEvent = eventMapper.mapDtoToEntity(response.body().throwAppError(response))
+            if (responseEvent != event) {
+                eventDao.insertEvent(responseEvent)
+            }
+        }
+    }
 }

@@ -29,6 +29,16 @@ interface EventService {
 
     @GET("api/events/latest")
     suspend fun getLatest(
-        @Query("count") count: Int)
-    : Response<List<EventDTO>>
+        @Query("count") count: Int
+    ): Response<List<EventDTO>>
+
+    @POST("api/events/{event_id}/likes")
+    suspend fun like(
+        @Path("event_id") id: Int
+    ): Response<EventDTO>
+
+    @DELETE("api/events/{event_id}/likes")
+    suspend fun deleteLike(
+        @Path("event_id") id: Int
+    ): Response<EventDTO>
 }

@@ -36,7 +36,7 @@
     <string name="try_again">Повторить попытку</string>
     <string name="retry">Повторить</string>
     <string name="something_went_wrong">Что-то пошло не так :(</string>
-    <string name="require_authorization">Необходимо авторизоваться</string>
+    <string name="require_authorization">Отсутствует авторизация</string>
     <string name="execute_login">Выполнить вход?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
@@ -66,6 +66,7 @@
     <string name="attach_file_button">Attach file button</string>
     <string name="speaker_selection_button">Speaker selection button</string>
     <string name="choosing_location_button">Choosing a location button</string>
+    <string name="alert_dialog_icon">Alert dialog icon</string>
     <string name="event_timing_button">event timing</string>
     <string name="back_button">Button to return to the previous screen</string>
     <string name="save_button">Save button</string>
