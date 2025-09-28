@@ -123,7 +123,7 @@ ext {
     lifecycle_viewmodel_compose_version = '2.8.0'
     compose_material_version = '1.5.0'
     compose_material3_version = '1.2.1'
-    coil_compose_version = '2.2.2'
+    coil_compose_version = '2.7.0'
     kotlinSerialization = '1.6.3'
     compose_nav_version = '2.8.6'
     accompanist_permissions = '0.28.0'
@@ -172,6 +172,7 @@ dependencies {
     implementation "androidx.compose.material:material:$compose_material_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"
     implementation "io.coil-kt:coil-compose:$coil_compose_version"
+    implementation "io.coil-kt:coil-video:$coil_compose_version"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinSerialization"
     implementation "androidx.navigation:navigation-compose:$compose_nav_version"
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_permissions"

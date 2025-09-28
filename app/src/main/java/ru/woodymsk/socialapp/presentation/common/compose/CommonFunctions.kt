@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.presentation.common.compose
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -67,7 +70,9 @@ fun LoadAvatar(url: String) {
 @Composable
 fun LoadImage(url: String) {
     SubcomposeAsyncImage(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp)),
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
             .crossfade(true)
@@ -219,4 +224,30 @@ fun isItemVisible(
     }
 
     return isVisible
+}
+
+@Composable
+fun RemoveAttachmentButton(
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .background(
+                color = Color.Black.copy(alpha = 0.7f),
+                shape = CircleShape
+            )
+            .clickable {
+                onRemove()
+            }
+            .padding(4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_close_24),
+            contentDescription = stringResource(R.string.remove_button_label),
+            tint = Color.White,
+            modifier = Modifier.size(16.dp)
+        )
+    }
 }
