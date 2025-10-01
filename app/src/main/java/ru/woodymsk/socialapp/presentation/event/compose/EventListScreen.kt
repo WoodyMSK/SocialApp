@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -31,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -43,6 +46,7 @@ import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.compose.AlertDialog
 import ru.woodymsk.socialapp.presentation.common.compose.AppendLoadError
 import ru.woodymsk.socialapp.presentation.common.compose.LoadingIndicator
 import ru.woodymsk.socialapp.presentation.common.compose.RefreshLoadError
@@ -97,12 +101,24 @@ fun EventListScreen(
         state.error?.let { error ->
             Toast.makeText(
                 context,
-                error.message ?: context.getString(R.string.download_error),
+                error.code,
                 Toast.LENGTH_LONG
             ).show()
             // Сбрасываем ошибку после показа
             onEvent(EventEvents.Error(null))
         }
+    }
+
+    if (state.showAuthDialog) {
+        AlertDialog(
+            onDismissRequest = { onEvent(EventEvents.HideAuthDialog) },
+            onConfirmation = { onEvent(EventEvents.GoToLoginScreen) },
+            dialogTitle = stringResource(id = R.string.require_authorization),
+            dialogText = stringResource(id = R.string.execute_login),
+            titleTextSize = 20.sp,
+            buttonTextSize = 16.sp,
+            icon = Icons.Default.Info,
+        )
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -129,7 +145,7 @@ fun EventListScreen(
                         if (event != null) {
                             EventItem(
                                 event = event,
-                                onEvent = onEvent
+                                onEvent = onEvent,
                             )
                         }
                     }
@@ -228,10 +244,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 55,
+        likes = "55",
         speakerIds = listOf(96),
         participantsIds = listOf(96),
         participatedByMe = false,
+        participantsNumber = "345",
         attachment = Attachment(
             url = "https://ik.imagekit.io/ube3bjrcz/2a47fb22-7803-411b-800e-c2b03c2402a7_ABW9phBTe.jpg",
             type = AttachmentType.IMAGE,
@@ -250,10 +267,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = true,
-        likes = 3,
+        likes = "3",
         speakerIds = listOf(96),
         participantsIds = listOf(96),
         participatedByMe = false,
+        participantsNumber = "35",
         attachment = null,
         ownedByMe = false,
     ),
@@ -269,10 +287,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 999,
+        likes = "999",
         speakerIds = listOf(96),
         participantsIds = listOf(96),
         participatedByMe = false,
+        participantsNumber = "45",
         attachment = null,
         ownedByMe = true,
     ),
@@ -288,10 +307,11 @@ private val mockEvents = listOf(
         type = EventType.OFFLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 0,
+        likes = "0",
         speakerIds = listOf(96),
         participantsIds = listOf(96),
         participatedByMe = false,
+        participantsNumber = "3453",
         attachment = null,
         ownedByMe = false,
     ),
@@ -307,10 +327,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 100,
+        likes = "100",
         speakerIds = listOf(87),
         participantsIds = listOf(87),
         participatedByMe = false,
+        participantsNumber = "3435345",
         attachment = null,
         ownedByMe = false,
     ),
@@ -326,10 +347,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 7,
+        likes = "7",
         speakerIds = listOf(87),
         participantsIds = listOf(87),
         participatedByMe = false,
+        participantsNumber = "3",
         attachment = null,
         ownedByMe = false,
     ),
@@ -345,10 +367,11 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 34,
+        likes = "34",
         speakerIds = listOf(87),
         participantsIds = listOf(87),
         participatedByMe = false,
+        participantsNumber = "344565",
         attachment = null,
         ownedByMe = false,
     ),
@@ -364,7 +387,7 @@ private val mockEvents = listOf(
         type = EventType.ONLINE,
         likeOwnerIds = listOf(),
         likedByMe = false,
-        likes = 0,
+        likes = "0",
         speakerIds = listOf(
             56,
             59,
@@ -373,6 +396,7 @@ private val mockEvents = listOf(
         ),
         participantsIds = listOf(68),
         participatedByMe = false,
+        participantsNumber = "34",
         attachment = Attachment(
             url = "https://ik.imagekit.io/ube3bjrcz/7152e3af-322c-4607-a52d-86f906bffd98_XZDy6EmFc.jpg",
             type = AttachmentType.IMAGE,

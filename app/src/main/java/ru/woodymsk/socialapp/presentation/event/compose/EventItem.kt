@@ -59,7 +59,7 @@ private const val VISIBLE_ROW_COUNT = 3
 @Composable
 fun EventItem(
     event: Event,
-    onEvent: (EventEvents) -> Unit
+    onEvent: (EventEvents) -> Unit,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = getTextLayoutResult(
@@ -214,7 +214,6 @@ fun EventItem(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // like button
-                    // TODO bug картинка лайка не меняется когда пользователь лайкает ивенты
                     Image(
                         painterResource(
                             id = if (event.likedByMe) {
@@ -230,20 +229,16 @@ fun EventItem(
                                 indication = null,
                                 interactionSource = interactionSource,
                             ) {
-                                // TODO add like event function
+                                onEvent(EventEvents.Like(event.id))
                             }
                     )
                     // count of likes
                     Box(
-                        modifier = Modifier.size(width = 33.dp, height = 40.dp),
+                        modifier = Modifier.size(width = 53.dp, height = 40.dp),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Text(
-                            text = if (event.likes != 0) {
-                                event.likes.toString() // TODO add converter function, more than 999 likes can be converted to 1k and so on
-                            } else {
-                                stringResource(R.string.empty_text)
-                            },
+                            text = event.likes,
                             modifier = Modifier.padding(end = 4.dp),
                             style = typography().labelLarge,
                         )
@@ -253,7 +248,6 @@ fun EventItem(
                         painterResource(id = R.drawable.ic_share_figma_18),
                         contentDescription = stringResource(id = R.string.share_button),
                         modifier = Modifier
-                            .padding(start = 20.dp)
                             .clickable(
                                 indication = null,
                                 interactionSource = interactionSource,
@@ -277,11 +271,7 @@ fun EventItem(
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         Text(
-                            text = if (event.participantsIds.isNotEmpty()) {
-                                event.participantsIds.size.toString()
-                            } else {
-                                stringResource(R.string.empty_text)
-                            },
+                            text = event.participantsNumber,
                             style = typography().labelLarge,
                         )
                     }
@@ -297,7 +287,7 @@ fun PreviewEventItem() {
     SocialAppTheme {
         EventItem(
             event = mockEvent,
-            onEvent = {}
+            onEvent = {},
         )
     }
 }
@@ -313,10 +303,11 @@ private val mockEvent = Event(
     type = EventType.ONLINE,
     likeOwnerIds = listOf(),
     likedByMe = true,
-    likes = 3,
+    likes = "98888888",
     speakerIds = listOf(96),
     participantsIds = listOf(96),
     participatedByMe = false,
+    participantsNumber = "10",
     attachment = null,
     ownedByMe = false,
 )

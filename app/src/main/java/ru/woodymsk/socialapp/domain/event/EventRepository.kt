@@ -9,5 +9,9 @@ interface EventRepository {
     fun getPagedEventList(): Flow<PagingData<EventEntity>>
     suspend fun createEvent(eventEntity: EventEntity, upload: MediaUpload?)
     suspend fun deleteEvent(id: String)
+    suspend fun insertEventToDB(event: EventEntity)
+    suspend fun getEventFromDB(id: Int): EventEntity
     suspend fun removeAllDbEvents()
+    suspend fun like(event: EventEntity)
+    suspend fun deleteLike(event: EventEntity)
 }
