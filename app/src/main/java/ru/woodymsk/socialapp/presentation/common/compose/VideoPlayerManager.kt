@@ -1,6 +1,7 @@
 package ru.woodymsk.socialapp.presentation.common.compose
 
 import android.content.Context
+import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -21,7 +22,7 @@ open class VideoPlayerManager @Inject constructor(
     private var currentVideoUrl: String? = null
     private var isPlaying: Boolean = false
 
-    fun playVideo(uri: String) {
+    fun playVideo(uri: String, eventId: Int? = null) {
         if (currentVideoUrl != uri) {
             player.setMediaItem(MediaItem.fromUri(uri))
             player.prepare()
@@ -32,30 +33,15 @@ open class VideoPlayerManager @Inject constructor(
     }
 
     fun pause() {
-        player.pause()
-        isPlaying = false
-    }
-
-    fun pauseIfPlaying(uri: String) {
-        if (currentVideoUrl == uri && isPlaying) {
+        if (isPlaying) {
             player.pause()
             isPlaying = false
         }
-    }
-
-    fun stop() {
-        player.stop()
-        currentVideoUrl = null
-        isPlaying = false
     }
 
     fun release() {
         player.release()
         currentVideoUrl = null
         isPlaying = false
-    }
-
-    fun isPlaying(uri: String): Boolean {
-        return currentVideoUrl == uri && isPlaying
     }
 }

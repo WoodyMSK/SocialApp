@@ -52,6 +52,7 @@ import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import android.content.Context
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.snapshotFlow
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 
@@ -75,6 +76,45 @@ fun EventListScreen(
         }
     )
     val listState = rememberLazyListState()
+    val mostVisibleVideoEvent = remember { mutableStateOf<Event?>(null) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                // Находим наиболее видимое видео-событие
+                val videoEvents = visibleItems.mapNotNull { item ->
+                    lazyPagingItems[item.index]?.takeIf { event ->
+                        event.attachment?.type == AttachmentType.VIDEO
+                    }?.let { event ->
+                        Pair(event, item)
+                    }
+                }
+
+                if (videoEvents.isNotEmpty()) {
+                    // Выбираем наиболее видимое видео (с максимальной площадью видимости)
+                    val mostVisible = videoEvents.maxByOrNull { (event, item) ->
+                        val visibleTop = maxOf(item.offset, listState.layoutInfo.viewportStartOffset)
+                        val visibleBottom = minOf(item.offset + item.size, listState.layoutInfo.viewportEndOffset)
+                        visibleBottom - visibleTop
+                    }?.first
+
+                    if (mostVisible != mostVisibleVideoEvent.value) {
+                        mostVisibleVideoEvent.value = mostVisible
+
+                        // Воспроизводим новое видео
+                        mostVisible?.attachment?.url?.let { url ->
+                            state.videoPlayerManager.playVideo(url, mostVisible.id)
+                        }
+                    }
+                } else {
+                    // Нет видимых видео - ставим на паузу
+                    if (mostVisibleVideoEvent.value != null) {
+                        state.videoPlayerManager.pause()
+                        mostVisibleVideoEvent.value = null
+                    }
+                }
+            }
+    }
 
     // Initial Upload processing
     LaunchedEffect(lazyPagingItems.loadState) {
@@ -138,8 +178,6 @@ fun EventListScreen(
                                 event = event,
                                 onEvent = onEvent,
                                 videoPlayerManager = state.videoPlayerManager,
-                                listState = listState,
-                                index = index,
                             )
                         }
                     }
