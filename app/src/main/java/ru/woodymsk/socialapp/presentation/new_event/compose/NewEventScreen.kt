@@ -13,9 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -23,8 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -51,7 +47,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,10 +54,13 @@ import androidx.compose.ui.unit.dp
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.AttachmentType.IMAGE
+import ru.woodymsk.socialapp.data.model.AttachmentType.VIDEO
 import ru.woodymsk.socialapp.domain.copyUriToFile
 import ru.woodymsk.socialapp.domain.createTempImageUri
 import ru.woodymsk.socialapp.presentation.common.compose.LaunchSettingsDialog
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
+import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDuration
+import ru.woodymsk.socialapp.presentation.common.compose.RemoveAttachmentButton
 import ru.woodymsk.socialapp.presentation.common.compose.rememberPermissionsState
 import ru.woodymsk.socialapp.presentation.common.getImagePermissionType
 import ru.woodymsk.socialapp.presentation.new_event.model.NewEventEvents
@@ -106,18 +104,25 @@ fun NewEventScreen(
             }
         }
     // media storage launcher
-    val pickImageLauncher =
+    val pickMediaLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
                 uri?.let {
-                    val copiedFile = copyUriToFile(context, uri)
+                    // defining the content type
+                    val mimeType = context.contentResolver.getType(uri)
+                    val attachmentType = when {
+                        mimeType?.startsWith("image/") == true -> IMAGE
+                        mimeType?.startsWith("video/") == true -> VIDEO
+                        else -> null
+                    }
+                    val copiedFile = copyUriToFile(context, uri, mimeType)
                     copiedFile?.let { file ->
                         val fileUri = Uri.fromFile(file).toString()
                         onEvent(
                             NewEventEvents.AttachmentUpdated(
                                 Attachment(
-                                    type = IMAGE,
+                                    type = attachmentType,
                                     url = fileUri
                                 )
                             )
@@ -130,10 +135,9 @@ fun NewEventScreen(
     val getMediaPermission = rememberPermissionsState(
         permissions = listOf(getImagePermissionType()),
         onGrantedAction = {
-            pickImageLauncher.launch(
+            pickMediaLauncher.launch(
                 PickVisualMediaRequest(
-                    ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
+                    ActivityResultContracts.PickVisualMedia.ImageAndVideo)
             )
         },
         onPermanentlyDeniedAction = {
@@ -332,28 +336,45 @@ fun NewEventScreen(
                 )
 
                 if (state.event.attachment?.type == IMAGE) {
-                    Spacer(modifier = Modifier.height(16.dp))
                     // event image with remove button
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(top = 16.dp),
                     ) {
                         LoadImage(url = state.event.attachment.url)
-                        Button(
-                            colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_typography)),
-                            onClick = {
+                        // remove button
+                        RemoveAttachmentButton(
+                            onRemove = {
                                 onEvent(NewEventEvents.AttachmentUpdated(null))
                             },
                             modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = 16.dp)
-                        ) {
-                            Text(
-                                style = typography().labelLarge,
-                                color = Color.White,
-                                text = stringResource(id = R.string.remove_button_label)
-                            )
-                        }
+                                .align(Alignment.TopEnd)
+                                .padding(8.dp)
+                        )
+                    }
+                }
+
+                if (state.event.attachment?.type == VIDEO) {
+                    // video preview with remove button
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                    ) {
+                        PreviewVideoImageWithDuration(
+                            videoUri = state.event.attachment.url,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        // remove button
+                        RemoveAttachmentButton(
+                            onRemove = {
+                                onEvent(NewEventEvents.AttachmentUpdated(null))
+                            },
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(8.dp)
+                        )
                     }
                 }
             }

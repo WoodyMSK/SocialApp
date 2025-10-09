@@ -11,8 +11,6 @@ import ru.woodymsk.socialapp.data.event.db.EventDatabase
 import ru.woodymsk.socialapp.data.event.db.EventKeyDao
 import ru.woodymsk.socialapp.data.event.mapper.EventMapper
 import ru.woodymsk.socialapp.data.event.model.EventEntity
-import ru.woodymsk.socialapp.data.model.Attachment
-import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.MediaUpload
 import ru.woodymsk.socialapp.domain.event.EventRepository
 import ru.woodymsk.socialapp.domain.post.PostRepository
@@ -63,10 +61,7 @@ class EventRepositoryImpl @Inject constructor(
                 eventService.createEvent(
                     eventMapper.mapEntityToDto(
                         eventEntity.copy(
-                            attachment = Attachment(
-                                media.url,
-                                AttachmentType.IMAGE
-                            )
+                            attachment = eventEntity.attachment?.copy(url = media.url)
                         )
                     )
                 )

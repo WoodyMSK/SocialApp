@@ -59,6 +59,7 @@
     <string name="context_menu_button">ContextMenuButton</string>
     <string name="load_avatar_by_coil">LoadAvatarByCoil</string>
     <string name="load_image_by_coil">LoadImageByCoil</string>
+    <string name="preview_video">PreviewVideo</string>
     <string name="add_event">Add event</string>
     <string name="like_button">Like button</string>
     <string name="share_button">Share button</string>

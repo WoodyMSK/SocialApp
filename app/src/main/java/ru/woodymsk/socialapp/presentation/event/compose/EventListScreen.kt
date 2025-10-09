@@ -85,7 +85,7 @@ fun EventListScreen(
     LaunchedEffect(listState, lazyPagingItems) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
-                // Find most visible video event
+                // Find most visible video event // TODO доработать алгоритм когда одновременно на экране видно два ивента с видео
                 val videoEvents = visibleItems.mapNotNull { item ->
                     try {
                         // check that the index is valid and the element exists

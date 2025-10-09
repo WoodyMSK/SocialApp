@@ -1,8 +1,10 @@
 package ru.woodymsk.socialapp.domain
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import java.io.File
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -113,16 +115,23 @@ fun createTempImageUri(context: Context): Uri? {
     }
 }
 
-fun copyUriToFile(context: Context, contentUri: Uri): File? {
+fun copyUriToFile(context: Context, contentUri: Uri, mimeType: String?): File? {
     return try {
         // Получаем InputStream из ContentResolver
         val inputStream: InputStream? = context.contentResolver.openInputStream(contentUri)
 
+        // Определяем расширение файла по MIME-типу
+        val extension = when {
+            mimeType?.startsWith("image/") == true -> ".jpg"
+            mimeType?.startsWith("video/") == true -> ".mp4"
+            else -> ".tmp"
+        }
+
         // Создаем временный файл в кэше приложения
         val outputFile = File.createTempFile(
-            "IMG_${System.currentTimeMillis()}",
-            ".jpg",
-            context.cacheDir // или context.filesDir для постоянного хранения
+            "MEDIA_${System.currentTimeMillis()}",
+            extension,
+            context.cacheDir
         )
 
         // Копируем данные
@@ -153,5 +162,41 @@ fun Int.formatNumberShort(): String {
             val truncated = Math.floor(value * 10) / 10.0
             if (truncated % 1 == 0.0) "${truncated.toInt()}kk" else "%.1fkk".format(truncated)
         }
+    }
+}
+
+fun getVideoDuration(context: Context, videoUri: String): String? {
+    return try {
+        val retriever = MediaMetadataRetriever()
+
+        if (videoUri.startsWith("http")) {
+            // Для онлайн видео
+            retriever.setDataSource(videoUri, HashMap())
+        } else {
+            // Для локальных файлов
+            retriever.setDataSource(context, videoUri.toUri())
+        }
+        // Получаем длительность видео
+        val durationMs = retriever.extractMetadata(
+            MediaMetadataRetriever.METADATA_KEY_DURATION
+        )?.toLongOrNull() ?: 0
+        // Освобождение ресурсов
+        retriever.release()
+        formatVideoDuration(durationMs)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun formatVideoDuration(milliseconds: Long): String {
+    val seconds = (milliseconds / 1000) % 60
+    val minutes = (milliseconds / (1000 * 60)) % 60
+    val hours = (milliseconds / (1000 * 60 * 60)) % 24
+
+    return if (hours > 0) {
+        String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    } else {
+        String.format("%02d:%02d", minutes, seconds)
     }
 }
