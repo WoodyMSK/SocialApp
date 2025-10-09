@@ -197,35 +197,43 @@ fun EventItem(
                     style = typography().bodyMedium,
                     maxLines = 1,
                 )
-                Text(
-                    text = buildAnnotatedString {
-                        append(displayDescriptionText)
-                        withStyle(
-                            SpanStyle(
-                                fontSize = 14.sp,
-                                fontFamily = robotoFamily,
-                                fontWeight = FontWeight.W500,
-                                color = colorResource(R.color.purple_typography),
-                            )
-                        ) {
-                            // if isn't Expanded, add button "read more"
-                            if (!isContentExpanded.value) {
-                                append(stringResource(R.string.read_next)) //TODO bug. При нажатии на любое сообщение, вне зависимости от количества строк, оно будет свёрнуто
+                if (event.content.isNotEmpty()) {
+                    Text(
+                        text = buildAnnotatedString {
+                            append(displayDescriptionText)
+                            withStyle(
+                                SpanStyle(
+                                    fontSize = 14.sp,
+                                    fontFamily = robotoFamily,
+                                    fontWeight = FontWeight.W500,
+                                    color = colorResource(R.color.purple_typography),
+                                )
+                            ) {
+                                // if isn't Expanded, add button "read more"
+                                if (!isContentExpanded.value) {
+                                    append(stringResource(R.string.read_next))
+                                }
                             }
-                        }
-                    },
-                    style = typography().bodyMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 32.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = interactionSource,
-                        ) { isContentExpanded.value = !isContentExpanded.value },
-                )
+                        },
+                        style = typography().bodyMedium,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp)
+                            .clickable(
+                                indication = null,
+                                interactionSource = interactionSource,
+                            ) {
+                                if (lineCount > VISIBLE_ROW_COUNT) {
+                                    isContentExpanded.value = !isContentExpanded.value
+                                }
+                            },
+                    )
+                }
                 // actions bar
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // like button
@@ -321,7 +329,7 @@ private val mockEvent = Event(
     type = EventType.ONLINE,
     likeOwnerIds = listOf(),
     likedByMe = true,
-    likes = "98888888",
+    likes = "988",
     speakerIds = listOf(96),
     participantsIds = listOf(96),
     participatedByMe = false,
