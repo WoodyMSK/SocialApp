@@ -50,9 +50,15 @@ import ru.woodymsk.socialapp.presentation.common.compose.AlertDialog
 import ru.woodymsk.socialapp.presentation.common.compose.AppendLoadError
 import ru.woodymsk.socialapp.presentation.common.compose.LoadingIndicator
 import ru.woodymsk.socialapp.presentation.common.compose.RefreshLoadError
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
+import android.content.Context
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.snapshotFlow
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 
 
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=1S5gJ3zZWiBBGUYm-1
@@ -73,6 +79,55 @@ fun EventListScreen(
             lazyPagingItems.refresh()
         }
     )
+    val listState = rememberLazyListState()
+    val mostVisibleVideoEvent = remember { mutableStateOf<Event?>(null) }
+
+    LaunchedEffect(listState, lazyPagingItems) {
+        snapshotFlow { listState.layoutInfo.visibleItemsInfo }
+            .collect { visibleItems ->
+                // Find most visible video event
+                val videoEvents = visibleItems.mapNotNull { item ->
+                    try {
+                        // check that the index is valid and the element exists
+                        if (item.index >= 0 && item.index < lazyPagingItems.itemCount) {
+                            lazyPagingItems[item.index]?.takeIf { event ->
+                                event.attachment?.type == AttachmentType.VIDEO
+                            }?.let { event ->
+                                Pair(event, item)
+                            }
+                        } else {
+                            null
+                        }
+                    } catch (e: Exception) {
+                        null
+                    }
+                }
+
+                if (videoEvents.isNotEmpty()) {
+                    // Select most visible video (with the maximum viewing area)
+                    val mostVisible = videoEvents.maxByOrNull { (event, item) ->
+                        val visibleTop = maxOf(item.offset, listState.layoutInfo.viewportStartOffset)
+                        val visibleBottom = minOf(item.offset + item.size, listState.layoutInfo.viewportEndOffset)
+                        visibleBottom - visibleTop
+                    }?.first
+
+                    if (mostVisible != mostVisibleVideoEvent.value) {
+                        mostVisibleVideoEvent.value = mostVisible
+
+                        // Play new video
+                        mostVisible?.attachment?.url?.let { url ->
+                            state.videoPlayerManager.playVideo(url)
+                        }
+                    }
+                } else {
+                    // if there are no visible videos, then pause video player
+                    if (mostVisibleVideoEvent.value != null) {
+                        state.videoPlayerManager.pause()
+                        mostVisibleVideoEvent.value = null
+                    }
+                }
+            }
+    }
 
     // Initial Upload processing
     LaunchedEffect(lazyPagingItems.loadState) {
@@ -131,6 +186,7 @@ fun EventListScreen(
             // show event list
             Column(modifier = Modifier.pullRefresh(pullRefreshState)) {
                 LazyColumn(
+                    state = listState,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxSize()
@@ -146,6 +202,7 @@ fun EventListScreen(
                             EventItem(
                                 event = event,
                                 onEvent = onEvent,
+                                videoPlayerManager = state.videoPlayerManager,
                             )
                         }
                     }
@@ -218,9 +275,12 @@ fun EventListScreen(
 @Preview
 @Composable
 fun EventScreenPreview() {
-        val mockState = EventUiState(
+    val mockVideoPlayerManager = MockVideoPlayerManager(LocalContext.current)
+    val mockState = EventUiState(
         isAuth = true,
-        pagingDataFlow = flowOf(PagingData.from(mockEvents))
+        pagingDataFlow = flowOf(PagingData.from(mockEvents)),
+        showAuthDialog = false,
+        videoPlayerManager = mockVideoPlayerManager,
     )
 
     SocialAppTheme {
@@ -228,6 +288,14 @@ fun EventScreenPreview() {
             state = mockState,
             onEvent = {},
         )
+    }
+}
+
+class MockVideoPlayerManager(context: Context) : VideoPlayerManager(context) {
+    override val player: ExoPlayer by lazy {
+        ExoPlayer.Builder(context).build().apply {
+            repeatMode = Player.REPEAT_MODE_ONE
+        }
     }
 }
 

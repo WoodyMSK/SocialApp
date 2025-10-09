@@ -5,12 +5,15 @@ import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
 import ru.woodymsk.socialapp.di.DaggerAppComponent
+import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import javax.inject.Inject
 
 class SocialApp : Application(), HasAndroidInjector {
 
     @Inject
     lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+    @Inject
+    lateinit var videoPlayerManager: VideoPlayerManager
 
     override fun onCreate() {
         super.onCreate()
@@ -22,6 +25,11 @@ class SocialApp : Application(), HasAndroidInjector {
             .context(this)
             .build()
             .inject(this)
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        videoPlayerManager.release()
     }
 
     override fun androidInjector(): AndroidInjector<Any> = dispatchingAndroidInjector
