@@ -59,7 +59,7 @@ import ru.woodymsk.socialapp.domain.copyUriToFile
 import ru.woodymsk.socialapp.domain.createTempImageUri
 import ru.woodymsk.socialapp.presentation.common.compose.LaunchSettingsDialog
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
-import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDuration
+import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDurationAndPlayButton
 import ru.woodymsk.socialapp.presentation.common.compose.RemoveAttachmentButton
 import ru.woodymsk.socialapp.presentation.common.compose.rememberPermissionsState
 import ru.woodymsk.socialapp.presentation.common.getImagePermissionType
@@ -362,7 +362,7 @@ fun NewEventScreen(
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                     ) {
-                        PreviewVideoImageWithDuration(
+                        PreviewVideoImageWithDurationAndPlayButton(
                             videoUri = state.event.attachment.url,
                             modifier = Modifier.fillMaxWidth()
                         )

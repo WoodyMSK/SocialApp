@@ -80,50 +80,30 @@ fun EventListScreen(
         }
     )
     val listState = rememberLazyListState()
-    val mostVisibleVideoEvent = remember { mutableStateOf<Event?>(null) }
+    var playingVideoEventId by remember { mutableStateOf<Int?>(null) }
 
-    LaunchedEffect(listState, lazyPagingItems) {
+    // tracking the visibility of video events to pause while scrolling
+    LaunchedEffect(listState, lazyPagingItems, playingVideoEventId) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
-                // Find most visible video event // TODO доработать алгоритм когда одновременно на экране видно два ивента с видео
-                val videoEvents = visibleItems.mapNotNull { item ->
-                    try {
-                        // check that the index is valid and the element exists
-                        if (item.index >= 0 && item.index < lazyPagingItems.itemCount) {
-                            lazyPagingItems[item.index]?.takeIf { event ->
-                                event.attachment?.type == AttachmentType.VIDEO
-                            }?.let { event ->
-                                Pair(event, item)
+                if (playingVideoEventId != null) {
+                    // checking if the event is visible with the video being played
+                    val isPlayingVideoVisible = visibleItems.any { item ->
+                        try {
+                            if (item.index >= 0 && item.index < lazyPagingItems.itemCount) {
+                                lazyPagingItems[item.index]?.id == playingVideoEventId
+                            } else {
+                                false
                             }
-                        } else {
-                            null
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                }
-
-                if (videoEvents.isNotEmpty()) {
-                    // Select most visible video (with the maximum viewing area)
-                    val mostVisible = videoEvents.maxByOrNull { (event, item) ->
-                        val visibleTop = maxOf(item.offset, listState.layoutInfo.viewportStartOffset)
-                        val visibleBottom = minOf(item.offset + item.size, listState.layoutInfo.viewportEndOffset)
-                        visibleBottom - visibleTop
-                    }?.first
-
-                    if (mostVisible != mostVisibleVideoEvent.value) {
-                        mostVisibleVideoEvent.value = mostVisible
-
-                        // Play new video
-                        mostVisible?.attachment?.url?.let { url ->
-                            state.videoPlayerManager.playVideo(url)
+                        } catch (e: Exception) {
+                            false
                         }
                     }
-                } else {
-                    // if there are no visible videos, then pause video player
-                    if (mostVisibleVideoEvent.value != null) {
+
+                    // if the video being played is not visible, we pause it
+                    if (!isPlayingVideoVisible) {
                         state.videoPlayerManager.pause()
-                        mostVisibleVideoEvent.value = null
+                        playingVideoEventId = null
                     }
                 }
             }
@@ -203,6 +183,20 @@ fun EventListScreen(
                                 event = event,
                                 onEvent = onEvent,
                                 videoPlayerManager = state.videoPlayerManager,
+                                isVideoPlaying = event.id == playingVideoEventId,
+                                onVideoPlayPause = { play ->
+                                    if (play) {
+                                        // if there is already a video playing, we pause it
+                                        if (playingVideoEventId != null && playingVideoEventId != event.id) {
+                                            state.videoPlayerManager.pause()
+                                        }
+                                        playingVideoEventId = event.id
+                                        state.videoPlayerManager.playVideo(event.attachment?.url ?: "")
+                                    } else {
+                                        playingVideoEventId = null
+                                        state.videoPlayerManager.pause()
+                                    }
+                                }
                             )
                         }
                     }
