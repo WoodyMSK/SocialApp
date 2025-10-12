@@ -71,6 +71,7 @@
     <string name="event_timing_button">event timing</string>
     <string name="back_button">Button to return to the previous screen</string>
     <string name="save_button">Save button</string>
+    <string name="play_video_button">Play video button</string>
     <string name="event_date_selection_button">Event date selection button</string>
     <string name="new_event_screen_title">New event</string>
     <string name="remove_button_label">Remove</string>

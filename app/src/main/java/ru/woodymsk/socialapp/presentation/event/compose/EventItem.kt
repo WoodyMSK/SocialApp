@@ -48,6 +48,7 @@ import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.formatDate
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
+import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDurationAndPlayButton
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerWithControls
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
@@ -65,6 +66,8 @@ fun EventItem(
     event: Event,
     onEvent: (EventEvents) -> Unit,
     videoPlayerManager: VideoPlayerManager,
+    isVideoPlaying: Boolean = false,
+    onVideoPlayPause: (Boolean) -> Unit = {},
 ) {
     val textMeasurer = rememberTextMeasurer()
     val textLayoutResult = getTextLayoutResult(
@@ -175,13 +178,28 @@ fun EventItem(
             }
             // event attachment video
             if (event.attachment?.type == AttachmentType.VIDEO) {
-                VideoPlayerWithControls(
-                    videoUrl = event.attachment.url,
-                    videoPlayerManager = videoPlayerManager,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16 / 9f)
-                )
+                if (isVideoPlaying) {
+                    VideoPlayerWithControls(
+                        videoUrl = event.attachment.url,
+                        videoPlayerManager = videoPlayerManager,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16 / 9f)
+                    )
+                } else {
+                    PreviewVideoImageWithDurationAndPlayButton(
+                        videoUri = event.attachment.url,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(16 / 9f)
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() },
+                            ) {
+                                onVideoPlayPause(true)
+                            }
+                    )
+                }
             }
             // text content
             Column(modifier = Modifier.padding(16.dp)) {

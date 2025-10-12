@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.presentation.common.compose
 
+import androidx.annotation.OptIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -8,8 +9,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 
+@OptIn(UnstableApi::class)
 @Composable
 fun VideoPlayerWithControls(
     videoUrl: String,
@@ -25,7 +28,7 @@ fun VideoPlayerWithControls(
                     videoPlayerManager.player.pause()
                 }
                 Lifecycle.Event.ON_RESUME -> {
-                    videoPlayerManager.player.play()
+                    // We do not resume automatically - management via the UI
                 }
                 Lifecycle.Event.ON_DESTROY -> {
                     // We are not releasing here because the video player is a singleton
@@ -52,8 +55,14 @@ fun VideoPlayerWithControls(
             PlayerView(context).apply {
                 player = videoPlayerManager.player
                 useController = true
+                setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        update = { playerView ->
+            videoPlayerManager.player.pause()
+            videoPlayerManager.player.play()
+            playerView.invalidate()
+        },
     )
 }

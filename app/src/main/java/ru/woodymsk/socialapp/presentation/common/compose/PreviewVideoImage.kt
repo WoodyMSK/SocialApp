@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.compose.SubcomposeAsyncImage
@@ -34,6 +35,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.domain.getVideoDuration
+import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.typography
 
 @Composable
@@ -81,7 +83,7 @@ fun PreviewVideoImage(
 }
 
 @Composable
-fun PreviewVideoImageWithDuration(
+fun PreviewVideoImageWithDurationAndPlayButton(
     videoUri: String,
     modifier: Modifier = Modifier,
 ) {
@@ -96,6 +98,7 @@ fun PreviewVideoImageWithDuration(
 
     Box(modifier = modifier) {
         PreviewVideoImage(videoUri, modifier = Modifier.fillMaxSize())
+        PlayVideoButton(modifier = Modifier.align(Alignment.Center))
 
         // Отображение длительности видео в правом нижнем углу
         duration?.let {
@@ -114,5 +117,16 @@ fun PreviewVideoImageWithDuration(
                     .padding(horizontal = 6.dp, vertical = 2.dp)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPreviewVideoImageWithDuration() {
+    SocialAppTheme {
+        PreviewVideoImageWithDurationAndPlayButton(
+            videoUri = "mockUri",
+            modifier = Modifier,
+        )
     }
 }

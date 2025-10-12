@@ -208,3 +208,21 @@ fun RemoveAttachmentButton(
         )
     }
 }
+
+@Composable
+fun PlayVideoButton(
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_play_24),
+        contentDescription = stringResource(R.string.play_video_button),
+        modifier = modifier
+            .size(60.dp)
+            .background(
+                color = Color.Black.copy(alpha = 0.6f),
+                shape = CircleShape
+            )
+            .padding(12.dp),
+        tint = Color.White
+    )
+}
