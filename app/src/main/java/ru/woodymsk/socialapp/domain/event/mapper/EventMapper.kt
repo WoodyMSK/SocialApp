@@ -67,6 +67,7 @@ class EventMapper @Inject constructor() {
         id = item.id,
         authorId = item.authorId,
         author = item.author,
+        authorJob = item.authorJob,
         authorAvatar = item.authorAvatar,
         content = item.content,
         datetime = item.datetime,

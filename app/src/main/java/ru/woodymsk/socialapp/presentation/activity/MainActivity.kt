@@ -12,9 +12,11 @@ import com.github.terrakok.cicerone.Replace
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.Screen
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import com.yandex.mapkit.MapKitFactory
 import dagger.android.AndroidInjection
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.woodymsk.socialapp.BuildConfig
 import ru.woodymsk.socialapp.R.id.itBottomNavigationAuthScreen
 import ru.woodymsk.socialapp.R.id.itBottomNavigationEventScreen
 import ru.woodymsk.socialapp.R.id.itBottomNavigationMyProfileScreen
@@ -45,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         AndroidInjection.inject(this)
+
+        MapKitFactory.setApiKey(BuildConfig.MAPKIT_API_KEY)
+        MapKitFactory.initialize(this)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
             .also { setContentView(it.root) }
@@ -91,6 +96,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        MapKitFactory.getInstance().onStop()
     }
 
     private fun selectBottomMenuItems(screen: Screen) {

@@ -34,9 +34,12 @@ class EventInteractor @Inject constructor(
         )
     }
 
+    suspend fun getEventFromDB(id: Int) =
+        eventMapper.mapSingleEventEntityToEvent(eventRepository.getEventFromDB(id))
+
     suspend fun deleteEvent(id: String) = eventRepository.deleteEvent(id)
     suspend fun like(id: Int) {
-        val event = eventMapper.mapSingleEventEntityToEvent(eventRepository.getEventFromDB(id))
+        val event = getEventFromDB(id)
         val updatedEvent = if (event.likedByMe) {
             event.copy(
                 likedByMe = false,

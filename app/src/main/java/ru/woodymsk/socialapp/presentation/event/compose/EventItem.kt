@@ -46,9 +46,12 @@ import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.formatDate
+import ru.woodymsk.socialapp.presentation.common.compose.LikeButton
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
 import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
+import ru.woodymsk.socialapp.presentation.common.compose.ParticipantButton
 import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDurationAndPlayButton
+import ru.woodymsk.socialapp.presentation.common.compose.ShareButton
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerWithControls
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
@@ -97,7 +100,11 @@ fun EventItem(
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
         Column(
-            Modifier.background(MaterialTheme.colorScheme.surface),
+            Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .clickable {
+                    onEvent(EventEvents.GoToEventDetailScreen(event.id))
+                },
         ) {
             // header
             Row(
@@ -255,23 +262,10 @@ fun EventItem(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     // like button
-                    Image(
-                        painterResource(
-                            id = if (event.likedByMe) {
-                                R.drawable.ic_like_filled_18
-                            } else {
-                                R.drawable.ic_like_outlined_18
-                            }
-                        ),
-                        contentDescription = stringResource(R.string.like_button),
-                        modifier = Modifier
-                            .padding(start = 12.dp, end = 8.dp)
-                            .clickable(
-                                indication = null,
-                                interactionSource = interactionSource,
-                            ) {
-                                onEvent(EventEvents.Like(event.id))
-                            }
+                    LikeButton(
+                        isLiked = event.likedByMe,
+                        modifier = Modifier.padding(start = 12.dp, end = 8.dp),
+                        onClick = { onEvent(EventEvents.Like(event.id)) },
                     )
                     // count of likes
                     Box(
@@ -285,26 +279,25 @@ fun EventItem(
                         )
                     }
                     // share button
-                    Image(
-                        painterResource(id = R.drawable.ic_share_figma_18),
-                        contentDescription = stringResource(id = R.string.share_button),
-                        modifier = Modifier
-                            .clickable(
-                                indication = null,
-                                interactionSource = interactionSource,
-                            ) {
-                                // TODO add share event function
-                            }
+                    ShareButton(
+                        iconTint = colorResource(R.color.purple_typography),
+                        onClick = {
+                            // TODO add share event function
+                        },
                     )
                     // spacer
-                    Spacer(modifier = Modifier
-                        .weight(1f)
-                        .height(40.dp))
+                    Spacer(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(40.dp)
+                    )
                     // number of participants counter
-                    Image(
-                        painterResource(id = R.drawable.ic_people_outline_22),
-                        contentDescription = stringResource(R.string.participants_icon),
+                    ParticipantButton(
+                        isParticipant = event.participatedByMe,
                         modifier = Modifier.padding(end = 8.dp),
+                        onClick = {
+                            // TODO add function of taking part in an event
+                        },
                     )
                     // participants number
                     Box(

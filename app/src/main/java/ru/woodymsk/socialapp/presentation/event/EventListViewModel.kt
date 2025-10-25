@@ -54,6 +54,7 @@ class EventListViewModel @Inject constructor(
             )
             is EventEvents.Like -> like(event.id)
             is EventEvents.GoToLoginScreen -> goToLoginScreen()
+            is EventEvents.GoToEventDetailScreen -> goToEventDetailsScreen(event.id)
             is EventEvents.HideAuthDialog -> hideAuthDialog()
         }
     }
@@ -73,6 +74,9 @@ class EventListViewModel @Inject constructor(
 
     private fun goToNewEventScreen(event: Event?) =
         navigateTo(Screen.NewEventScreen(event))
+
+    private fun goToEventDetailsScreen(id: Int) =
+        navigateTo(Screen.EventDetailsScreen(id))
 
     private fun isAuth() {
         updateUIState { it.copy(isAuth = auth.authStateFlow.value.id != 0) }
