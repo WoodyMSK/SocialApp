@@ -39,6 +39,7 @@ jobs:
           echo "STORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> local.properties
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> local.properties
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> local.properties
+          echo "MAPKIT_API_KEY=${{ secrets.MAPKIT_API_KEY }}" >> local.properties
 
       - name: Build Release APK
         run: ./gradlew assembleRelease
