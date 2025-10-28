@@ -12,9 +12,13 @@ import androidx.navigation.toRoute
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.event.compose.EventListView
-import ru.woodymsk.socialapp.presentation.navigation.model.Screen.PopBackStack
+import ru.woodymsk.socialapp.presentation.event_details.EventDetailsViewModel
+import ru.woodymsk.socialapp.presentation.event_details.compose.EventDetailsView
+import ru.woodymsk.socialapp.presentation.event_details.model.EventDetailsEvents
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventDetailsScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventListScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.NewEventScreen
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen.PopBackStack
 import ru.woodymsk.socialapp.presentation.new_event.NewEventViewModel
 import ru.woodymsk.socialapp.presentation.new_event.compose.NewEventView
 import ru.woodymsk.socialapp.presentation.new_event.model.NewEventEvents
@@ -22,6 +26,7 @@ import kotlin.reflect.typeOf
 
 private const val EVENT_VM_KEY = "EventViewModel"
 private const val NEW_EVENT_VM_KEY = "NewEventViewModel"
+private const val EVENT_DETAILS_VM_KEY = "EventDetailsViewModel"
 
 @Composable
 fun Navigation(
@@ -67,6 +72,22 @@ fun Navigation(
 
             NewEventView(viewModel) { navigateTo ->
                 Log.d("NavHost", "NewEventScreen navigateTo = $navigateTo")
+                navHostController.navigate(navigateTo)
+            }
+        }
+
+        composable<EventDetailsScreen> {
+            val viewModel: EventDetailsViewModel = viewModel(
+                factory = viewModelFactory,
+                key = EVENT_DETAILS_VM_KEY
+            )
+            val arguments = it.toRoute<EventDetailsScreen>()
+
+            LaunchedEffect(Unit) {
+                viewModel.onEvent(EventDetailsEvents.LoadEvent(arguments.id))
+            }
+
+            EventDetailsView(viewModel) { navigateTo ->
                 navHostController.navigate(navigateTo)
             }
         }

@@ -12,5 +12,8 @@ sealed class Screen {
     data class NewEventScreen(val event: Event?): Screen()
 
     @Serializable
+    data class EventDetailsScreen(val id: Int): Screen()
+
+    @Serializable
     data object PopBackStack: Screen()
 }

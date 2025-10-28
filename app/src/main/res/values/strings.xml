@@ -13,6 +13,7 @@
     <string name="auth_complete">Войти</string>
     <string name="feed">Лента</string>
     <string name="event">События</string>
+    <string name="event_title">Event</string>
     <string name="logIn">Вход</string>
     <string name="connect_to_event">Присоединиться</string>
     <string name="card_post_author_avatar_description">CardPostAuthorAvatar</string>
@@ -71,6 +72,7 @@
     <string name="event_timing_button">event timing</string>
     <string name="back_button">Button to return to the previous screen</string>
     <string name="save_button">Save button</string>
+    <string name="show_more_button">Show more button</string>
     <string name="play_video_button">Play video button</string>
     <string name="event_date_selection_button">Event date selection button</string>
     <string name="new_event_screen_title">New event</string>
@@ -92,6 +94,10 @@
     <string name="message_is_blank">Сообщение не должно быть пустым</string>
     <string name="date_in_past">Дата проведения события должна быть позже текущей</string>
     <string name="go_over">Перейти</string>
+    <string name="speakers">Speakers</string>
+    <string name="likers">Likers</string>
+    <string name="participants">Participants</string>
+    <string name="no_speakers">Желающих выступать ещё нет</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

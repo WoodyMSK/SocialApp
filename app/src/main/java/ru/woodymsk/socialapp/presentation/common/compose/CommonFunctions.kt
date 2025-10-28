@@ -1,8 +1,10 @@
 package ru.woodymsk.socialapp.presentation.common.compose
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +37,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
@@ -42,16 +46,19 @@ import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.presentation.theme.typography
 
 @Composable
-fun LoadAvatar(url: String) {
+fun LoadAvatar(
+    url: String,
+    modifier: Modifier = Modifier,
+) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
             .crossfade(true)
             .build(),
-        placeholder = painterResource(id = R.drawable.ic_profile_24),
-        error = painterResource(id = R.drawable.ic_error_24),
+        placeholder = painterResource(id = R.drawable.error_avatar),
+        error = painterResource(id = R.drawable.error_avatar),
         contentScale = ContentScale.Crop,
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
             .fillMaxSize(),
         contentDescription = stringResource(R.string.load_avatar_by_coil),
@@ -59,9 +66,12 @@ fun LoadAvatar(url: String) {
 }
 
 @Composable
-fun LoadImage(url: String) {
+fun LoadImage(
+    url: String,
+    modifier: Modifier = Modifier,
+) {
     SubcomposeAsyncImage(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp)),
         model = ImageRequest.Builder(LocalContext.current)
@@ -225,4 +235,172 @@ fun PlayVideoButton(
             .padding(12.dp),
         tint = Color.White
     )
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun ShowMoreButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(35.dp)
+            .clip(CircleShape)
+            .background(colorResource(id = R.color.purple_typography)),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_add_24),
+            contentDescription = stringResource(R.string.show_more_button),
+            modifier = Modifier
+                .size(16.dp)
+                .clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource(),
+                ) {
+                    onClick()
+                },
+            colorFilter = ColorFilter.tint(Color(0xFFFEF7FF)),
+        )
+    }
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun BackButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier.size(40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_arrow_back_24),
+            contentDescription = stringResource(R.string.back_button),
+            modifier = Modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource(),
+                ) {
+                    onClick()
+                },
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+        )
+    }
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun SaveButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier.size(40.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_check_24),
+            contentDescription = stringResource(R.string.save_button),
+            modifier = Modifier
+                .clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource(),
+                ) {
+                    onClick()
+                },
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+        )
+    }
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun ShareButton(
+    iconTint: Color = MaterialTheme.colorScheme.onSurface,
+    iconSize: Dp = 18.dp,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_share_figma_18),
+            contentDescription = stringResource(R.string.share_button),
+            modifier = Modifier
+                .size(iconSize)
+                .clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource(),
+                ) {
+                    onClick()
+                },
+            colorFilter = ColorFilter.tint(iconTint),
+        )
+    }
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun LikeButton(
+    isLiked: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painterResource(
+                id = if (isLiked) {
+                    R.drawable.ic_like_filled_18
+                } else {
+                    R.drawable.ic_like_outlined_18
+                }
+            ),
+            contentDescription = stringResource(R.string.like_button),
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = MutableInteractionSource(),
+            ) {
+                onClick()
+            },
+        )
+    }
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
+fun ParticipantButton(
+    isParticipant: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painterResource(
+                id = if (isParticipant) {
+                    R.drawable.ic_people_filled_22
+                } else {
+                    R.drawable.ic_people_outline_22
+                }
+            ),
+            contentDescription = stringResource(R.string.participants_icon),
+            modifier = Modifier.clickable(
+                indication = null,
+                interactionSource = MutableInteractionSource(),
+            ) {
+                onClick()
+            },
+
+        )
+    }
 }
