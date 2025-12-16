@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -403,4 +405,52 @@ fun ParticipantButton(
 
         )
     }
+}
+
+@Composable
+fun AlertDialogButton(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Button(
+        colors = ButtonDefaults.buttonColors(colorResource(id = R.color.purple_typography)),
+        modifier = modifier,
+        onClick = onClick
+    ) {
+        Text(
+            style = typography().labelLarge,
+            color = Color.White,
+            text = text,
+        )
+    }
+}
+
+@Composable
+fun CategoryTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun CategoryValue(
+    text: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        modifier = modifier
+            .clickable { onClick() }
+            .padding(bottom = 4.dp),
+        color = MaterialTheme.colorScheme.primary,
+    )
 }

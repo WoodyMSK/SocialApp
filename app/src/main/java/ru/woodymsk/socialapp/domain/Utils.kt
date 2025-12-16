@@ -5,6 +5,8 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import com.yandex.mapkit.geometry.BoundingBox
+import com.yandex.mapkit.map.VisibleRegion
 import java.io.File
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -200,3 +202,5 @@ fun formatVideoDuration(milliseconds: Long): String {
         String.format("%02d:%02d", minutes, seconds)
     }
 }
+
+fun VisibleRegion.toBoundingBox() = BoundingBox(bottomLeft, topRight)

@@ -11,6 +11,7 @@ import ru.woodymsk.socialapp.presentation.common.ViewModelFactory
 import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.event_details.EventDetailsViewModel
 import ru.woodymsk.socialapp.presentation.login.LoginViewModel
+import ru.woodymsk.socialapp.presentation.map_screen.MapScreenViewModel
 import ru.woodymsk.socialapp.presentation.new_event.NewEventViewModel
 import ru.woodymsk.socialapp.presentation.new_post.NewPostViewModel
 import ru.woodymsk.socialapp.presentation.post.PostViewModel
@@ -69,6 +70,11 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(EventDetailsViewModel::class)
     fun bindEventDetailsViewModel(eventDetailsViewModel: EventDetailsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MapScreenViewModel::class)
+    fun bindMapScreenViewModel(mapScreenViewModel: MapScreenViewModel): ViewModel
 }
 
 @MustBeDocumented

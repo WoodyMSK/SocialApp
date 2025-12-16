@@ -30,6 +30,9 @@ import javax.inject.Singleton
         ViewModelModule::class,
         ActivityModule::class,
         FragmentModule::class,
+        ResourceModule::class,
+        ConverterModule::class,
+        FormatterModule::class,
     ]
 )
 interface AppComponent {
