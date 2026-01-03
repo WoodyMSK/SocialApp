@@ -52,6 +52,9 @@ class NewEventViewModel @Inject constructor(
                 eventPicture.value = PictureModel(event.newAttachment?.url?.toUri())
                 it.copy(event = it.event.copy(attachment = event.newAttachment))
             }
+            is NewEventEvents.CoordsUpdated -> updateUIState {
+                it.copy(event = it.event.copy(coords = event.newCoords))
+            }
             is NewEventEvents.CreateEvent -> {
                 createDataChecked()
                 if (uiState.value.eventDataInvalid == null) {
@@ -71,6 +74,7 @@ class NewEventViewModel @Inject constructor(
                 it.copy(event = event.editEvent ?: Event())
             }
             is NewEventEvents.GoToBackScreen -> onBackPressed()
+            is NewEventEvents.GoToMapScreen -> navigateTo(Screen.MapScreen)
             is NewEventEvents.DismissDataInvalid -> updateUIState {
                 it.copy(eventDataInvalid = null)
             }

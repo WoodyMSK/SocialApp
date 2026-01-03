@@ -132,7 +132,8 @@ ext {
     compose_nav_version = '2.8.6'
     accompanist_permissions = '0.28.0'
     media3_version = '1.3.1'
-    yandex_maps_mobile = '4.4.0-lite'
+    yandex_maps_mobile_full = '4.4.0-full'
+    services_location = '21.0.1'
 }
 
 dependencies {
@@ -161,6 +162,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     implementation "com.google.dagger:dagger:$dagger2_version"
     implementation "com.google.dagger:dagger-android-support:$dagger2_version"
+    implementation "com.google.android.gms:play-services-location:$services_location"
     implementation "javax.inject:javax.inject:$javax_inject_version"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     implementation "androidx.paging:paging-compose-android:$paging_version"
@@ -183,7 +185,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_permissions"
     implementation("androidx.media3:media3-exoplayer:$media3_version")
     implementation("androidx.media3:media3-ui:$media3_version")
-    implementation "com.yandex.android:maps.mobile:$yandex_maps_mobile"
+    implementation "com.yandex.android:maps.mobile:$yandex_maps_mobile_full"
     annotationProcessor "com.google.dagger:dagger-android-processor:$dagger2_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     //noinspection KaptUsageInsteadOfKsp

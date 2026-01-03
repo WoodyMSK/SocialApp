@@ -17,6 +17,10 @@ fun YandexMap(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val imageProvider = ImageProvider.fromResource(
+        context,
+        R.drawable.map_pin_red_149x149
+    )
 
     AndroidView(
         modifier = modifier,
@@ -27,11 +31,6 @@ fun YandexMap(
 
                 // добавление метки для каждой точки
                 points.forEach { point ->
-                    val imageProvider = ImageProvider.fromResource(
-                        context,
-                        R.drawable.map_pin_red_149x149
-                    )
-
                     mapWindow.map.mapObjects.addPlacemark().apply {
                         geometry = point
                         setIcon(imageProvider)
@@ -43,11 +42,6 @@ fun YandexMap(
             // обновление метки при изменении списка точек
             mapView.mapWindow.map.mapObjects.clear()
             points.forEach { point ->
-                val imageProvider = ImageProvider.fromResource(
-                    context,
-                    R.drawable.map_pin_red_149x149
-                )
-
                 mapView.mapWindow.map.mapObjects.addPlacemark().apply {
                     geometry = point
                     setIcon(imageProvider)

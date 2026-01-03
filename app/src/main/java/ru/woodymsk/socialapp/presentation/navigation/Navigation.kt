@@ -9,14 +9,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import ru.woodymsk.socialapp.data.model.Coords
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.presentation.event.EventListViewModel
 import ru.woodymsk.socialapp.presentation.event.compose.EventListView
 import ru.woodymsk.socialapp.presentation.event_details.EventDetailsViewModel
 import ru.woodymsk.socialapp.presentation.event_details.compose.EventDetailsView
 import ru.woodymsk.socialapp.presentation.event_details.model.EventDetailsEvents
+import ru.woodymsk.socialapp.presentation.map_screen.MapScreenViewModel
+import ru.woodymsk.socialapp.presentation.map_screen.compose.MapScreenView
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventDetailsScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.EventListScreen
+import ru.woodymsk.socialapp.presentation.navigation.model.Screen.MapScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.NewEventScreen
 import ru.woodymsk.socialapp.presentation.navigation.model.Screen.PopBackStack
 import ru.woodymsk.socialapp.presentation.new_event.NewEventViewModel
@@ -27,6 +31,8 @@ import kotlin.reflect.typeOf
 private const val EVENT_VM_KEY = "EventViewModel"
 private const val NEW_EVENT_VM_KEY = "NewEventViewModel"
 private const val EVENT_DETAILS_VM_KEY = "EventDetailsViewModel"
+private const val MAP_VM_KEY = "MapViewModel"
+private const val OBJECT_COORDS = "objectСoords"
 
 @Composable
 fun Navigation(
@@ -60,6 +66,7 @@ fun Navigation(
         ) {
             Log.d("NavHost", "start NewEventScreen")
             val arguments = it.toRoute<NewEventScreen>()
+            val savedStateHandle = it.savedStateHandle
             val viewModel: NewEventViewModel = viewModel(
                 factory = viewModelFactory,
                 key = NEW_EVENT_VM_KEY,
@@ -73,6 +80,20 @@ fun Navigation(
             NewEventView(viewModel) { navigateTo ->
                 Log.d("NavHost", "NewEventScreen navigateTo = $navigateTo")
                 navHostController.navigate(navigateTo)
+            }
+
+            LaunchedEffect(savedStateHandle) {
+                savedStateHandle.getStateFlow<Coords?>(
+                    OBJECT_COORDS,
+                    null
+                )
+                    .collect { coords ->
+                        coords?.let { newCoords ->
+                            viewModel.onEvent(NewEventEvents.CoordsUpdated(newCoords))
+                            // clear savedStateHandle
+                            savedStateHandle.remove<Coords>(OBJECT_COORDS)
+                        }
+                    }
             }
         }
 
@@ -90,6 +111,29 @@ fun Navigation(
             EventDetailsView(viewModel) { navigateTo ->
                 navHostController.navigate(navigateTo)
             }
+        }
+
+        composable<MapScreen> {
+            Log.d("NavHost", "start MapScreen")
+            val viewModel: MapScreenViewModel = viewModel(
+                factory = viewModelFactory,
+                key = MAP_VM_KEY
+            )
+
+            MapScreenView(
+                viewModel = viewModel,
+                onNavigateTo = { navigateTo ->
+                    Log.d("NavHost", "MapScreen navigateTo = $navigateTo")
+                    navHostController.navigate(navigateTo)
+                },
+                onBackWithResult = { coords ->
+                    navHostController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(OBJECT_COORDS, coords)
+
+                    navHostController.navigateUp()
+                }
+            )
         }
 
         composable<PopBackStack> {

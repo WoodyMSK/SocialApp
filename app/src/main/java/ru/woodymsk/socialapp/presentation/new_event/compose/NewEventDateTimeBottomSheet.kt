@@ -1,8 +1,10 @@
 package ru.woodymsk.socialapp.presentation.new_event.compose
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,17 +35,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
@@ -65,15 +69,20 @@ fun NewEventDateTimeBottomSheet(
     state: Event = Event(),
     onEvent: (NewEventEvents) -> Unit = {},
 ) {
-
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboardManager.current
     val interactionSource = remember { MutableInteractionSource() }
     var eventTypeState by remember { mutableStateOf(state.type) }
     val datePickerState = rememberDatePickerState()
     val timePickerState = rememberTimePickerState()
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
+    var showPlaceButton by remember {
+        mutableStateOf(when (eventTypeState) {
+            EventType.OFFLINE -> (true)
+            else -> (false)
+        })
+    }
 
     // Datetime update function in ViewModel
     fun updateDateTime(dateTime: LocalDateTime) {
@@ -108,12 +117,6 @@ fun NewEventDateTimeBottomSheet(
         }
     }
 
-    // focus on BasicTextField and launch keyboard at the start of the NewEventDateTimeBottomSheet
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-        keyboardController?.show()
-    }
-
     Surface(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -124,9 +127,7 @@ fun NewEventDateTimeBottomSheet(
         ) {
             // Date and time selection field
             OutlinedTextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = state.datetime,
@@ -184,7 +185,9 @@ fun NewEventDateTimeBottomSheet(
             )
             // Event type switcher
             Column(
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .fillMaxWidth(),
             ) {
                 Text(
                     text = stringResource(R.string.type),
@@ -196,6 +199,7 @@ fun NewEventDateTimeBottomSheet(
                     state = eventTypeState,
                     onEventType = {
                         eventTypeState = EventType.ONLINE
+                        showPlaceButton = false
                         onEvent(NewEventEvents.TypeUpdated(eventTypeState))
                     },
                 )
@@ -205,9 +209,64 @@ fun NewEventDateTimeBottomSheet(
                     state = eventTypeState,
                     onEventType = {
                         eventTypeState = EventType.OFFLINE
+                        showPlaceButton = true
                         onEvent(NewEventEvents.TypeUpdated(eventTypeState))
                     },
                 )
+                if (state.coords != null && state.type == EventType.OFFLINE) {
+                    Text(
+                        modifier = Modifier.padding(top = 8.dp),
+                        text = stringResource(R.string.place),
+                        style = typography().labelLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = state.coords.toString(),
+                            style = typography().labelLarge.copy(
+                                fontSize = 18.sp,
+                                textDecoration = TextDecoration.Underline,
+                            ),
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clickable {
+                                    clipboardManager.setText(AnnotatedString(state.coords.toString()))
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.coordinates_copied),
+                                        Toast.LENGTH_SHORT,
+                                    ).show()
+                                },
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                        // button for changing an event venue
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            PlaceButton(
+                                text = stringResource(R.string.change),
+                                onClick = { onEvent(NewEventEvents.GoToMapScreen(null)) },
+                            )
+                        }
+                    }
+                }
+            }
+            // button for adding an event venue
+            if (showPlaceButton && state.coords == null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    PlaceButton(
+                        text = stringResource(R.string.add_place_button),
+                        onClick = { onEvent(NewEventEvents.GoToMapScreen(null)) },
+                    )
+                }
             }
             // time selection dialog
             if (showTimePicker) {
@@ -262,6 +321,26 @@ fun NewEventDateTimeBottomSheet(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PlaceButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(R.color.purple_typography)
+        ),
+        onClick = { onClick() },
+    ) {
+        Text(
+            style = typography().titleMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
+            text = text,
+        )
     }
 }
 

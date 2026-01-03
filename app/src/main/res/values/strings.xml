@@ -41,6 +41,7 @@
     <string name="execute_login">Выполнить вход?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
+    <string name="change">изменить</string>
     <string name="remove">удалить</string>
     <string name="remove_post">Удалить пост?</string>
     <string name="what_is_new_with_you">Что у вас нового?</string>
@@ -84,12 +85,16 @@
     <string name="event_date">Date</string>
     <string name="event_date_format">dd/MM/yyyy HH:mm</string>
     <string name="type">Type</string>
+    <string name="place">Place</string>
     <string name="ok">OK</string>
+    <string name="add">Добавить</string>
     <string name="cancel">Отмена</string>
+    <string name="close">Закрыть</string>
     <string name="choose_time">Выбрать время</string>
     <string name="event_datetime_validation_error">event datetime validation error</string>
     <string name="сamera_access_is_required">Требуется доступ к камере</string>
     <string name="media_access_is_required">Требуется доступ к фото и медиа файлам</string>
+    <string name="location_access_is_required">Для показа вашего местоположения необходимо предоставить разрешение</string>
     <string name="go_to_settings_to_allow_access">Перейдите в настройки, чтобы разрешить доступ</string>
     <string name="message_is_blank">Сообщение не должно быть пустым</string>
     <string name="date_in_past">Дата проведения события должна быть позже текущей</string>
@@ -98,6 +103,26 @@
     <string name="likers">Likers</string>
     <string name="participants">Participants</string>
     <string name="no_speakers">Желающих выступать ещё нет</string>
+    <string name="search_button">Кнопка поиска</string>
+    <string name="search_places">Поиск мест</string>
+    <string name="clear_search">Очистить поиск</string>
+    <string name="coordinates">Координаты</string>
+    <string name="coordinates_copied">Координаты скопированы</string>
+    <string name="link">Ссылка</string>
+    <string name="address">Адрес</string>
+    <string name="components">Компоненты</string>
+    <string name="object_name">Название</string>
+    <string name="working_hours">Часы работы</string>
+    <string name="categories">Категории</string>
+    <string name="phone_numbers">Телефоны</string>
+    <string name="copied_masculine">скопирован</string>
+    <string name="copied_feminine">скопирована</string>
+    <string name="copied_neuter">скопировано</string>
+    <string name="copied_plural">скопированы</string>
+    <string name="add_place_button">Добавить место проведения события</string>
+    <string name="coordinates_not_specified">Координаты не указаны</string>
+    <string name="name_is_missing">Имя отсутствует</string>
+    <string name="description_is_missing">Описание отсутствует</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>
