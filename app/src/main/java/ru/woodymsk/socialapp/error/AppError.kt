@@ -1,5 +1,6 @@
 package ru.woodymsk.socialapp.error
 
+import androidx.media3.common.PlaybackException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import okio.IOException
 import retrofit2.HttpException
@@ -20,6 +21,7 @@ sealed class AppError(var code: String) : RuntimeException() {
                 is IOException -> NetworkError
                 is NullPointerException -> NullError
                 is IllegalAccessError -> AccessError
+                is PlaybackException -> MediaError
                 is AppError -> e
                 else -> UnknownError
             }
@@ -31,6 +33,7 @@ sealed class AppError(var code: String) : RuntimeException() {
     object DbError : AppError("error_db")
     object UnknownError : AppError("error_unknown")
     object NullError : AppError("error_null")
+    object MediaError : AppError("error_media")
     object ServerError : AppError("Что-то пошло не так")
 
     data class ApiError(val errorMessage: String) : AppError(errorMessage)

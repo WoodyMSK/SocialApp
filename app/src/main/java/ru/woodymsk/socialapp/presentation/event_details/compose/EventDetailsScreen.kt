@@ -172,10 +172,13 @@ fun EventDetailsScreen(
                                         .fillMaxWidth()
                                         .aspectRatio(16 / 9f)
                                         .padding(vertical = 8.dp),
+                                    onPlayingChanged = { isVideoPlaying.value = it },
+                                    onError = { onEvent(EventDetailsEvents.Error(it)) },
                                 )
                             } else {
                                 PreviewVideoImageWithDurationAndPlayButton(
                                     videoUri = event.attachment.url,
+                                    duration = event.attachmentMetadata?.duration,
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .aspectRatio(16 / 9f)

@@ -7,7 +7,7 @@ import ru.woodymsk.socialapp.data.event.model.EventEntity
 import ru.woodymsk.socialapp.data.event.model.EventKeyEntity
 import ru.woodymsk.socialapp.data.post.db.PostConverters
 
-@Database(entities = [EventEntity::class, EventKeyEntity::class], version = 2  , exportSchema = false)
+@Database(entities = [EventEntity::class, EventKeyEntity::class], version = 3  , exportSchema = false)
 @TypeConverters(PostConverters::class)
 abstract class EventDatabase : RoomDatabase() {
     abstract fun eventDao(): EventDao

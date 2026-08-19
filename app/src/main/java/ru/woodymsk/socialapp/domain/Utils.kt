@@ -1,10 +1,8 @@
 package ru.woodymsk.socialapp.domain
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.map.VisibleRegion
 import java.io.File
@@ -164,30 +162,6 @@ fun Int.formatNumberShort(): String {
             val truncated = Math.floor(value * 10) / 10.0
             if (truncated % 1 == 0.0) "${truncated.toInt()}kk" else "%.1fkk".format(truncated)
         }
-    }
-}
-
-fun getVideoDuration(context: Context, videoUri: String): String? {
-    return try {
-        val retriever = MediaMetadataRetriever()
-
-        if (videoUri.startsWith("http")) {
-            // Для онлайн видео
-            retriever.setDataSource(videoUri, HashMap())
-        } else {
-            // Для локальных файлов
-            retriever.setDataSource(context, videoUri.toUri())
-        }
-        // Получаем длительность видео
-        val durationMs = retriever.extractMetadata(
-            MediaMetadataRetriever.METADATA_KEY_DURATION
-        )?.toLongOrNull() ?: 0
-        // Освобождение ресурсов
-        retriever.release()
-        formatVideoDuration(durationMs)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
     }
 }
 

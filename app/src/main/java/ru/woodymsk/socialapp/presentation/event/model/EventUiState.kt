@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
+import ru.woodymsk.socialapp.presentation.common.compose.AudioPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 
 data class EventUiState(
@@ -13,4 +14,9 @@ data class EventUiState(
     val error: AppError? = null,
     val showAuthDialog: Boolean = false,
     val videoPlayerManager: VideoPlayerManager,
+    val audioPlayerManager: AudioPlayerManager,
+    val playingAudioEventId: Int? = null,
+    val playingVideoEventId: Int? = null,
+    val isAudioPlaying: Boolean = false,
+    val isVideoPlaying: Boolean = false,
 )

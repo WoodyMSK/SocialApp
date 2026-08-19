@@ -5,6 +5,7 @@ import ru.woodymsk.socialapp.data.model.Attachment
 import ru.woodymsk.socialapp.data.model.Coords
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.data.model.UserPreview
+import ru.woodymsk.socialapp.domain.common.model.AttachmentMetadata
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -29,6 +30,7 @@ data class Event(
     val participatedByMe: Boolean = false,
     val participantsNumber: String = "",
     val attachment: Attachment? = null,
+    val attachmentMetadata: AttachmentMetadata? = null,
     val ownedByMe: Boolean = false,
     val link: String? = null,
     val users: Map<Int, UserPreview> = emptyMap(),

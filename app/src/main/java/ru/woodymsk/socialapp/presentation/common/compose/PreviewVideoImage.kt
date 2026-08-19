@@ -11,11 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,10 +27,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import ru.woodymsk.socialapp.R
-import ru.woodymsk.socialapp.domain.getVideoDuration
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.typography
 
@@ -85,17 +78,9 @@ fun PreviewVideoImage(
 @Composable
 fun PreviewVideoImageWithDurationAndPlayButton(
     videoUri: String,
+    duration: String?,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    var duration by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(videoUri) {
-        duration = withContext(Dispatchers.IO) {
-            getVideoDuration(context, videoUri)
-        }
-    }
-
     Box(modifier = modifier) {
         PreviewVideoImage(videoUri, modifier = Modifier.fillMaxSize())
         PlayVideoButton(modifier = Modifier.align(Alignment.Center))
@@ -126,6 +111,7 @@ fun PreviewPreviewVideoImageWithDuration() {
     SocialAppTheme {
         PreviewVideoImageWithDurationAndPlayButton(
             videoUri = "mockUri",
+            duration = "3:45",
             modifier = Modifier,
         )
     }
