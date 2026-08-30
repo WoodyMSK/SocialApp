@@ -364,6 +364,7 @@ fun NewEventScreen(
                     ) {
                         PreviewVideoImageWithDurationAndPlayButton(
                             videoUri = state.event.attachment.url,
+                            duration = state.event.attachmentMetadata?.duration,
                             modifier = Modifier.fillMaxWidth()
                         )
                         // remove button

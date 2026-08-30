@@ -56,11 +56,6 @@ class EventDetailsViewModel @Inject constructor(
         _uiState.update(updater)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        videoPlayerManager.release()
-    }
-
     private fun handleError(error: Throwable?) {
         updateUIState { it.copy(error = error?.let { AppError.handleError(it) }) }
     }

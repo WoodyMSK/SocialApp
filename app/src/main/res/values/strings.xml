@@ -123,6 +123,10 @@
     <string name="coordinates_not_specified">Координаты не указаны</string>
     <string name="name_is_missing">Имя отсутствует</string>
     <string name="description_is_missing">Описание отсутствует</string>
+    <string name="play_audio">Проигрывать аудио</string>
+    <string name="pause_audio">Поставить аудио на паузу</string>
+    <string name="unknown_audio_title">Неизвестно</string>
+    <string name="unknown_audio_artist">Неизвестно</string>
     <string-array name="eventFormat">
         <item>ONLINE</item>
         <item>OFFLINE</item>

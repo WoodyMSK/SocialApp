@@ -11,40 +11,33 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-open class VideoPlayerManager @Inject constructor(
+open class AudioPlayerManager @Inject constructor(
     private val context: Context
 ) {
     open val player: ExoPlayer by lazy {
         ExoPlayer.Builder(context).build().apply {
-            repeatMode = Player.REPEAT_MODE_ONE
-            prepare()
+            repeatMode = Player.REPEAT_MODE_OFF
         }
     }
 
     private val _state = MutableStateFlow(MediaPlaybackState())
     val state: StateFlow<MediaPlaybackState> = _state.asStateFlow()
-    private var currentVideoUrl: String? = null
+    private var currentAudioUrl: String? = null
 
-    fun playVideo(uri: String) {
-        if (currentVideoUrl != uri) {
+    fun playAudio(uri: String) {
+        if (currentAudioUrl != uri) {
             player.setMediaItem(MediaItem.fromUri(uri))
             player.prepare()
-            currentVideoUrl = uri
+            currentAudioUrl = uri
         }
         player.play()
     }
 
-    fun pause() {
+    fun pauseAudio() {
         player.pause()
     }
 
     fun setPlayingState(eventId: Int?, isPlaying: Boolean) {
         _state.value = MediaPlaybackState(eventId, isPlaying)
-    }
-
-    fun release() {
-        player.release()
-        currentVideoUrl = null
-        _state.value = MediaPlaybackState()
     }
 }

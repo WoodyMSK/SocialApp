@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.error.AppError
 import ru.woodymsk.socialapp.presentation.common.compose.AlertDialog
 import ru.woodymsk.socialapp.presentation.common.compose.AppendLoadError
+import ru.woodymsk.socialapp.presentation.common.compose.AudioPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.LoadingIndicator
 import ru.woodymsk.socialapp.presentation.common.compose.RefreshLoadError
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
@@ -56,10 +58,13 @@ import ru.woodymsk.socialapp.presentation.event.model.EventUiState
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import android.content.Context
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-
 
 // Ссылка на экран в Figma: https://www.figma.com/design/8z1sV6KIf6Sc1y02TrY2XS/Nmedia?node-id=13-2511&t=1S5gJ3zZWiBBGUYm-1
 @OptIn(ExperimentalMaterialApi::class)
@@ -80,12 +85,13 @@ fun EventListScreen(
         }
     )
     val listState = rememberLazyListState()
-    var playingVideoEventId by remember { mutableStateOf<Int?>(null) }
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     // tracking the visibility of video events to pause while scrolling
-    LaunchedEffect(listState, lazyPagingItems, playingVideoEventId) {
+    LaunchedEffect(listState, lazyPagingItems, state.playingVideoEventId) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo }
             .collect { visibleItems ->
+                val playingVideoEventId = state.playingVideoEventId
                 if (playingVideoEventId != null) {
                     // checking if the event is visible with the video being played
                     val isPlayingVideoVisible = visibleItems.any { item ->
@@ -102,8 +108,7 @@ fun EventListScreen(
 
                     // if the video being played is not visible, we pause it
                     if (!isPlayingVideoVisible) {
-                        state.videoPlayerManager.pause()
-                        playingVideoEventId = null
+                        onEvent(EventEvents.PauseVideo(playingVideoEventId))
                     }
                 }
             }
@@ -141,6 +146,34 @@ fun EventListScreen(
             ).show()
             // Сбрасываем ошибку после показа
             onEvent(EventEvents.Error(null))
+        }
+    }
+
+    val currentState by rememberUpdatedState(state)
+    val currentOnEvent by rememberUpdatedState(onEvent)
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_PAUSE -> {
+                    // Видео ставим на паузу, когда оно не в фокусе
+                    // Аудио должно играть пока не запустят другое аудио или видео
+                    currentState.playingVideoEventId?.let { currentOnEvent(EventEvents.PauseVideo(it)) }
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    // Аудио и видео не запускаются автоматически
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                    // Не удаляем плеер т.к. синглтон
+                }
+                else -> Unit
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -183,18 +216,15 @@ fun EventListScreen(
                                 event = event,
                                 onEvent = onEvent,
                                 videoPlayerManager = state.videoPlayerManager,
-                                isVideoPlaying = event.id == playingVideoEventId,
+                                audioPlayerManager = state.audioPlayerManager,
+                                isVideoPlaying = event.id == state.playingVideoEventId && state.isVideoPlaying,
+                                isCurrentAudio = event.id == state.playingAudioEventId,
+                                isAudioPlaying = event.id == state.playingAudioEventId && state.isAudioPlaying,
                                 onVideoPlayPause = { play ->
                                     if (play) {
-                                        // if there is already a video playing, we pause it
-                                        if (playingVideoEventId != null && playingVideoEventId != event.id) {
-                                            state.videoPlayerManager.pause()
-                                        }
-                                        playingVideoEventId = event.id
-                                        state.videoPlayerManager.playVideo(event.attachment?.url ?: "")
+                                        onEvent(EventEvents.PlayVideo(event.id, event.attachment?.url ?: ""))
                                     } else {
-                                        playingVideoEventId = null
-                                        state.videoPlayerManager.pause()
+                                        onEvent(EventEvents.PauseVideo(event.id))
                                     }
                                 }
                             )
@@ -270,11 +300,13 @@ fun EventListScreen(
 @Composable
 fun EventScreenPreview() {
     val mockVideoPlayerManager = MockVideoPlayerManager(LocalContext.current)
+    val mockAudioPlayerManager = AudioPlayerManager(LocalContext.current)
     val mockState = EventUiState(
         isAuth = true,
         pagingDataFlow = flowOf(PagingData.from(mockEvents)),
         showAuthDialog = false,
         videoPlayerManager = mockVideoPlayerManager,
+        audioPlayerManager = mockAudioPlayerManager,
     )
 
     SocialAppTheme {

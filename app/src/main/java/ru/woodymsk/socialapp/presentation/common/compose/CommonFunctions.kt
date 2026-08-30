@@ -241,6 +241,35 @@ fun PlayVideoButton(
 
 @SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
+fun PlayPauseButton(
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Icon(
+        painter = painterResource(id = if (isPlaying) R.drawable.ic_pause_24 else R.drawable.ic_play_24),
+        contentDescription = stringResource(
+            if (isPlaying) R.string.pause_audio else R.string.play_audio
+        ),
+        modifier = modifier
+            .size(60.dp)
+            .background(
+                color = colorResource(id = R.color.purple_typography),
+                shape = CircleShape,
+            )
+            .padding(12.dp)
+            .clickable(
+                indication = null,
+                interactionSource = MutableInteractionSource(),
+            ) {
+                onClick()
+            },
+        tint = Color.White,
+    )
+}
+
+@SuppressLint("UnrememberedMutableInteractionSource")
+@Composable
 fun ShowMoreButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
