@@ -25,9 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,14 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.media3.common.C
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import ru.woodymsk.socialapp.R
 import ru.woodymsk.socialapp.data.model.AttachmentType
 import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.formatDate
-import ru.woodymsk.socialapp.domain.formatVideoDuration
 import ru.woodymsk.socialapp.presentation.common.compose.AudioCard
 import ru.woodymsk.socialapp.presentation.common.compose.AudioPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.LikeButton
@@ -66,11 +61,11 @@ import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerWithControls
 import ru.woodymsk.socialapp.presentation.common.compose.getLineSymbolCount
 import ru.woodymsk.socialapp.presentation.common.compose.getTextLayoutResult
+import ru.woodymsk.socialapp.presentation.common.compose.rememberAudioProgress
 import ru.woodymsk.socialapp.presentation.event.model.EventEvents
 import ru.woodymsk.socialapp.presentation.theme.SocialAppTheme
 import ru.woodymsk.socialapp.presentation.theme.robotoFamily
 import ru.woodymsk.socialapp.presentation.theme.typography
-import kotlin.time.Duration.Companion.milliseconds
 
 private const val VISIBLE_ROW_COUNT = 3
 
@@ -228,32 +223,17 @@ fun EventItem(
             // event attachment audio
             if (event.attachment?.type == AttachmentType.AUDIO) {
                 val staticDuration = event.attachmentMetadata?.duration ?: "--:--"
-                var displayDuration by remember { mutableStateOf(staticDuration) }
-                var progress by remember { mutableFloatStateOf(0f) }
-
-                // Пока трек играет — показываем обратный отсчёт (сколько осталось) и прогресс слайдера
-                LaunchedEffect(isAudioPlaying, isCurrentAudio) {
-                    if (isAudioPlaying) {
-                        val player = audioPlayerManager.player
-                        while (isActive) {
-                            val total = player.duration
-                            if (total != C.TIME_UNSET && total > 0) {
-                                val remaining = (total - player.currentPosition).coerceAtLeast(0)
-                                displayDuration = formatVideoDuration(remaining)
-                                progress = (player.currentPosition.toFloat() / total).coerceIn(0f, 1f)
-                            }
-                            delay(200.milliseconds)
-                        }
-                    } else if (!isCurrentAudio) {
-                        displayDuration = staticDuration
-                        progress = 0f
-                    }
-                }
+                var audioProgress by rememberAudioProgress(
+                    player = audioPlayerManager.player,
+                    isPlaying = isAudioPlaying,
+                    isCurrent = isCurrentAudio,
+                    staticDuration = staticDuration,
+                )
 
                 AudioCard(
                     title = event.attachmentMetadata?.title ?: stringResource(R.string.unknown_audio_title),
                     artist = event.attachmentMetadata?.artist ?: stringResource(R.string.unknown_audio_artist),
-                    duration = displayDuration,
+                    duration = audioProgress.displayDuration,
                     isPlaying = isAudioPlaying,
                     onPlayPause = {
                         if (isAudioPlaying) {
@@ -262,7 +242,7 @@ fun EventItem(
                             onEvent(EventEvents.PlayAudio(event.id, event.attachment.url))
                         }
                     },
-                    progress = progress,
+                    progress = audioProgress.progress,
                     seekEnabled = isCurrentAudio,
                     onSeek = { fraction ->
                         val player = audioPlayerManager.player
@@ -271,7 +251,7 @@ fun EventItem(
                             player.seekTo((fraction * total).toLong())
                             // Опрос обновит progress только через ~200мс — без этого слайдер на
                             // мгновение отскакивает к старой позиции, пока не придёт новый тик
-                            progress = fraction
+                            audioProgress = audioProgress.copy(progress = fraction)
                         }
                     },
                     modifier = Modifier
