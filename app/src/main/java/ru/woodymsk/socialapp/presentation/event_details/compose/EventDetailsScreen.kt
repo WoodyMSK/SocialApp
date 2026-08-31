@@ -25,8 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.C
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraPosition
 import ru.woodymsk.socialapp.R
@@ -44,7 +46,8 @@ import ru.woodymsk.socialapp.data.model.EventType
 import ru.woodymsk.socialapp.data.model.UserPreview
 import ru.woodymsk.socialapp.domain.event.model.Event
 import ru.woodymsk.socialapp.domain.formatDate
-import ru.woodymsk.socialapp.presentation.common.compose.ShowMoreButton
+import ru.woodymsk.socialapp.presentation.common.compose.AudioCard
+import ru.woodymsk.socialapp.presentation.common.compose.AudioPlayerManager
 import ru.woodymsk.socialapp.presentation.common.compose.BackButton
 import ru.woodymsk.socialapp.presentation.common.compose.LikeButton
 import ru.woodymsk.socialapp.presentation.common.compose.LoadAvatar
@@ -52,8 +55,10 @@ import ru.woodymsk.socialapp.presentation.common.compose.LoadImage
 import ru.woodymsk.socialapp.presentation.common.compose.ParticipantButton
 import ru.woodymsk.socialapp.presentation.common.compose.PreviewVideoImageWithDurationAndPlayButton
 import ru.woodymsk.socialapp.presentation.common.compose.ShareButton
+import ru.woodymsk.socialapp.presentation.common.compose.ShowMoreButton
 import ru.woodymsk.socialapp.presentation.common.compose.VideoPlayerWithControls
 import ru.woodymsk.socialapp.presentation.common.compose.YandexMap
+import ru.woodymsk.socialapp.presentation.common.compose.rememberAudioProgress
 import ru.woodymsk.socialapp.presentation.event.compose.MockVideoPlayerManager
 import ru.woodymsk.socialapp.presentation.event_details.model.EventDetailsEvents
 import ru.woodymsk.socialapp.presentation.event_details.model.EventDetailsUIState
@@ -73,7 +78,9 @@ fun EventDetailsScreen(
     onEvent: (EventDetailsEvents) -> Unit,
 ) {
     val event = state.event
-    val isVideoPlaying = remember { mutableStateOf(false) }
+    val isVideoPlaying = event.id == state.playingVideoEventId && state.isVideoPlaying
+    val isCurrentAudio = event.id == state.playingAudioEventId
+    val isAudioPlaying = isCurrentAudio && state.isAudioPlaying
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -164,7 +171,7 @@ fun EventDetailsScreen(
                         }
                         // event attachment video
                         if (event.attachment?.type == AttachmentType.VIDEO) {
-                            if (isVideoPlaying.value) {
+                            if (isVideoPlaying) {
                                 VideoPlayerWithControls(
                                     videoUrl = event.attachment.url,
                                     videoPlayerManager = state.videoPlayerManager,
@@ -172,7 +179,18 @@ fun EventDetailsScreen(
                                         .fillMaxWidth()
                                         .aspectRatio(16 / 9f)
                                         .padding(vertical = 8.dp),
-                                    onPlayingChanged = { isVideoPlaying.value = it },
+                                    onPlayingChanged = { playing ->
+                                        if (playing) {
+                                            onEvent(
+                                                EventDetailsEvents.PlayVideo(
+                                                    event.id,
+                                                    event.attachment.url,
+                                                )
+                                            )
+                                        } else {
+                                            onEvent(EventDetailsEvents.PauseVideo(event.id))
+                                        }
+                                    },
                                     onError = { onEvent(EventDetailsEvents.Error(it)) },
                                 )
                             } else {
@@ -187,10 +205,61 @@ fun EventDetailsScreen(
                                             indication = null,
                                             interactionSource = remember { MutableInteractionSource() },
                                         ) {
-                                            isVideoPlaying.value = true
+                                            onEvent(
+                                                EventDetailsEvents.PlayVideo(
+                                                    event.id,
+                                                    event.attachment.url,
+                                                )
+                                            )
                                         }
                                 )
                             }
+                        }
+                        // event attachment audio
+                        if (event.attachment?.type == AttachmentType.AUDIO) {
+                            val staticDuration = event.attachmentMetadata?.duration ?: "--:--"
+                            var audioProgress by rememberAudioProgress(
+                                player = state.audioPlayerManager.player,
+                                isPlaying = isAudioPlaying,
+                                isCurrent = isCurrentAudio,
+                                staticDuration = staticDuration,
+                            )
+
+                            AudioCard(
+                                title = event.attachmentMetadata?.title
+                                    ?: stringResource(R.string.unknown_audio_title),
+                                artist = event.attachmentMetadata?.artist
+                                    ?: stringResource(R.string.unknown_audio_artist),
+                                duration = audioProgress.displayDuration,
+                                isPlaying = isAudioPlaying,
+                                onPlayPause = {
+                                    if (isAudioPlaying) {
+                                        onEvent(EventDetailsEvents.PauseAudio(event.id))
+                                    } else {
+                                        onEvent(
+                                            EventDetailsEvents.PlayAudio(
+                                                event.id,
+                                                event.attachment.url,
+                                            )
+                                        )
+                                    }
+                                },
+                                progress = audioProgress.progress,
+                                seekEnabled = isCurrentAudio,
+                                onSeek = { fraction ->
+                                    val player = state.audioPlayerManager.player
+                                    val total = player.duration
+                                    if (total != C.TIME_UNSET && total > 0) {
+                                        player.seekTo((fraction * total).toLong())
+                                        // Опрос обновит progress только через ~200мс — без этого слайдер на
+                                        // мгновение отскакивает к старой позиции, пока не придёт новый тик
+                                        audioProgress = audioProgress.copy(progress = fraction)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
                         }
                         // text content
                         Column(
@@ -433,9 +502,11 @@ fun EventDetailsScreen(
 @Composable
 fun PreviewEventDetailsScreen() {
     val mockVideoPlayerManager = MockVideoPlayerManager(LocalContext.current)
+    val mockAudioPlayerManager = AudioPlayerManager(LocalContext.current)
     val mockUIState = EventDetailsUIState(
         event = mockEvent,
-        videoPlayerManager = mockVideoPlayerManager
+        videoPlayerManager = mockVideoPlayerManager,
+        audioPlayerManager = mockAudioPlayerManager,
     )
 
     SocialAppTheme {
